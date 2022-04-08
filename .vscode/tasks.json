@@ -1,0 +1,73 @@
+{
+    // See https://go.microsoft.com/fwlink/?LinkId=733558
+    // for the documentation about the tasks.json format
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "CMake Configure : Debug",
+            "command": "cmake",
+            "args": [
+                "-B${workspaceFolder}/build",
+                "-DCMAKE_BUILD_TYPE:STRING=Debug",
+                "-H${workspaceFolder}"
+            ],
+            "problemMatcher": [
+                "$gcc"
+            ]
+        },
+        {
+            "label": "CMake Build : Debug",
+            "command": "cmake",
+            "args": [
+                "--build", "${workspaceFolder}/build",
+                "--config", "Debug",
+                "--target", "all"
+            ],
+            "problemMatcher": [
+                "$gcc"
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "dependsOn": [
+                "CMake Configure : Debug"
+            ],
+            "dependsOrder": "sequence",
+        },
+        {
+            "label": "CMake Configure : Release",
+            "command": "cmake",
+            "args": [
+                "-B${workspaceFolder}/build",
+                "-DCMAKE_BUILD_TYPE:STRING=Release",
+                "-H${workspaceFolder}"
+            ],
+            "problemMatcher": [
+                "$gcc"
+            ]
+        },
+        {
+            "label": "CMake Build : Release",
+            "command": "cmake",
+            "args": [
+                "--build", "${workspaceFolder}/build",
+                "--config", "Release",
+                "--target", "all",
+                "--parallel"
+            ],
+            "dependsOn": [
+                "CMake Configure : Release"
+            ],
+            "dependsOrder": "sequence"
+        },
+        {
+            "label": "Launch Profiler",
+            "command": "${workspaceFolder}/build/lib/arctic/lib/easy_profiler/bin/profiler_gui",
+            "dependsOn": [
+                "CMake Build : Debug"
+            ],
+            "dependsOrder": "sequence"
+        }
+    ]
+}
