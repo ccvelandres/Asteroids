@@ -37,7 +37,8 @@ protected:
     Entity &getEntity() { return *m_entity; }
 
 public:
-    Component() {}
+    Component() {};
+    virtual ~Component() {};
 
     virtual void awake() {}
     virtual void init() {}
@@ -47,6 +48,11 @@ public:
     friend Entity;
     friend EntityManager;
 };
+
+template <typename T>
+using ComponentPtr = std::shared_ptr<T>;
+template<typename T>
+using ComponentList = std::vector<std::shared_ptr<T>>;
 
 class ComponentManager
 {
@@ -59,9 +65,6 @@ public:
     ComponentManager() {}
 
     template <typename T>
-    using ComponentList = std::vector<std::shared_ptr<T>>;
-
-    template <typename T>
     void registerComponent(std::shared_ptr<Component> &component)
     {
         m_components[getComponentID<T>()].push_back(component);
@@ -70,14 +73,26 @@ public:
     template <typename T>
     ComponentList<T> getComponents()
     {
+        auto &a = m_components[getComponentID<T>()];
         ComponentList<T> list;
-        for (auto &c : m_components[getComponentID<T>()])
+        list.reserve(a.size());
+        for (auto &c : a)
         {
-            list.push_back(c.lock());
+            list.push_back(std::dynamic_pointer_cast<T>(c.lock()));
         }
-        return list;
+        return std::move(list);
     }
 
+    void init();
+    template <typename T>
+    void update(float delta)
+    {
+        for (auto &c : m_components[getComponentID<T>()])
+        {
+            auto l = c.lock();
+            l->update(delta);
+        }
+    }
     void refresh();
 };
 
@@ -88,16 +103,30 @@ private:
     std::bitset<maxComponents> m_componentBitset;
 
     bool m_isActive, m_isFree;
+
 protected:
 public:
     Entity() : m_isActive(true),
                m_isFree(false) {}
 
+    /** Check if entity has component T */
+    template <typename T>
+    bool hasComponent()
+    {
+        return m_componentBitset[getComponentID<T>()];
+    }
+    /** Removes component T attached to entity */
+    template <typename T>
+    void removeComponent()
+    {
+        m_components[getComponentID<T>()].reset();
+    }
     /** Creates and allocate component T on the entity */
     template <typename T, typename... TArgs>
     T &addComponent(TArgs &&...args)
     {
-        assert(m_componentBitset[getComponentID<T>()] != true);
+        /** @todo: change return type to ComponentPtr<T> */
+        assert(hasComponent<T>() == false);
 
         T *c = new T(std::forward<TArgs>(args)...);
         std::shared_ptr<Component> p(c);
@@ -111,17 +140,15 @@ public:
 
         return *c;
     }
-    /** Check if entity has component T */
+    /** Retrieves the component T of entity */
     template <typename T>
-    bool hasComponent()
+    T &getComponent()
     {
-        return m_componentBitset[getComponentID<T>()];
-    }
-    /** Removes component T attached to entity */
-    template <typename T>
-    bool removeComponent()
-    {
-        m_components[getComponentID<T>()].reset();
+        /** @todo: change return type to ComponentPtr<T> */
+        assert(hasComponent<T>() == true);
+
+        T *c =  dynamic_cast<T*>(m_components[getComponentID<T>()].get());
+        return *c;
     }
 
     /** Called once on allocation of entity */
@@ -139,6 +166,8 @@ public:
     bool active() { return m_isActive; }
     /** Set the active status of entity */
     void active(const bool &active) { m_isActive = active; }
+
+    friend EntityManager;
 };
 
 using EntityType = std::size_t;
@@ -154,7 +183,15 @@ public:
 
     /** Creates and allocates a new entity object of type */
     template <typename T, typename... TArgs>
-    T &addEntity(const EntityType &type = 0, TArgs &&...args);
+    T &addEntity(const EntityType &type = 0, TArgs &&...args)
+    {
+        T *e = new T(std::forward<TArgs>(args)...);
+        std::shared_ptr<Entity> p(e);
+        m_entities.push_back(std::move(p));
+
+        e->init();
+        return *e;
+    }
 
     void updateEntities(float delta);
 

@@ -1,14 +1,5 @@
 #include <ecs/ecs.hpp>
 
-template <typename T, typename... TArgs>
-T &EntityManager::addEntity(const EntityType& type, TArgs &&...args)
-{
-    T *e = new T(std::forward<TArgs>(args)...);
-    m_entities.push_back(std::make_shared(e)); // is this move?
-
-    e->init();
-}
-
 void EntityManager::updateEntities(float delta) {
     for (auto &e : m_entities){
         e->update(delta);

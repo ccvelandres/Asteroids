@@ -4,12 +4,11 @@
 
 class TransformComponent : public Component
 {
-protected:
-    float posX, posY;
-
 public:
-    TransformComponent() {}
+    TransformComponent() : posX(0), posY(0){}
     TransformComponent(const float &posX,
                        const float &posY) : posX(posX),
                                             posY(posY) {}
+
+    float posX, posY;
 };

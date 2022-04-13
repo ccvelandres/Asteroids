@@ -22,6 +22,10 @@ class Texture
 {
 private:
     std::shared_ptr<SDL_Texture> m_texture;
+    int posX, posY;
+    int width, height;
+    uint32_t m_pixelFormat;
+    int m_textureAccess;
     TextureType m_type;
 
     static void deallocTexture(SDL_Texture *tex)
@@ -33,41 +37,44 @@ private:
 protected:
 public:
     Texture() {}
+    Texture(Texture &&) = default;
+    Texture(Texture &e) = default;
+    // {
+    //     std::cout << "Texture Copied" << std::endl;
+    // }
     Texture(std::shared_ptr<SDL_Texture> texture) : m_type(SIMPLE),
-                                                    m_texture(texture) {}
-    Texture(SDL_Texture *texture) : m_type(SIMPLE),
-                                    m_texture(texture, deallocTexture)
+                                                    m_texture(texture)
     {
-        std::cout << "TextureCreated: " << texture << std::endl;
+        SDL_QueryTexture(m_texture.get(), &m_pixelFormat, &m_textureAccess, &width, &height);
+    }
+    Texture(std::shared_ptr<SDL_Texture> texture,
+            const int &posX,
+            const int &posY,
+            const int &width,
+            const int &height) : m_type(REGION),
+                                 m_texture(texture),
+                                 posX(posX),
+                                 posY(posY),
+                                 width(width),
+                                 height(height)
+    {
+        int w, h;
+        SDL_QueryTexture(m_texture.get(), &m_pixelFormat, &m_textureAccess, &w, &h);
+        assert(w >= posX + width);
+        assert(h >= posY + height);
+    }
+    ~Texture() {}
+
+    void setSize(const int &w, const int &h)
+    {
+        this->width = w;
+        this->height = h;
     }
 
-    friend Renderer;
-};
-
-class TextureRegion : public Texture
-{
-private:
-    const int &posX, posY, sizeX, sizeY;
-
-public:
-    TextureRegion(Texture texture,
-                  const int &posX,
-                  const int &posY,
-                  const int &sizeX,
-                  const int &sizeY) : Texture(texture),
-                                      posX(posX),
-                                      posY(posY),
-                                      sizeX(sizeX),
-                                      sizeY(sizeY) {}
-    TextureRegion(SDL_Texture *texture,
-                  const int &posX,
-                  const int &posY,
-                  const int &sizeX,
-                  const int &sizeY) : Texture(texture),
-                                      posX(posX),
-                                      posY(posY),
-                                      sizeX(sizeX),
-                                      sizeY(sizeY) {}
+    void setPosition(const int &x, const int& y) {
+        this->posX = x;
+        this->posY = y;
+    }
 
     friend Renderer;
 };
@@ -82,13 +89,22 @@ private:
     SDL_Renderer *m_renderer;
 
     std::map<std::string, std::weak_ptr<SDL_Texture>> m_textures;
+    std::shared_ptr<SDL_Texture> loadTexturePtr(const std::string &filename);
 
 protected:
 public:
     Renderer();
     ~Renderer();
 
-    Texture loadTexture(const std::string &filename);
+    Texture loadTexture(const std::string &filename)
+    {
+        return Texture(loadTexturePtr(filename));
+    }
+    std::vector<Texture> loadTextureAtlas(const std::string &filename,
+                                          const int &regionWidth,
+                                          const int &regionHeight,
+                                          const int &rows,
+                                          const int &cols);
 
     void refresh();
 
@@ -97,11 +113,16 @@ public:
     /** Ends the render process and presents to screen */
     void endRender();
 
-    void drawTexture(const Texture &texture,
+    void drawLine(const float &p1x,
+                  const float &p1y,
+                  const float &p2x,
+                  const float &p2y);
+
+    void drawTexture(Texture &texture,
                      const int &dstX,
                      const int &dstY);
 
-    void drawTexture(const Texture &texture,
+    void drawTexture(Texture &texture,
                      const int &dstX,
                      const int &dstY,
                      const int &srcX,

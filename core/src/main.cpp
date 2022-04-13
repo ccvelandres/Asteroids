@@ -30,6 +30,9 @@ int main(int arc, char **argv)
     //     }
     // }
     game->init();
+
+    Player player = Game::entityManager().addEntity<Player>();
+    
     game->startGameLoop();
     // if (SDL_Init(SDL_INIT_EVERYTHING) != 0)
     // {

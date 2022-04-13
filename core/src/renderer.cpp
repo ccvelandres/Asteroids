@@ -15,44 +15,94 @@ Renderer::~Renderer()
     SDL_DestroyRenderer(m_renderer);
 }
 
-Texture Renderer::loadTexture(const std::string &filename)
+std::shared_ptr<SDL_Texture> Renderer::loadTexturePtr(const std::string &filename)
 {
     std::weak_ptr<SDL_Texture> &e = m_textures[filename];
+    std::shared_ptr<SDL_Texture> p;
 
     if (e.expired())
     {
-        SDL_Surface *s = IMG_Load(filename.c_str());
-        SDL_Texture *t = SDL_CreateTextureFromSurface(m_renderer, s);
+        SDL_Texture *t = IMG_LoadTexture(m_renderer, filename.c_str());
         if (t == nullptr)
         {
-            std::cerr << "TextureFromSurface Error: " << SDL_GetError() << std::endl;
+            std::cerr << "Could not load texture: " << filename << std::endl;
         }
-        SDL_FreeSurface(s);
-        Texture tx(t);
-        e = tx.m_texture;
-        return tx;
+        else 
+            std::cout << "TextureAlloc: " << t << std::endl;
+        p.reset(t, Texture::deallocTexture);
+        e = p;
     }
     else
     {
-        return Texture(e.lock());
+        p = e.lock();
     }
+
+    return p;
+}
+
+std::vector<Texture> Renderer::loadTextureAtlas(const std::string &filename,
+                                                const int &regionWidth,
+                                                const int &regionHeight,
+                                                const int &rows,
+                                                const int &cols)
+{
+    std::vector<Texture> l_textures;
+    l_textures.reserve(rows * cols);
+    for (int r = 0; r < rows; r++)
+    {
+        for (int c = 0; c < cols; c++)
+        {
+            std::shared_ptr<SDL_Texture> t = loadTexturePtr(filename);
+            Texture e(t,
+                      regionWidth * r,
+                      regionHeight * c,
+                      regionWidth,
+                      regionHeight);
+            l_textures.emplace_back((e));
+        }
+    }
+    return std::move(l_textures);
 }
 
 void Renderer::startRender()
 {
+    SDL_SetRenderDrawColor(m_renderer, 0x00, 0x00, 0x00, SDL_ALPHA_OPAQUE);
+    SDL_RenderClear(m_renderer);
+    SDL_SetRenderDrawColor(m_renderer, 0xFF, 0xFF, 0xFF, SDL_ALPHA_OPAQUE);
 }
 
 void Renderer::endRender()
 {
+    SDL_RenderPresent(m_renderer);
 }
 
-void Renderer::drawTexture(const Texture &texture,
+void Renderer::drawLine(const float &p1x,
+                        const float &p1y,
+                        const float &p2x,
+                        const float &p2y)
+{
+    SDL_RenderDrawLineF(m_renderer, p1x, p1y, p2x, p2y);
+}
+
+void Renderer::drawTexture(Texture &texture,
                            const int &dstX,
                            const int &dstY)
 {
+    SDL_Rect srcRect = {
+        .x = texture.posX,
+        .y = texture.posY,
+        .w = texture.width,
+        .h = texture.height
+    };
+    SDL_Rect dstRect = {
+        .x = dstX,
+        .y = dstY,
+        .w = texture.width,
+        .h = texture.height};
+    SDL_RenderCopy(m_renderer, texture.m_texture.get(), &srcRect, &dstRect);
 }
 
-void Renderer::drawTexture(const Texture &texture,
+void Renderer::drawTexture(Texture &texture,
                            const int &dstX,
                            const int &dstY,
                            const int &srcX,

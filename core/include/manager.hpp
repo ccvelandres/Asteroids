@@ -12,8 +12,6 @@ class Manager
 public:
     Manager()
     {
-        static_assert((void*)(&M::preUpdate) == (void*)(&Manager::preUpdate),
-            "Derid didnt implement");
         // static_assert(,
         //               "Derived class must define preUpdate function");
     }
