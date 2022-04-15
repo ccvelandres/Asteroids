@@ -1,32 +1,24 @@
 #pragma once
 
 #include <SDL2/SDL.h>
+#include <utils/vector.hpp>
 
 #include <map>
 #include <vector>
 #include <memory>
 #include <iostream>
 
-class Texture;
-class TextureRegion;
+class Texture2D;
 class Renderer;
 
-enum TextureType
-{
-    SIMPLE,
-    ATLAS,
-    REGION
-};
-
-class Texture
+class Texture2D
 {
 private:
     std::shared_ptr<SDL_Texture> m_texture;
-    int posX, posY;
-    int width, height;
+    Vector2 m_position;
+    Vector2 m_size;
     uint32_t m_pixelFormat;
     int m_textureAccess;
-    TextureType m_type;
 
     static void deallocTexture(SDL_Texture *tex)
     {
@@ -36,45 +28,21 @@ private:
 
 protected:
 public:
-    Texture() {}
-    Texture(Texture &&) = default;
-    Texture(Texture &e) = default;
-    // {
-    //     std::cout << "Texture Copied" << std::endl;
-    // }
-    Texture(std::shared_ptr<SDL_Texture> texture) : m_type(SIMPLE),
-                                                    m_texture(texture)
-    {
-        SDL_QueryTexture(m_texture.get(), &m_pixelFormat, &m_textureAccess, &width, &height);
-    }
-    Texture(std::shared_ptr<SDL_Texture> texture,
-            const int &posX,
-            const int &posY,
-            const int &width,
-            const int &height) : m_type(REGION),
-                                 m_texture(texture),
-                                 posX(posX),
-                                 posY(posY),
-                                 width(width),
-                                 height(height)
-    {
-        int w, h;
-        SDL_QueryTexture(m_texture.get(), &m_pixelFormat, &m_textureAccess, &w, &h);
-        assert(w >= posX + width);
-        assert(h >= posY + height);
-    }
-    ~Texture() {}
+    Texture2D() {}
+    Texture2D(Texture2D &) = default;
+    Texture2D(Texture2D &&) = default;
 
-    void setSize(const int &w, const int &h)
-    {
-        this->width = w;
-        this->height = h;
-    }
+    Texture2D(std::shared_ptr<SDL_Texture> texture);
+    Texture2D(std::shared_ptr<SDL_Texture> texture,
+              const Vector2 &position,
+              const Vector2 &size);
+    ~Texture2D() {}
 
-    void setPosition(const int &x, const int& y) {
-        this->posX = x;
-        this->posY = y;
-    }
+    Vector2 position() { return m_position; }
+    void position(const Vector2 &position) { m_position = position; }
+
+    Vector2 size() { return m_size; }
+    void size(const Vector2 &size) { m_size = size; }
 
     friend Renderer;
 };
@@ -96,15 +64,15 @@ public:
     Renderer();
     ~Renderer();
 
-    Texture loadTexture(const std::string &filename)
+    Texture2D loadTexture(const std::string &filename)
     {
-        return Texture(loadTexturePtr(filename));
+        return Texture2D(loadTexturePtr(filename));
     }
-    std::vector<Texture> loadTextureAtlas(const std::string &filename,
-                                          const int &regionWidth,
-                                          const int &regionHeight,
-                                          const int &rows,
-                                          const int &cols);
+    std::vector<Texture2D> loadTextureAtlas(const std::string &filename,
+                                            const int &regionWidth,
+                                            const int &regionHeight,
+                                            const int &rows,
+                                            const int &cols);
 
     void refresh();
 
@@ -118,15 +86,23 @@ public:
                   const float &p2x,
                   const float &p2y);
 
-    void drawTexture(Texture &texture,
-                     const int &dstX,
-                     const int &dstY);
+    void drawTexture2D(Texture2D &texture,
+                       const float &dstX,
+                       const float &dstY);
 
-    void drawTexture(Texture &texture,
-                     const int &dstX,
-                     const int &dstY,
-                     const int &srcX,
-                     const int &srcY,
-                     const int &sizeX,
-                     const int &sizeY);
+    void drawTexture2D(Texture2D &texture,
+                       const float &dstX,
+                       const float &dstY,
+                       const float &scaleX,
+                       const float &scaleY);
+
+    void drawTexture2D(Texture2D &texture,
+                       const float &dstW,
+                       const float &dstH,
+                       const float &dstX,
+                       const float &dstY,
+                       const int &srcW,
+                       const int &srcH,
+                       const int &srcX,
+                       const int &srcY);
 };

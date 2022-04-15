@@ -7,22 +7,33 @@
 #include <bitset>
 
 #include <game.hpp>
+#include <time.hpp>
 
 class Component;
 class Entity;
 class EntityManager;
 
+/**
+ * @todo Replace component ID with no RTTI
+ *
+ * template<typename T>
+ * struct type { static void id() { } };
+ *
+ * template<typename T>
+ * std::size_t type_id() { return reinterpret_cast<std::size_t>(&type<T>::id); }
+ */
+
 using ComponentID = std::size_t;
 constexpr std::size_t maxComponents = 32;
 
-static ComponentID getComponentID()
+inline ComponentID getComponentID()
 {
     static ComponentID lastID = 0;
     return lastID++;
 }
 
 template <typename T>
-static ComponentID getComponentID()
+inline ComponentID getComponentID() noexcept
 {
     static ComponentID cID = getComponentID();
     return cID;
@@ -32,18 +43,25 @@ class Component
 {
 private:
     Entity *m_entity;
+    bool m_enabled;
 
 protected:
-    Entity &getEntity() { return *m_entity; }
-
 public:
-    Component() {};
-    virtual ~Component() {};
+    Component() : m_enabled(true) {}
+    virtual ~Component(){};
 
     virtual void awake() {}
     virtual void init() {}
-    virtual void update(float delta) {}
+    virtual void update(time_ds delta) {}
     virtual void clean() {}
+
+    /** Returns the entity attached to this component */
+    Entity &entity() { return *m_entity; }
+
+    /** Returns status of component */
+    inline bool enabled() { return m_enabled; }
+    /** Set enable status of component */
+    inline void enabled(const bool &enabled) { m_enabled = enabled; }
 
     friend Entity;
     friend EntityManager;
@@ -51,7 +69,7 @@ public:
 
 template <typename T>
 using ComponentPtr = std::shared_ptr<T>;
-template<typename T>
+template <typename T>
 using ComponentList = std::vector<std::shared_ptr<T>>;
 
 class ComponentManager
@@ -80,17 +98,19 @@ public:
         {
             list.push_back(std::dynamic_pointer_cast<T>(c.lock()));
         }
-        return std::move(list);
+        return list;
     }
 
+    /** Initialize Component Manager */
     void init();
     template <typename T>
-    void update(float delta)
+    void update(time_ds delta)
     {
         for (auto &c : m_components[getComponentID<T>()])
         {
             auto l = c.lock();
-            l->update(delta);
+            if (l->enabled())
+                l->update(delta);
         }
     }
     void refresh();
@@ -102,12 +122,13 @@ private:
     std::array<std::shared_ptr<Component>, maxComponents> m_components;
     std::bitset<maxComponents> m_componentBitset;
 
-    bool m_isActive, m_isFree;
+    bool m_isFree;
+    std::shared_ptr<Entity> m_parent;
+    std::vector<std::shared_ptr<Entity>> m_children;
 
 protected:
 public:
-    Entity() : m_isActive(true),
-               m_isFree(false) {}
+    Entity() : m_isFree(false) {}
 
     /** Check if entity has component T */
     template <typename T>
@@ -147,30 +168,41 @@ public:
         /** @todo: change return type to ComponentPtr<T> */
         assert(hasComponent<T>() == true);
 
-        T *c =  dynamic_cast<T*>(m_components[getComponentID<T>()].get());
+        T *c = dynamic_cast<T *>(m_components[getComponentID<T>()].get());
         return *c;
     }
 
     /** Called once on allocation of entity */
     virtual void init() {}
+    /** Called at the start of game update */
+    virtual void preUpdate() {}
     /** Called once every frame update */
-    virtual void update(float delta) {}
+    virtual void update(time_ds delta) {}
+    /** Called after updating most components */
+    virtual void postUpdate() {}
     /** Called once when entity is reused */
     virtual void reset() {}
     /** Called once before sending object back to be reused */
     virtual void clean() {}
 
+    /** @todo: add object pooling to minimize allocations? */
     /** Calling this will free the entity on next refresh */
-    void free() { m_isFree = true; }
-    /** Get the active status of entity */
-    bool active() { return m_isActive; }
-    /** Set the active status of entity */
-    void active(const bool &active) { m_isActive = active; }
+    void free(const bool &free) { m_isFree = free; }
+    /** Calling this will free the entity on next refresh */
+    bool free() { return m_isFree; }
+
+    void parent(std::shared_ptr<Entity> &parent) { m_parent = parent; }
+    std::shared_ptr<Entity> parent() { return m_parent; }
+
+    void addChild(std::shared_ptr<Entity> &child) { m_children.push_back(child); }
+    const std::vector<std::shared_ptr<Entity>> children() { return m_children; }
 
     friend EntityManager;
 };
 
 using EntityType = std::size_t;
+template <typename T>
+using EntityList = std::vector<std::shared_ptr<T>>;
 
 class EntityManager
 {
@@ -183,7 +215,7 @@ public:
 
     /** Creates and allocates a new entity object of type */
     template <typename T, typename... TArgs>
-    T &addEntity(const EntityType &type = 0, TArgs &&...args)
+    T &addEntity(TArgs &&...args)
     {
         T *e = new T(std::forward<TArgs>(args)...);
         std::shared_ptr<Entity> p(e);
@@ -193,7 +225,35 @@ public:
         return *e;
     }
 
-    void updateEntities(float delta);
+    template <typename T, typename... TArgs>
+    EntityList<T> addEntities(const int &numEntities,
+                                                TArgs &&...args)
+    {
+        std::vector<std::shared_ptr<T>> l_entities;
+        l_entities.reserve(numEntities);
+
+        for (int i = 0; i < numEntities; i++)
+        {
+            T *e = new T(std::forward<TArgs>(args)...);
+            l_entities.emplace_back(e);
+            std::shared_ptr<T> &p = l_entities[l_entities.size() - 1];
+            m_entities.push_back(p);
+
+            e->init();
+        }
+
+        return l_entities;
+    }
+
+    /** Initialize Entity Manager */
+    void init();
+    /** @todo: add threading for update methods? */
+    /** Calls preUpdate for all entities */
+    void preUpdate();
+    /** Calls update for all entities */
+    void update(time_ds delta);
+    /** Calls postUpdate for all entities */
+    void postUpdate();
 
     void refresh();
 };

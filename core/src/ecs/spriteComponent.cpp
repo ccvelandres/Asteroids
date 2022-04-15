@@ -1,26 +1,37 @@
 #include <ecs/spriteComponent.hpp>
 
-void SpriteComponent::update(float delta)
+SpriteComponent::SpriteComponent()
 {
+}
+
+SpriteComponent::~SpriteComponent()
+{
+}
+
+void SpriteComponent::update(time_ds delta)
+{
+    if (!m_sprites.size())
+        return;
     m_lastUpdate += delta;
 
     assert(m_sprites.find(m_spriteIndex) != m_sprites.end());
     assert(m_spriteTiming[m_spriteIndex].size() >= m_timingIndex);
 
-    int e = m_spriteTiming[m_spriteIndex][m_timingIndex];
+    time_ds e = m_spriteTiming[m_spriteIndex][m_timingIndex];
     if (m_lastUpdate > e)
     {
-        m_lastUpdate %= e;
+        m_lastUpdate = time_ds(0);
         if (++m_timingIndex >= m_spriteTiming[m_spriteIndex].size())
             m_timingIndex = 0;
     }
 }
 
-void SpriteComponent::setSpriteHandle(const std::size_t& spriteHandle) {
-    this->m_spriteIndex
+void SpriteComponent::setSpriteHandle(const std::size_t &spriteHandle)
+{
+    this->m_spriteIndex = spriteHandle;
 }
 
-Texture &SpriteComponent::texture()
+Texture2D &SpriteComponent::texture()
 {
     return m_sprites[m_spriteIndex][m_timingIndex];
 }
@@ -29,11 +40,11 @@ void SpriteComponent::addSpriteSet(std::size_t spriteHandle,
                                    const std::string &filename,
                                    const int &rW, const int &rH,
                                    const int &rows, const int &cols,
-                                   const std::vector<int> &timing)
+                                   const std::vector<time_ds> &timing)
 {
-    std::vector<Texture> spriteSet = Game::renderer().loadTextureAtlas(filename,
-                                                                       rW, rH,
-                                                                       rows, cols);
+    std::vector<Texture2D> spriteSet = Game::renderer().loadTextureAtlas(filename,
+                                                                         rW, rH,
+                                                                         rows, cols);
 
     assert(spriteSet.size() == timing.size());
 
@@ -43,17 +54,17 @@ void SpriteComponent::addSpriteSet(std::size_t spriteHandle,
 }
 
 void SpriteComponent::appendSpriteSet(std::size_t spriteHandle,
-                     const std::string &filename,
-                     const int &rW, const int &rH,
-                     const int &posX, const int &posY,
-                     const int &timing)
+                                      const std::string &filename,
+                                      const int &rW, const int &rH,
+                                      const int &posX, const int &posY,
+                                      const time_ds &timing)
 {
-    std::vector<Texture> &v = m_sprites[spriteHandle];
-    std::vector<int> &t = m_spriteTiming[spriteHandle];
+    std::vector<Texture2D> &v = m_sprites[spriteHandle];
+    std::vector<time_ds> &t = m_spriteTiming[spriteHandle];
 
-    Texture tex = Game::renderer().loadTexture(filename);
-    tex.setPosition(posX, posY);
-    tex.setSize(rW, rH);
+    Texture2D tex = Game::renderer().loadTexture(filename);
+    tex.position(Vector2(posX, posY));
+    tex.size(Vector2(rW, rH));
 
     v.emplace_back(tex);
     t.push_back(timing);

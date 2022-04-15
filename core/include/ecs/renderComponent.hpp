@@ -8,17 +8,16 @@
 class RenderComponent : public Component {
     SpriteComponent *sprite;
     TransformComponent *transform;
+
 public:
     RenderComponent () {}
 
-    void init () override {
-        sprite = &this->getEntity().getComponent<SpriteComponent>();
-        transform = &this->getEntity().getComponent<TransformComponent>();
-    }
-
-    void update (float delta) override {
-        
-    }
+    /** Component overrides */
+    // void awake() override;
+    void init() override;
+    // void update(time_ds delta) override;
+    // void clean() override;
 
     void render();
+
 };

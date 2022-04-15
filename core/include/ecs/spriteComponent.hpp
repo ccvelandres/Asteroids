@@ -5,39 +5,39 @@
 #include "ecs.hpp"
 #include <game.hpp>
 #include <renderer.hpp>
+#include <time.hpp>
 
 class SpriteComponent : public Component
 {
 protected:
-    std::map<std::size_t, std::vector<Texture>> m_sprites;
-    std::map<std::size_t, std::vector<int>> m_spriteTiming;
-    std::size_t m_lastUpdate = 0;
+    std::map<std::size_t, std::vector<Texture2D>> m_sprites;
+    std::map<std::size_t, std::vector<time_ds>> m_spriteTiming;
+    time_ds m_lastUpdate = time_ds(0);
     std::size_t m_spriteIndex = 0;
     std::size_t m_timingIndex = 0;
-    Texture m_texture;
+    Texture2D m_texture;
 
 public:
-    // using SpriteTiming = std::vector<Texture>;
-    SpriteComponent() {}
-    // SpriteComponent(const std::string &textureName) : m_texture(Game::renderer().loadTexture(textureName)) {}
+    SpriteComponent();
+    ~SpriteComponent();
 
-    void init() override
-    {
-    }
-
-    void update(float delta) override;
+    /** Component overrides */
+    // void awake() override;
+    // void init() override;
+    void update(time_ds delta) override;
+    // void clean() override;
 
     void setSpriteHandle(const std::size_t& spriteHandle);
     void addSpriteSet(std::size_t spriteHandle,
                       const std::string &filename,
                       const int &rW, const int &rH,
                       const int &rows, const int &cols,
-                      const std::vector<int> &timing);
+                      const std::vector<time_ds> &timing);
 
     void appendSpriteSet(std::size_t spriteHandle,
                          const std::string &filename,
                          const int &rw, const int &rH,
                          const int &posX, const int &posY,
-                         const int &timing);
-    Texture &texture();
+                         const time_ds &timing);
+    Texture2D &texture();
 };

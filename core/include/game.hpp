@@ -5,6 +5,7 @@
 #include <cassert>
 
 #include <SDL2/SDL.h>
+#include <time.hpp>
 
 class EntityManager;
 class ComponentManager;
@@ -19,8 +20,8 @@ private:
     std::string m_windowTitle;
     int m_windowWidth, m_windowHeight;
 
-    std::size_t m_frameStart, m_frameEnd, m_frameDelta, m_frameTime, m_targetDelta;
-    float m_fps;
+    time_ds m_frameStart, m_frameEnd, m_frameDelta, m_frameTime, m_targetDelta;
+    float m_fps, m_minfps = MAXFLOAT, m_maxfps;
 
     static Game *m_game;
     static EntityManager *m_entityManager;
@@ -56,4 +57,6 @@ public:
 
     void init();
     void startGameLoop();
+
+    void setTargetFPS(const float fps);
 };
