@@ -99,7 +99,6 @@ void Game::startGameLoop()
 
         /** Manager Update */
         m_entityManager->update(m_frameDelta);
-        m_componentManager->update<PhysicsComponent>(m_frameDelta);
         m_componentManager->update<TransformComponent>(m_frameDelta);
         m_componentManager->update<SpriteComponent>(m_frameDelta);
 
