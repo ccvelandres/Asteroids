@@ -294,6 +294,10 @@ public:
         return Vector2Base<T>(static_cast<T>(this->x), static_cast<T>(this->y));
     }
 
+    operator bool() {
+        return (x + y);
+    }
+
     // ************************************************
     // Vector2 friend functions
 
@@ -627,6 +631,10 @@ public:
     operator Vector3Base<T>()
     {
         return Vector3Base<T>(static_cast<T>(this->x), static_cast<T>(this->y), static_cast<T>(this->z));
+    }
+
+    operator bool() {
+        return (x + y + z);
     }
 
     // ************************************************
