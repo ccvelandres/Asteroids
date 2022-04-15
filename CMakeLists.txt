@@ -9,7 +9,7 @@ find_package(SDL2 REQUIRED)
 find_package(Threads REQUIRED)
 
 set(CMAKE_C_STANDARD 11) # Requires C11 standard
-set(CMAKE_CXX_STANDARD 17) # Requires C++20 standard
+set(CMAKE_CXX_STANDARD 20) # Requires C++20 standard
 
 file(GLOB_RECURSE SRC_C_CORE ${CMAKE_SOURCE_DIR}/core/src/*.c)
 file(GLOB_RECURSE SRC_CPP_CORE ${CMAKE_SOURCE_DIR}/core/src/*.cpp)
