@@ -295,7 +295,7 @@ public:
     }
 
     operator bool() {
-        return (x + y);
+        return abs(x) + abs(y);
     }
 
     // ************************************************
@@ -634,7 +634,7 @@ public:
     }
 
     operator bool() {
-        return (x + y + z);
+        return abs(x) + abs(y) + abs(z);
     }
 
     // ************************************************
