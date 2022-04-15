@@ -5,6 +5,8 @@
 #include <event.hpp>
 #include <input/inputManager.hpp>
 
+#include <thread>
+
 Game *Game::m_game = nullptr;
 EntityManager *Game::m_entityManager = nullptr;
 ComponentManager *Game::m_componentManager = nullptr;
@@ -39,7 +41,7 @@ Game::Game(const std::string &windowTitle,
     m_entityManager = new EntityManager();
 
     /** FPS Defaults */
-    m_targetDelta = 1000 / 60;
+    m_targetDelta = time_ds(1.0f / 60);
 }
 
 Game::~Game()
@@ -62,14 +64,26 @@ void Game::startGameLoop()
 {
     bool isRunning = true;
 
+    /** Register Event filter for exit @todo: replace this */
+    SDL_AddEventWatch([](void *data, SDL_Event *e) -> int
+                      {
+        bool *isRunning = static_cast<bool*>(data);
+        switch (e->type) {
+            case SDL_WINDOWEVENT:
+                if (e->window.event != SDL_WINDOWEVENT_CLOSE)
+                    break;
+            case SDL_QUIT:
+                *isRunning = false;
+                break;
+            default: break;
+        }
+        return 0; /** ignored */ },
+                      &isRunning);
+
     while (isRunning)
     {
-        m_frameStart = SDL_GetTicks();
+        m_frameStart = Time::time();
         m_frameDelta = m_frameStart - m_frameEnd;
-        std::cout << "FPS  : " << m_fps << std::endl;
-        std::cout << "Start: " << m_frameStart << std::endl;
-        std::cout << "End  : " << m_frameEnd << std::endl;
-        std::cout << "Delta: " << m_frameDelta << std::endl;
 
         /** Manager PreUpdates */
 
@@ -78,20 +92,28 @@ void Game::startGameLoop()
             m_eventManager->handleEvents();
         }
 
+        m_entityManager->preUpdate();
+
         /* Update inputs */
         m_inputManager->update();
 
         /** Manager Update */
-        m_entityManager->updateEntities(m_frameDelta);
+        m_entityManager->update(m_frameDelta);
+        m_componentManager->update<PhysicsComponent>(m_frameDelta);
         m_componentManager->update<TransformComponent>(m_frameDelta);
         m_componentManager->update<SpriteComponent>(m_frameDelta);
+
+        m_entityManager->postUpdate();
+        m_inputManager->postUpdate();
 
         /** Render */
         {
             m_renderer->startRender();
             ComponentList<RenderComponent> rComponents = m_componentManager->getComponents<RenderComponent>();
-            for (auto &c : rComponents) {
-                c->render();
+            for (auto &c : rComponents)
+            {
+                if (c->enabled())
+                    c->render();
             }
             m_renderer->endRender();
         }
@@ -100,14 +122,23 @@ void Game::startGameLoop()
         m_componentManager->refresh();
         m_entityManager->refresh();
 
-        m_inputManager->postUpdate();
-
-        m_frameEnd = SDL_GetTicks();
+        m_frameEnd = Time::time();
         m_frameTime = m_frameEnd - m_frameStart;
         if (m_targetDelta > m_frameTime)
         {
-            SDL_Delay(m_targetDelta - m_frameTime);
+            std::this_thread::sleep_for(time_ds(m_targetDelta - m_frameTime));
         }
-        m_fps = 1000.0f / (static_cast<float>(SDL_GetTicks()) - static_cast<float>(m_frameStart));
+        m_fps = 1.f / (Time::time() - m_frameStart).count();
+        m_minfps = (m_fps < m_minfps ? m_fps : m_minfps);
+        m_maxfps = (m_fps > m_maxfps ? m_fps : m_maxfps);
+        std::cout << "FPS: " << m_fps << std::endl;
+        std::cout << "MIN: " << m_minfps << std::endl;
+        std::cout << "FTS: " << m_frameTime.count() << std::endl;
     }
+}
+
+void Game::setTargetFPS(const float fps)
+{
+    /** add one to adjust target */
+    m_targetDelta = time_ds(1.0f / (fps + 1.0f));
 }
