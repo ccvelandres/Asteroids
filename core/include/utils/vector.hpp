@@ -44,9 +44,9 @@ public:
      */
     Vector2Base normalize() const
     {
-        Vector2Base<Ty> v(*this);
-        v /= v.magnitude();
-        return v;
+        float mag = this->magnitude();
+        if (mag < 0.1f) return Vector2Base();
+        return *this / mag;
     }
 
     /**
@@ -56,7 +56,9 @@ public:
      */
     static void normalize(Vector2Base &vect)
     {
-        vect /= vect.magnitude();
+        float mag = vect.magnitude();
+        if (mag < 0.1f) vect = Vector2Base(0);
+        else vect /= mag;
     }
 
     /**
@@ -369,9 +371,9 @@ public:
      */
     Vector3Base normalize() const
     {
-        Vector3Base<Ty> v(*this);
-        v /= v.magnitude();
-        return v;
+        float mag = this->magnitude();
+        if (mag < 0.1f) return Vector3Base();
+        return *this / mag;
     }
 
     /**
@@ -381,7 +383,9 @@ public:
      */
     static void normalize(Vector3Base &vect)
     {
-        vect /= vect.magnitude();
+        float mag = vect.magnitude();
+        if (mag < 0.1f) vect = Vector3Base(0);
+        else vect /= mag;
     }
 
     /**
