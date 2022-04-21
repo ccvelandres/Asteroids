@@ -4,7 +4,7 @@
 #include <memory>
 #include <cassert>
 
-#include <SDL2/SDL.h>
+#include <SDL.h>
 #include <time.hpp>
 
 class EntityManager;

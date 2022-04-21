@@ -1,7 +1,7 @@
 #include <game.hpp>
 #include <renderer.hpp>
 
-#include <SDL2/SDL_image.h>
+#include <SDL_image.h>
 
 Renderer::Renderer()
 {

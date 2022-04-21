@@ -1,7 +1,7 @@
 #include <input/inputManager.hpp>
 #include <cassert>
 
-#include <SDL2/SDL.h>
+#include <SDL.h>
 
 void InputManager::init() {
     int numKeys = 0;
