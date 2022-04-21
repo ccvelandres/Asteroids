@@ -25,10 +25,6 @@ add_executable(${PROJECT_NAME} main.cpp)
 target_include_directories(${PROJECT_NAME} PRIVATE ${CMAKE_SOURCE_DIR}/core/src)
 target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_SOURCE_DIR}/core/include)
 
-# add_custom_command(TARGET ${PROJECT_NAME} POSTBUILD
-#     COMMAND ldd Asteroids)
-
-# set_target_properties(${PROJECT_NAME} )
 #################################################################
 ## SDL
 
@@ -48,35 +44,20 @@ target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_SOURCE_DIR}/core/inclu
 #     )
 # set(SDL2_IMAGE_SRC "${CMAKE_SOURCE_DIR}/lib/SDL")
 
-# SDL2
-find_file(SDL2_INCLUDE_DIR NAME SDL.h HINTS SDL2 PATHS ${SDL2_DIR})
+# SDL2 can be replaced with find_package
 find_library(SDL2_LIBRARY NAME SDL2 PATHS ${SDL2_DIR})
+find_path(SDL2_INCLUDE_DIR SDL.h PATHS ${SDL2_DIR} PATH_SUFFIXES SDL2)
 target_link_libraries(${PROJECT_NAME} PUBLIC ${SDL2_LIBRARY})
 target_include_directories(${PROJECT_NAME} PUBLIC ${SDL2_INCLUDE_DIR})
+message("SDL Library: ${SDL2_LIBRARY}")
+message("SDL IncludeDir: ${SDL2_INCLUDE_DIR}")
 
-# set(SDL_STATIC OFF)
-# add_subdirectory(lib/SDL)
-# message("SDL_LIBRARY ${SDL_LIBRARY}")
-# add_subdirectory(lib/SDL_image)
-# set(SDL_SHARED OFF)
-# add_subdirectory(lib/SDL)
-# target_link_libraries(${PROJECT_NAME} ${SDL_LIBRARIES})
-
-# add_custom_command(OUTPUT SDL2_IMAGE_CONFIGURE
-#     COMMAND ./configure
-#     WORKING_DIRECTORY lib/SDL_image
-#     )
-
-# add_custom_target(SDL2_IMAGE_BUILD
-#     COMMAND make
-#     DEPENDS SDL2_IMAGE_CONFIGURE
-#     )
-
-# add_custom_target(SDL_image
-#     COMMAND echo $(pwd)
-#     DEPENDS SDL2
-#     WORKING_DIRECTORY lib/SDL_image
-#     )
+find_library(SDL2_IMAGE_LIBRARY NAME SDL2_image PATHS ${SDL2_DIR})
+find_path(SDL2_IMAGE_INCLUDE_DIR SDL_image.h PATHS ${SDL2_DIR} PATH_SUFFIXES SDL2)
+target_link_libraries(${PROJECT_NAME} PUBLIC ${SDL2_IMAGE_LIBRARY})
+target_include_directories(${PROJECT_NAME} PUBLIC ${SDL2_IMAGE_INCLUDE_DIR})
+message("SDL_image Library: ${SDL2_IMAGE_LIBRARY}")
+message("SDL_image IncludeDir: ${SDL2_IMAGE_INCLUDE_DIR}")
 
 # message("BuildType: ${CMAKE_BUILD_TYPE}")
 # if (CMAKE_BUILD_TYPE MATCHES "Debug")
@@ -95,4 +76,3 @@ target_include_directories(${PROJECT_NAME} PUBLIC ${SDL2_INCLUDE_DIR})
 
 # Package assets with binary
 file(COPY assets DESTINATION ${CMAKE_BINARY_DIR})
-file(COPY config DESTINATION ${CMAKE_BINARY_DIR})
