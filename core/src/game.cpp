@@ -13,6 +13,7 @@ ComponentManager *Game::m_componentManager = nullptr;
 EventManager *Game::m_eventManager = nullptr;
 Renderer *Game::m_renderer = nullptr;
 InputManager *Game::m_inputManager = nullptr;
+Time *Game::m_time = nullptr;
 
 Game::Game(const std::string &windowTitle,
            const int &windowWidth,
@@ -34,6 +35,7 @@ Game::Game(const std::string &windowTitle,
     if (m_game)
         assert("Only one Game class object may exist");
     m_game = this;
+    m_time = new Time();
     m_renderer = new Renderer();
     m_inputManager = new InputManager();
     m_eventManager = new EventManager();
@@ -51,6 +53,7 @@ Game::~Game()
     delete m_componentManager;
     delete m_eventManager;
     delete m_renderer;
+    delete m_time;
     m_game = nullptr;
 }
 
@@ -84,6 +87,7 @@ void Game::startGameLoop()
     {
         m_frameStart = Time::time();
         m_frameDelta = m_frameStart - m_frameEnd;
+        m_time->preUpdate();
 
         /** Manager PreUpdates */
 

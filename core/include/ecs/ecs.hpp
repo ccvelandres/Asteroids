@@ -5,9 +5,16 @@
 #include <array>
 #include <algorithm>
 #include <bitset>
+#include <functional>
 
 #include <game.hpp>
 #include <time.hpp>
+
+/**
+ * @brief ECS Component system
+ * 
+ * @note Good library for ecs system -> https://github.com/skypjack/entt
+ */
 
 class Component;
 class Entity;
@@ -50,9 +57,13 @@ public:
     Component() : m_enabled(true) {}
     virtual ~Component(){};
 
-    virtual void awake() {}
+    /** Called when the component is first created */
     virtual void init() {}
+    /** Called for every frame update (uses unscaled time) */
+    virtual void fixedUpdate(time_ds delta) {}
+    /** Called for every frame update (uses scaled time) */
     virtual void update(time_ds delta) {}
+    /** Called when the component is released */
     virtual void clean() {}
 
     /** Returns the entity attached to this component */
@@ -99,6 +110,14 @@ public:
             list.push_back(std::dynamic_pointer_cast<T>(c.lock()));
         }
         return list;
+    }
+
+    template <typename T>
+    void foreach(const std::function<void (T&)> &callback) {
+        auto &a = m_components[getComponentID<T>()];
+        for (auto &c : a) {
+            callback(c);
+        }
     }
 
     /** Initialize Component Manager */
@@ -176,7 +195,9 @@ public:
     virtual void init() {}
     /** Called at the start of game update */
     virtual void preUpdate() {}
-    /** Called once every frame update */
+    /** Called for every frame update (uses unscaled time) */
+    virtual void fixedUpdate(time_ds delta) {}
+    /** Called for every frame update (uses scaled time) */
     virtual void update(time_ds delta) {}
     /** Called after updating most components */
     virtual void postUpdate() {}

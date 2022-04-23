@@ -29,6 +29,7 @@ private:
     static Renderer *m_renderer;
     static EventManager *m_eventManager;
     static InputManager *m_inputManager;
+    static Time* m_time;
 
     friend Renderer;
 
@@ -51,7 +52,8 @@ public:
     static EventManager &eventManager() { return *m_eventManager; }
     /** Get the InputManager Object */
     static InputManager &inputManager() { return *m_inputManager; }
-    
+    /** Get the Time Manager Object */
+    static Time &time() { return *m_time; }
     /** Get the Renderer Object */
     static Renderer &renderer() { return *m_renderer; }
 
