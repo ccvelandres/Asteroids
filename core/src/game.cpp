@@ -43,7 +43,7 @@ Game::Game(const std::string &windowTitle,
     m_entityManager = new EntityManager();
 
     /** FPS Defaults */
-    m_targetDelta = time_ds(1.0f / 60);
+    m_targetDelta = time_ds(time_step::den / 60);
 }
 
 Game::~Game()
@@ -85,8 +85,6 @@ void Game::startGameLoop()
 
     while (isRunning)
     {
-        m_frameStart = Time::time();
-        m_frameDelta = m_frameStart - m_frameEnd;
         m_time->preUpdate();
 
         /** Manager PreUpdates */
@@ -102,9 +100,9 @@ void Game::startGameLoop()
         m_inputManager->update();
 
         /** Manager Update */
-        m_entityManager->update(m_frameDelta);
-        m_componentManager->update<TransformComponent>(m_frameDelta);
-        m_componentManager->update<SpriteComponent>(m_frameDelta);
+        m_entityManager->update(m_time->scaledDeltaTime());
+        m_componentManager->update<TransformComponent>(m_time->scaledDeltaTime());
+        m_componentManager->update<SpriteComponent>(m_time->scaledDeltaTime());
 
         m_entityManager->postUpdate();
         m_inputManager->postUpdate();
@@ -125,23 +123,21 @@ void Game::startGameLoop()
         m_componentManager->refresh();
         m_entityManager->refresh();
 
-        m_frameEnd = Time::time();
-        m_frameTime = m_frameEnd - m_frameStart;
-        if (m_targetDelta > m_frameTime)
+        m_time->postUpdate();
+        if (m_targetDelta > m_time->unscaledFrameTime())
         {
-            std::this_thread::sleep_for(time_ds(m_targetDelta - m_frameTime));
+            std::this_thread::sleep_for((m_targetDelta - m_time->unscaledFrameTime()));
         }
-        m_fps = 1.f / (Time::time() - m_frameStart).count();
+        m_fps = time_fs::period::den / (Time::unscaledTime<time_fs>() - m_time->unscaledFrameStart<time_fs>()).count();
         m_minfps = (m_fps < m_minfps ? m_fps : m_minfps);
         m_maxfps = (m_fps > m_maxfps ? m_fps : m_maxfps);
         std::cout << "FPS: " << m_fps << std::endl;
         std::cout << "MIN: " << m_minfps << std::endl;
-        std::cout << "FTS: " << m_frameTime.count() << std::endl;
     }
 }
 
 void Game::setTargetFPS(const float fps)
 {
     /** add one to adjust target */
-    m_targetDelta = time_ds(1.0f / (fps + 1.0f));
+    m_targetDelta = time_ds(static_cast<time_ds::rep>(time_step::den / fps));
 }
