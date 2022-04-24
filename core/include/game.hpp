@@ -20,7 +20,7 @@ private:
     std::string m_windowTitle;
     int m_windowWidth, m_windowHeight;
 
-    time_ds m_frameStart, m_frameEnd, m_frameDelta, m_frameTime, m_targetDelta;
+    time_ds m_targetDelta;
     float m_fps, m_minfps = MAXFLOAT, m_maxfps;
 
     static Game *m_game;

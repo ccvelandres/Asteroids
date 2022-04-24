@@ -1,18 +1,20 @@
 #pragma once
 
 #include <memory>
+#include <map>
 #include <vector>
 #include <array>
 #include <algorithm>
 #include <bitset>
 #include <functional>
+#include <iostream>
 
 #include <game.hpp>
 #include <time.hpp>
 
 /**
  * @brief ECS Component system
- * 
+ *
  * @note Good library for ecs system -> https://github.com/skypjack/entt
  */
 
@@ -113,9 +115,11 @@ public:
     }
 
     template <typename T>
-    void foreach(const std::function<void (T&)> &callback) {
+    void foreach (const std::function<void(T &)> &callback)
+    {
         auto &a = m_components[getComponentID<T>()];
-        for (auto &c : a) {
+        for (auto &c : a)
+        {
             callback(c);
         }
     }
@@ -141,13 +145,12 @@ private:
     std::array<std::shared_ptr<Component>, maxComponents> m_components;
     std::bitset<maxComponents> m_componentBitset;
 
-    bool m_isFree;
     std::shared_ptr<Entity> m_parent;
     std::vector<std::shared_ptr<Entity>> m_children;
 
 protected:
 public:
-    Entity() : m_isFree(false) {}
+    Entity() {}
 
     /** Check if entity has component T */
     template <typename T>
@@ -166,14 +169,19 @@ public:
     T &addComponent(TArgs &&...args)
     {
         /** @todo: change return type to ComponentPtr<T> */
-        assert(hasComponent<T>() == false);
+        
+        T *c = nullptr;
+        if (!hasComponent<T>()) {
+            c = new T(std::forward<TArgs>(args)...);
+            std::shared_ptr<Component> p(c);
 
-        T *c = new T(std::forward<TArgs>(args)...);
-        std::shared_ptr<Component> p(c);
-
-        m_components[getComponentID<T>()] = p;
-        m_componentBitset[getComponentID<T>()] = true;
-        Game::componentManager().registerComponent<T>(p);
+            m_components[getComponentID<T>()] = p;
+            m_componentBitset[getComponentID<T>()] = true;
+            Game::componentManager().registerComponent<T>(p);
+        }
+        else {
+            c = dynamic_cast<T*>(m_components[getComponentID<T>()].get());
+        }
 
         c->m_entity = this;
         c->init();
@@ -206,12 +214,6 @@ public:
     /** Called once before sending object back to be reused */
     virtual void clean() {}
 
-    /** @todo: add object pooling to minimize allocations? */
-    /** Calling this will free the entity on next refresh */
-    void free(const bool &free) { m_isFree = free; }
-    /** Calling this will free the entity on next refresh */
-    bool free() { return m_isFree; }
-
     void parent(std::shared_ptr<Entity> &parent) { m_parent = parent; }
     std::shared_ptr<Entity> parent() { return m_parent; }
 
@@ -228,19 +230,20 @@ using EntityList = std::vector<std::shared_ptr<T>>;
 class EntityManager
 {
 private:
-    std::vector<std::shared_ptr<Entity>> m_entities;
+    std::map<std::size_t, std::vector<std::shared_ptr<Entity>>> m_entities;
 
 protected:
 public:
     EntityManager() {}
-
+    
     /** Creates and allocates a new entity object of type */
     template <typename T, typename... TArgs>
     T &addEntity(TArgs &&...args)
     {
+        std::cout << "Creating entity for " << typeid(T).name() << " hash: " << typeid(T).hash_code() << std::endl;
         T *e = new T(std::forward<TArgs>(args)...);
         std::shared_ptr<Entity> p(e);
-        m_entities.push_back(std::move(p));
+        m_entities[typeid(T).hash_code()].push_back(std::move(p));
 
         e->init();
         return *e;
@@ -248,8 +251,9 @@ public:
 
     template <typename T, typename... TArgs>
     EntityList<T> addEntities(const int &numEntities,
-                                                TArgs &&...args)
+                              TArgs &&...args)
     {
+        std::cout << "Creating entity for " << typeid(T).name() << " hash: " << typeid(T).hash_code() << std::endl;
         std::vector<std::shared_ptr<T>> l_entities;
         l_entities.reserve(numEntities);
 
@@ -258,12 +262,22 @@ public:
             T *e = new T(std::forward<TArgs>(args)...);
             l_entities.emplace_back(e);
             std::shared_ptr<T> &p = l_entities[l_entities.size() - 1];
-            m_entities.push_back(p);
+            m_entities[typeid(T).hash_code()].push_back(p);
 
             e->init();
         }
 
         return l_entities;
+    }
+
+    template <typename T>
+    void foreach (const std::function<void(T &)> &callback)
+    {
+        auto &a = m_entities[typeid(T).hash_code()];
+        for (auto &c : a)
+        {
+            callback(c);
+        }
     }
 
     /** Initialize Entity Manager */

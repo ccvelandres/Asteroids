@@ -31,7 +31,7 @@ void Player::init()
     /** Preallocate bullet objects */
     m_bullets = Game::entityManager().addEntities<Bullet>(32, *this);
 
-    speed = 300;
+    speed = 300000;
     shootInterval = time_ms(100);
     m_lastShoot = time_ds(0);
 }
@@ -63,7 +63,7 @@ void Player::update(time_ds delta)
 
     /** Shooting */
     if (Game::inputManager().isPressed(SDL_SCANCODE_SPACE) &&
-        (m_lastShoot + shootInterval < Time::time()))
+        (m_lastShoot + shootInterval < Time::unscaledTime()))
     {
         /** Look for free bullet object */
         auto it = std::find_if(m_bullets.begin(),
@@ -77,7 +77,7 @@ void Player::update(time_ds delta)
             Bullet &bullet = (*it->get());
             bullet.shoot(m_transform->position + Vector3F(0, 0, 0),
                          Vector3F(0, -500, 0));
-            m_lastShoot = Time::time();
+            m_lastShoot = Time::unscaledTime();
             std::cout << "Shooting bullet object" << std::endl;
         }
     }

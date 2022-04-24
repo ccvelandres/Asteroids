@@ -101,6 +101,7 @@ void Game::startGameLoop()
 
         /** Manager Update */
         m_entityManager->update(m_time->scaledDeltaTime());
+
         m_componentManager->update<TransformComponent>(m_time->scaledDeltaTime());
         m_componentManager->update<SpriteComponent>(m_time->scaledDeltaTime());
 
@@ -128,11 +129,20 @@ void Game::startGameLoop()
         {
             std::this_thread::sleep_for((m_targetDelta - m_time->unscaledFrameTime()));
         }
+        // std::cout << "m_targetDelta:      " << m_targetDelta.count() << std::endl;
+        // std::cout << "unscaledDeltaTime:  " << m_time->unscaledDeltaTime().count() << std::endl;
+        // std::cout << "unscaledFrameStart: " << m_time->unscaledFrameStart().count() << std::endl;
+        // std::cout << "unscaledFrameEnd:   " << m_time->unscaledFrameEnd().count() << std::endl;
+        // std::cout << "unscaledFrameTime:  " << m_time->unscaledFrameTime().count() << std::endl;
+        // std::cout << "scaledDeltaTime:    " << m_time->scaledDeltaTime().count() << std::endl;
+        // std::cout << "scaledFrameTime:    " << m_time->scaledFrameTime().count() << std::endl;
+        // std::cout << "unscaledTime:       " << m_time->unscaledTime().count() << std::endl;
+        // std::cout << "delayedFrameTime:   " << (Time::unscaledTime() - m_time->unscaledFrameStart()).count() << std::endl;
         m_fps = time_fs::period::den / (Time::unscaledTime<time_fs>() - m_time->unscaledFrameStart<time_fs>()).count();
         m_minfps = (m_fps < m_minfps ? m_fps : m_minfps);
         m_maxfps = (m_fps > m_maxfps ? m_fps : m_maxfps);
-        std::cout << "FPS: " << m_fps << std::endl;
-        std::cout << "MIN: " << m_minfps << std::endl;
+        // std::cout << "FPS: " << m_fps << std::endl;
+        // std::cout << "MIN: " << m_minfps << std::endl;
     }
 }
 

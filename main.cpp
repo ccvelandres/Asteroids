@@ -2,10 +2,45 @@
 #define SDL_MAIN_HANDLED
 #include "SDL.h"
 
+#include <utils/objectpool.hpp>
+
+class Entity
+{
+public:
+    virtual void update(){};
+};
+
+class Player : public Entity
+{
+public:
+    void update() override { std::cout << "Player update" << std::endl; }
+};
+
+class Enemy
+{
+public:
+    void update()  { std::cout << "Player update" << std::endl; }
+};
+
+ObjectPool<Entity> pool;
+
 #ifdef __cplusplus
 extern "C"
 #endif
-int main()
+    int
+    main()
+{
+    // Player &a = pool.addObject<Player>();
+    // Enemy &e = pool.addObject<Enemy>();
+
+    // Entity &et = a;
+
+    // et.update();
+
+    
+}
+
+int main2()
 {
     std::cout << "Hello world" << std::endl;
     if (SDL_Init(SDL_INIT_EVERYTHING) != 0)

@@ -34,7 +34,7 @@ int main(int arc, char **argv)
 
     Game *game = new Game("Asteroids", windowWidth, windowHeight);
     game->init();
-    game->setTargetFPS(120);
+    game->setTargetFPS(90);
     
     Player player = Game::entityManager().addEntity<Player>();
     EntityList<Enemy> enemies = Game::entityManager().addEntities<Enemy>(8);

@@ -1,30 +1,46 @@
 #include <ecs/ecs.hpp>
 
-void EntityManager::preUpdate() {
-    for (auto &e : m_entities){
-        e->preUpdate();
+void EntityManager::preUpdate()
+{
+    for (auto &[hash, vector] : m_entities)
+    {
+        for (auto &e : vector)
+        {
+            e->preUpdate();
+        }
     }
 }
 
-void EntityManager::update(time_ds delta) {
-    for (auto &e : m_entities){
-        e->update(delta);
+void EntityManager::update(time_ds delta)
+{
+    for (auto &[hash, vector] : m_entities)
+    {
+        for (auto &e : vector)
+        {
+            e->update(delta);
+        }
     }
 }
 
-void EntityManager::postUpdate() {
-    for (auto &e : m_entities){
-        e->postUpdate();
+void EntityManager::postUpdate()
+{
+    for (auto &[hash, vector] : m_entities)
+    {
+        for (auto &e : vector)
+        {
+            e->postUpdate();
+        }
     }
 }
 
 void EntityManager::refresh()
 {
-    m_entities.erase(std::remove_if(m_entities.begin(),
-                                    m_entities.end(),
-                                    [](const std::shared_ptr<Entity> &e)
-                                    {
-                                        return e->free();
-                                    }),
-                     m_entities.end());
+    for (auto &v : m_entities)
+        v.second.erase(std::remove_if(v.second.begin(),
+                                      v.second.end(),
+                                      [](const std::shared_ptr<Entity> &e)
+                                      {
+                                          return e.use_count() == 0;
+                                      }),
+                       v.second.end());
 }
