@@ -8,6 +8,7 @@
 #include <bitset>
 #include <functional>
 #include <iostream>
+#include <typeindex>
 
 #include <game.hpp>
 #include <time.hpp>
@@ -230,7 +231,7 @@ using EntityList = std::vector<std::shared_ptr<T>>;
 class EntityManager
 {
 private:
-    std::map<std::size_t, std::vector<std::shared_ptr<Entity>>> m_entities;
+    std::map<std::type_index, std::vector<std::shared_ptr<Entity>>> m_entities;
 
 protected:
 public:
@@ -240,10 +241,10 @@ public:
     template <typename T, typename... TArgs>
     T &addEntity(TArgs &&...args)
     {
-        std::cout << "Creating entity for " << typeid(T).name() << " hash: " << typeid(T).hash_code() << std::endl;
+        std::cout << "Creating entity for " << typeid(T).name() << " hash: " << std::type_index(typeid(T)).hash_code() << std::endl;
         T *e = new T(std::forward<TArgs>(args)...);
         std::shared_ptr<Entity> p(e);
-        m_entities[typeid(T).hash_code()].push_back(std::move(p));
+        m_entities[std::type_index(typeid(T))].push_back(std::move(p));
 
         e->init();
         return *e;
@@ -253,7 +254,7 @@ public:
     EntityList<T> addEntities(const int &numEntities,
                               TArgs &&...args)
     {
-        std::cout << "Creating entity for " << typeid(T).name() << " hash: " << typeid(T).hash_code() << std::endl;
+        std::cout << "Creating entity for " << typeid(T).name() << " hash: " << std::type_index(typeid(T)).hash_code() << std::endl;
         std::vector<std::shared_ptr<T>> l_entities;
         l_entities.reserve(numEntities);
 
@@ -262,7 +263,7 @@ public:
             T *e = new T(std::forward<TArgs>(args)...);
             l_entities.emplace_back(e);
             std::shared_ptr<T> &p = l_entities[l_entities.size() - 1];
-            m_entities[typeid(T).hash_code()].push_back(p);
+            m_entities[std::type_index(typeid(T))].push_back(p);
 
             e->init();
         }
@@ -273,7 +274,7 @@ public:
     template <typename T>
     void foreach (const std::function<void(T &)> &callback)
     {
-        auto &a = m_entities[typeid(T).hash_code()];
+        auto &a = m_entities[std::type_index(typeid(T))];
         for (auto &c : a)
         {
             callback(c);
