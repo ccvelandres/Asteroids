@@ -1,6 +1,7 @@
 #include <iostream>
 #include <thread>
 #include <map>
+#include <typeindex>
 
 #include <SDL.h>
 #include <SDL2_gfxPrimitives.h>
@@ -8,6 +9,7 @@
 #include <game.hpp>
 #include <event.hpp>
 #include <ecs/ecs.hpp>
+#include <utils/logging.hpp>
 
 #include <logic/player.hpp>
 #include <logic/enemy.hpp>
@@ -19,18 +21,9 @@ constexpr int originY = windowHeight / 2;
 
 auto app_start = std::chrono::high_resolution_clock::now();
 
-static float time()
-{
-    using namespace std::chrono;
-    auto ts = high_resolution_clock::now();
-    // time_dns e = ts - te;
-    float d = duration_cast<time_ds>(ts - app_start).count();
-    // return duration_cast<duration<double, std::nano>>(e);
-    return d;
-}
-
 int main(int arc, char **argv)
 {
+    logging::set_level(logging::level::debug);
 
     Game *game = new Game("Asteroids", windowWidth, windowHeight);
     game->init();

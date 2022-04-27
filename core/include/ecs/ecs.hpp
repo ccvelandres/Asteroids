@@ -7,11 +7,11 @@
 #include <algorithm>
 #include <bitset>
 #include <functional>
-#include <iostream>
 #include <typeindex>
 
 #include <game.hpp>
 #include <time.hpp>
+#include <utils/logging.hpp>
 
 /**
  * @brief ECS Component system
@@ -241,7 +241,10 @@ public:
     template <typename T, typename... TArgs>
     T &addEntity(TArgs &&...args)
     {
-        std::cout << "Creating entity for " << typeid(T).name() << " hash: " << std::type_index(typeid(T)).hash_code() << std::endl;
+        logging::debug("{},{}: {}, hash({})", 
+            __LINE__, __func__,
+            typeid(T).name(), 
+            typeid(T).hash_code());
         T *e = new T(std::forward<TArgs>(args)...);
         std::shared_ptr<Entity> p(e);
         m_entities[std::type_index(typeid(T))].push_back(std::move(p));
@@ -251,10 +254,14 @@ public:
     }
 
     template <typename T, typename... TArgs>
-    EntityList<T> addEntities(const int &numEntities,
+    EntityList<T> addEntities(const int numEntities,
                               TArgs &&...args)
     {
-        std::cout << "Creating entity for " << typeid(T).name() << " hash: " << std::type_index(typeid(T)).hash_code() << std::endl;
+        logging::debug("{},{}: {}, count({}), hash({})", 
+            __LINE__, __func__,
+            typeid(T).name(), 
+            numEntities,
+            typeid(T).hash_code());
         std::vector<std::shared_ptr<T>> l_entities;
         l_entities.reserve(numEntities);
 

@@ -6,7 +6,6 @@
 #include <map>
 #include <vector>
 #include <memory>
-#include <iostream>
 
 class Texture2D;
 class Renderer;
@@ -20,12 +19,8 @@ private:
     uint32_t m_pixelFormat;
     int m_textureAccess;
 
-    static void deallocTexture(SDL_Texture *tex)
-    {
-        std::cout << "TextureDealloc: " << tex << std::endl;
-        SDL_DestroyTexture(tex);
-    }
-
+    static std::shared_ptr<SDL_Texture> openTexture(SDL_Renderer * const renderer, const std::string &filename);
+    static void deallocTexture(SDL_Texture *tex);
 protected:
 public:
     Texture2D() {}

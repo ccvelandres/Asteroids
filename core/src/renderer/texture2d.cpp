@@ -1,5 +1,9 @@
-#include <renderer.hpp>
 #include <cassert>
+
+#include <SDL2/SDL_image.h>
+
+#include <renderer.hpp>
+#include <utils/logging.hpp>
 
 Texture2D::Texture2D(std::shared_ptr<SDL_Texture> texture) : m_texture(texture)
 {
@@ -20,4 +24,33 @@ Texture2D::Texture2D(std::shared_ptr<SDL_Texture> texture,
     SDL_QueryTexture(m_texture.get(), &m_pixelFormat, &m_textureAccess, &w, &h);
     assert(m_size.x >= m_position.x + size.x);
     assert(m_size.y >= m_position.y + size.y);
+}
+
+std::shared_ptr<SDL_Texture> Texture2D::openTexture(SDL_Renderer *const renderer,
+                                                    const std::string &filename)
+{
+    SDL_Texture *t = IMG_LoadTexture(renderer, filename.c_str());
+    if (t == NULL)
+    {
+        logging::error("{},{}: Could not open {}",
+                       __LINE__, __func__,
+                       filename);
+    }
+    else
+    {
+        logging::debug("{},{}: Texture loaded from {} ({})",
+                       __LINE__, __func__,
+                       filename,
+                       fmt::ptr(t));
+        std::shared_ptr<SDL_Texture> p(t, Texture2D::deallocTexture);
+        return p;
+    }
+    return {};
+}
+
+void Texture2D::deallocTexture(SDL_Texture *tex)
+{
+    logging::debug("{},{}: Texture unload ({})",
+                   __LINE__, __func__, fmt::ptr(tex));
+    SDL_DestroyTexture(tex);
 }

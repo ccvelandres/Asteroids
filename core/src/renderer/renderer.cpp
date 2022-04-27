@@ -18,26 +18,17 @@ Renderer::~Renderer()
 std::shared_ptr<SDL_Texture> Renderer::loadTexturePtr(const std::string &filename)
 {
     std::weak_ptr<SDL_Texture> &e = m_textures[filename];
-    std::shared_ptr<SDL_Texture> p;
 
     if (e.expired())
     {
-        SDL_Texture *t = IMG_LoadTexture(m_renderer, filename.c_str());
-        if (t == nullptr)
-        {
-            std::cerr << "Could not load texture: " << filename << std::endl;
-        }
-        else
-            std::cout << "TextureAlloc: " << t << std::endl;
-        p.reset(t, Texture2D::deallocTexture);
-        e = p;
+        auto px = Texture2D::openTexture(m_renderer, filename);
+        e = px;
+        return px;
     }
     else
     {
-        p = e.lock();
+        return e.lock();
     }
-
-    return p;
 }
 
 std::vector<Texture2D> Renderer::loadTextureAtlas(const std::string &filename,
