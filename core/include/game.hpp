@@ -23,7 +23,7 @@ private:
 
     time_ds m_targetDelta;
     float m_minfps = MAXFLOAT, m_maxfps;
-    Average<float> m_fps;
+    float m_fps;
 
     static Game *m_game;
     static EntityManager *m_entityManager;

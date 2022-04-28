@@ -143,8 +143,8 @@ void Game::startGameLoop()
         float fps = time_fs::period::den / (Time::getTime<time_fs>() - m_time->unscaledFrameStart<time_fs>()).count();
         m_minfps = (fps < m_minfps ? fps : m_minfps);
         m_maxfps = (fps > m_maxfps ? fps : m_maxfps);
-        m_fps.push(fps);
-        logging::debug("{},{}: {} FPS: ({})", __LINE__, __func__, m_fps.index, m_fps.get());
+        m_fps = fps;
+        logging::debug("{},{}: FPS: ({})", __LINE__, __func__, m_fps);
         logging::trace("{},{}: MIN: ({})", __LINE__, __func__, m_minfps);
     }
 }
