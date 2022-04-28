@@ -8,7 +8,7 @@ SpriteComponent::~SpriteComponent()
 {
 }
 
-void SpriteComponent::update(time_ds delta)
+void SpriteComponent::update(time_ms delta)
 {
     if (!m_sprites.size())
         return;
@@ -20,7 +20,7 @@ void SpriteComponent::update(time_ds delta)
     time_ds e = m_spriteTiming[m_spriteIndex][m_timingIndex];
     if (m_lastUpdate > e)
     {
-        m_lastUpdate = time_ds(0);
+        m_lastUpdate = time_ms(0);
         if (++m_timingIndex >= m_spriteTiming[m_spriteIndex].size())
             m_timingIndex = 0;
     }

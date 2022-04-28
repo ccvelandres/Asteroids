@@ -12,7 +12,7 @@ class SpriteComponent : public Component
 protected:
     std::map<std::size_t, std::vector<Texture2D>> m_sprites;
     std::map<std::size_t, std::vector<time_ds>> m_spriteTiming;
-    time_ds m_lastUpdate = time_ds(0);
+    time_ms m_lastUpdate = time_ms(0);
     std::size_t m_spriteIndex = 0;
     std::size_t m_timingIndex = 0;
     Texture2D m_texture;
@@ -24,7 +24,7 @@ public:
     /** Component overrides */
     // void awake() override;
     // void init() override;
-    void update(time_ds delta) override;
+    void update(time_ms delta) override;
     // void clean() override;
 
     void setSpriteHandle(const std::size_t& spriteHandle);

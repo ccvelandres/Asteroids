@@ -28,7 +28,7 @@ void Enemy::preUpdate()
 {
 }
 
-void Enemy::update(time_ds delta)
+void Enemy::update(time_ms delta)
 {
     if (!m_isActive)
         return;

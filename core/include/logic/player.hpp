@@ -26,7 +26,7 @@ public:
     /** Entity overrides */
     void init() override;
     void preUpdate() override;
-    void update(time_ds delta) override;
+    void update(time_ms delta) override;
     void postUpdate() override;
     // void reset() override;
     // void clean() override;

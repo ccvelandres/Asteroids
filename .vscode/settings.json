@@ -52,7 +52,22 @@
         "streambuf": "cpp",
         "cinttypes": "cpp",
         "typeinfo": "cpp",
-        "thread": "cpp"
+        "thread": "cpp",
+        "complex": "cpp",
+        "any": "cpp",
+        "bitset": "cpp",
+        "charconv": "cpp",
+        "condition_variable": "cpp",
+        "list": "cpp",
+        "map": "cpp",
+        "set": "cpp",
+        "regex": "cpp",
+        "future": "cpp",
+        "iomanip": "cpp",
+        "mutex": "cpp",
+        "shared_mutex": "cpp",
+        "typeindex": "cpp",
+        "variant": "cpp"
     },
     "cmake.configureOnOpen": false
 }

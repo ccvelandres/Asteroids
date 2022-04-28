@@ -63,9 +63,9 @@ public:
     /** Called when the component is first created */
     virtual void init() {}
     /** Called for every frame update (uses unscaled time) */
-    virtual void fixedUpdate(time_ds delta) {}
+    virtual void fixedUpdate(time_ms delta) {}
     /** Called for every frame update (uses scaled time) */
-    virtual void update(time_ds delta) {}
+    virtual void update(time_ms delta) {}
     /** Called when the component is released */
     virtual void clean() {}
 
@@ -128,7 +128,7 @@ public:
     /** Initialize Component Manager */
     void init();
     template <typename T>
-    void update(time_ds delta)
+    void update(time_ms delta)
     {
         for (auto &c : m_components[getComponentID<T>()])
         {
@@ -205,9 +205,9 @@ public:
     /** Called at the start of game update */
     virtual void preUpdate() {}
     /** Called for every frame update (uses unscaled time) */
-    virtual void fixedUpdate(time_ds delta) {}
+    virtual void fixedUpdate(time_ms delta) {}
     /** Called for every frame update (uses scaled time) */
-    virtual void update(time_ds delta) {}
+    virtual void update(time_ms delta) {}
     /** Called after updating most components */
     virtual void postUpdate() {}
     /** Called once when entity is reused */
@@ -294,7 +294,7 @@ public:
     /** Calls preUpdate for all entities */
     void preUpdate();
     /** Calls update for all entities */
-    void update(time_ds delta);
+    void update(time_ms delta);
     /** Calls postUpdate for all entities */
     void postUpdate();
 

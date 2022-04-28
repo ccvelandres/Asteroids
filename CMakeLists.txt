@@ -20,13 +20,15 @@ project(${PROJECT_NAME} VERSION 0.1.0)
 file(GLOB_RECURSE SRC_C_CORE ${CMAKE_SOURCE_DIR}/core/src/*.c)
 file(GLOB_RECURSE SRC_CPP_CORE ${CMAKE_SOURCE_DIR}/core/src/*.cpp)
 
-# add_executable(${PROJECT_NAME} ${SRC_C_CORE} ${SRC_CPP_CORE})
-add_executable(${PROJECT_NAME} main.cpp)
+add_executable(${PROJECT_NAME} ${SRC_C_CORE} ${SRC_CPP_CORE})
+# add_executable(${PROJECT_NAME} main.cpp)
 target_include_directories(${PROJECT_NAME} PRIVATE ${CMAKE_SOURCE_DIR}/core/src)
 target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_SOURCE_DIR}/core/include)
 
 #################################################################
 ## SDL
+
+set(PROJECT_LIBRARY_DIR "${CMAKE_SOURCE_DIR}/lib")
 
 # set(CMAKE_MODULE_PATH "${CMAKE_MODULE_PATH} ${CMAKE_SOURCE_DIR}/lib/sdl2-cmake-scripts")
 # set(SDL2_PATH "${CMAKE_SOURCE_DIR}/lib/SDL")
@@ -59,6 +61,9 @@ target_include_directories(${PROJECT_NAME} PUBLIC ${SDL2_IMAGE_INCLUDE_DIR})
 message("SDL_image Library: ${SDL2_IMAGE_LIBRARY}")
 message("SDL_image IncludeDir: ${SDL2_IMAGE_INCLUDE_DIR}")
 
+# fmt
+# add_subdirectory(${PROJECT_LIBRARY_DIR}/fmt)
+# target_link_libraries(${PROJECT_NAME} PUBLIC fmt)
 
 # spdlog
 add_subdirectory(${PROJECT_LIBRARY_DIR}/spdlog)

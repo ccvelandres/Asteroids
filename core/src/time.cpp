@@ -8,7 +8,7 @@ void Time::preUpdate()
 {
     using namespace std::chrono;
     /** unscaled update */
-    m_unscaledFrameStart = getTime<time_ds>();
+    m_unscaledTime = m_unscaledFrameStart = getTime<time_ds>();
     m_unscaledFrameDelta = m_unscaledFrameStart - m_unscaledFrameEnd;
 
     /** scaled update */

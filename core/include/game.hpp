@@ -6,6 +6,7 @@
 
 #include <SDL.h>
 #include <time.hpp>
+#include <utils/average.hpp>
 
 class EntityManager;
 class ComponentManager;
@@ -21,7 +22,8 @@ private:
     int m_windowWidth, m_windowHeight;
 
     time_ds m_targetDelta;
-    float m_fps, m_minfps = MAXFLOAT, m_maxfps;
+    float m_minfps = MAXFLOAT, m_maxfps;
+    Average<float> m_fps;
 
     static Game *m_game;
     static EntityManager *m_entityManager;

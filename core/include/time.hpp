@@ -23,6 +23,7 @@ private:
     time_ds m_unscaledFrameTime;
     time_ds m_unscaledFrameStart;
     time_ds m_unscaledFrameEnd;
+    time_ds m_unscaledTime;
 
     float m_timeScale;
     time_ds m_scaledFrameDelta;
@@ -34,10 +35,10 @@ private:
 protected:
 public:
     Time() : m_timeScale(1) {}
-
-    /** Template function for retrieving the time */
+    /** Unless needing the exact time, use unscaledTime as much as possible */
     template <typename T>
     static T getTime() { return std::chrono::duration_cast<T>(clock::now() - m_startTime); }
+
 
     /** Called every start of game loop update */
     void preUpdate();
@@ -73,14 +74,14 @@ public:
     T unscaledFrameTime() const { return std::chrono::duration_cast<T>(m_unscaledFrameTime); }
     /** Get elapsed unscaled time */
     template <typename T = time_ds>
-    static T unscaledTime() { return getTime<T>(); }
+    T unscaledTime() { return std::chrono::duration_cast<T>(m_unscaledTime); }
 
     static constexpr double ticksPerSecond = std::chrono::duration<double, clock::period>(std::chrono::seconds(1)).count();
 
     /** Get elapsed time in milliseconds */
-    static time_ms millis() { return getTime<time_ms>(); }
+    time_ms millis() { return std::chrono::duration_cast<time_ms>(m_unscaledTime); }
     /** Get elapsed time in microseconds */
-    static time_us micros() { return getTime<time_us>(); }
+    time_us micros() { return std::chrono::duration_cast<time_us>(m_unscaledTime); }
     /** Get elapsed time in nanoseconds */
-    static time_ns nano() { return getTime<time_ns>(); }
+    time_ns nano() { return std::chrono::duration_cast<time_ns>(m_unscaledTime); }
 };

@@ -31,7 +31,7 @@ void Player::init()
     /** Preallocate bullet objects */
     m_bullets = Game::entityManager().addEntities<Bullet>(32, *this);
 
-    speed = 300000;
+    speed = 300;
     shootInterval = time_ms(100);
     m_lastShoot = time_ds(0);
 }
@@ -40,8 +40,9 @@ void Player::preUpdate()
 {
 }
 
-void Player::update(time_ds delta)
+void Player::update(time_ms delta)
 {
+    float d = Game::time().scaledDeltaTime<time_fs>().count();
     /** Movement */
     Vector3F l_inputForce(0);
     if (Game::inputManager().isPressed(SDL_SCANCODE_UP))
@@ -56,14 +57,15 @@ void Player::update(time_ds delta)
     Vector3F::normalize(l_inputForce);
     if (l_inputForce)
     {
-        Vector3F offset = l_inputForce * delta.count() * speed;
-        std::cout << offset << std::endl;
+        Vector3F offset = l_inputForce * delta.count() * (speed / 1000.f);
+        logging::debug("{},{}: InputForce {},{}", 
+            __LINE__, __func__, offset.x, offset.y);
         m_transform->position += offset;
     }
 
     /** Shooting */
     if (Game::inputManager().isPressed(SDL_SCANCODE_SPACE) &&
-        (m_lastShoot + shootInterval < Time::unscaledTime()))
+        (m_lastShoot + shootInterval < Game::time().unscaledTime()))
     {
         /** Look for free bullet object */
         auto it = std::find_if(m_bullets.begin(),
@@ -77,21 +79,18 @@ void Player::update(time_ds delta)
             Bullet &bullet = (*it->get());
             bullet.shoot(m_transform->position + Vector3F(0, 0, 0),
                          Vector3F(0, -500, 0));
-            m_lastShoot = Time::unscaledTime();
-            std::cout << "Shooting bullet object" << std::endl;
+            m_lastShoot = Game::time().unscaledTime();
+            logging::trace("{},{}: Shooting bullet object", 
+                __LINE__, __func__);
         }
     }
 
-
-    std::cout << "Player@ " << m_transform->position << std::endl;
-    std::cout << " force@ " << l_inputForce << std::endl;
     {
         int activeBullets = 0;
         std::for_each(m_bullets.begin(), m_bullets.end(),
             [&activeBullets](std::shared_ptr<Bullet> &b) {
                 if (b->isShot()) activeBullets++;
             });
-        std::cout << "   acb@ " << activeBullets << std::endl;
     }
 }
 

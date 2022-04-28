@@ -18,7 +18,7 @@ public:
     /** Component overrides */
     // void awake() override;
     // void init() override;
-    // void update(time_ds delta) override;
+    // void update(time_ms delta) override;
     // void clean() override;
 
     Vector3F position;

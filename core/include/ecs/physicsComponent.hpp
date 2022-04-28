@@ -28,9 +28,9 @@ public:
         transform = &this->entity().getComponent<TransformComponent>();
     }
 
-    void update(time_ds delta) override
+    void update(time_ms delta) override
     {
-        // time_ds deltaS = delta / 1000;
+        // time_ms deltaS = delta / 1000;
         // /** Clamp acceleration before computing velocity */
         // if (fabs(acceleration.x) > maxAcceleration.x)
         //     acceleration.x = (acceleration.x > 0.f ? maxAcceleration.x : -maxAcceleration.x);

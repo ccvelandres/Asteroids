@@ -11,7 +11,7 @@ void EntityManager::preUpdate()
     }
 }
 
-void EntityManager::update(time_ds delta)
+void EntityManager::update(time_ms delta)
 {
     for (auto &[hash, vector] : m_entities)
     {

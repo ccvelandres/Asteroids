@@ -4,6 +4,8 @@
             "name": "Linux",
             "includePath": [
                 "${workspaceFolder}/**",
+                "${workspaceFolder}/lib/**",
+                "${workspaceFolder}/lib/fmt/include",
                 "/usr/include/SDL2/"
             ],
             "defines": [

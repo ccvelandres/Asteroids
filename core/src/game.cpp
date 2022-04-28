@@ -100,10 +100,12 @@ void Game::startGameLoop()
         m_inputManager->update();
 
         /** Manager Update */
-        m_entityManager->update(m_time->scaledDeltaTime());
-
-        m_componentManager->update<TransformComponent>(m_time->scaledDeltaTime());
-        m_componentManager->update<SpriteComponent>(m_time->scaledDeltaTime());
+        {
+            time_ms delta = m_time->scaledDeltaTime<time_ms>();
+            m_entityManager->update(delta);
+            m_componentManager->update<TransformComponent>(delta);
+            m_componentManager->update<SpriteComponent>(delta);
+        }
 
         m_entityManager->postUpdate();
         m_inputManager->postUpdate();
@@ -129,20 +131,21 @@ void Game::startGameLoop()
         {
             std::this_thread::sleep_for((m_targetDelta - m_time->unscaledFrameTime()));
         }
-        // std::cout << "m_targetDelta:      " << m_targetDelta.count() << std::endl;
-        // std::cout << "unscaledDeltaTime:  " << m_time->unscaledDeltaTime().count() << std::endl;
-        // std::cout << "unscaledFrameStart: " << m_time->unscaledFrameStart().count() << std::endl;
-        // std::cout << "unscaledFrameEnd:   " << m_time->unscaledFrameEnd().count() << std::endl;
-        // std::cout << "unscaledFrameTime:  " << m_time->unscaledFrameTime().count() << std::endl;
-        // std::cout << "scaledDeltaTime:    " << m_time->scaledDeltaTime().count() << std::endl;
-        // std::cout << "scaledFrameTime:    " << m_time->scaledFrameTime().count() << std::endl;
-        // std::cout << "unscaledTime:       " << m_time->unscaledTime().count() << std::endl;
-        // std::cout << "delayedFrameTime:   " << (Time::unscaledTime() - m_time->unscaledFrameStart()).count() << std::endl;
-        m_fps = time_fs::period::den / (Time::unscaledTime<time_fs>() - m_time->unscaledFrameStart<time_fs>()).count();
-        m_minfps = (m_fps < m_minfps ? m_fps : m_minfps);
-        m_maxfps = (m_fps > m_maxfps ? m_fps : m_maxfps);
-        // std::cout << "FPS: " << m_fps << std::endl;
-        // std::cout << "MIN: " << m_minfps << std::endl;
+
+        logging::trace("{},{}: m_targetDelta:      ({})", __LINE__, __func__, m_targetDelta.count());
+        logging::trace("{},{}: unscaledDeltaTime:  ({})", __LINE__, __func__, m_time->unscaledDeltaTime().count());
+        logging::trace("{},{}: unscaledFrameStart: ({})", __LINE__, __func__, m_time->unscaledFrameStart().count());
+        logging::trace("{},{}: unscaledFrameEnd:   ({})", __LINE__, __func__, m_time->unscaledFrameEnd().count());
+        logging::trace("{},{}: unscaledFrameTime:  ({})", __LINE__, __func__, m_time->unscaledFrameTime().count());
+        logging::trace("{},{}: scaledDeltaTime:    ({})", __LINE__, __func__, m_time->scaledDeltaTime().count());
+        logging::trace("{},{}: scaledFrameTime:    ({})", __LINE__, __func__, m_time->scaledFrameTime().count());
+        logging::trace("{},{}: unscaledTime:       ({})", __LINE__, __func__, m_time->unscaledTime().count());
+        float fps = time_fs::period::den / (Time::getTime<time_fs>() - m_time->unscaledFrameStart<time_fs>()).count();
+        m_minfps = (fps < m_minfps ? fps : m_minfps);
+        m_maxfps = (fps > m_maxfps ? fps : m_maxfps);
+        m_fps.push(fps);
+        logging::debug("{},{}: {} FPS: ({})", __LINE__, __func__, m_fps.index, m_fps.get());
+        logging::trace("{},{}: MIN: ({})", __LINE__, __func__, m_minfps);
     }
 }
 

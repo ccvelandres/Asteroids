@@ -639,12 +639,13 @@ public:
 
     // ************************************************
     // Vector3 friend functions
-
+    /** @todo: add support for <format> */
+    
     template <typename T1, typename T2>
-    friend bool operator==(const Vector2Base<T1> &lhs, const Vector2Base<T2> &rhs);
+    friend bool operator==(const Vector3Base<T1> &lhs, const Vector3Base<T2> &rhs);
 
     template <typename T>
-    friend std::ostream &operator<<(std::ostream &os, const Vector2Base<T> &vect);
+    friend std::ostream &operator<<(std::ostream &os, const Vector3Base<T> &vect);
 };
 
 using Vector3F = Vector3Base<float>;

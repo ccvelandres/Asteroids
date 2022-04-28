@@ -1,5 +1,7 @@
 #include <logic/bullet.hpp>
 
+#include <utils/logging.hpp>
+
 Bullet::Bullet(Entity &parent) : m_parent(&parent),
                                  m_isShot(false)
 {
@@ -30,7 +32,7 @@ void Bullet::preUpdate()
 {
 }
 
-void Bullet::update(time_ds delta)
+void Bullet::update(time_ms delta)
 {
     if (!m_isShot)
         return;
@@ -38,7 +40,8 @@ void Bullet::update(time_ds delta)
     if (m_shootTime + 5000 < SDL_GetTicks())
     {
         m_isShot = false;
-        std::cout << "Freeing bullet object" << std::endl;
+        logging::debug("{},{}: Freeing bullet object", 
+            __LINE__, __func__);
     }
 
     m_transform->position += m_velocity * delta.count();
