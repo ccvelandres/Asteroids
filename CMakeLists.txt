@@ -69,6 +69,10 @@ message("SDL_image IncludeDir: ${SDL2_IMAGE_INCLUDE_DIR}")
 add_subdirectory(${PROJECT_LIBRARY_DIR}/spdlog)
 target_link_libraries(${PROJECT_NAME} PUBLIC spdlog)
 
+# easy_profiler
+add_subdirectory(${PROJECT_LIBRARY_DIR}/easy_profiler)
+target_link_libraries(${PROJECT_NAME} PUBLIC easy_profiler)
+
 # message("BuildType: ${CMAKE_BUILD_TYPE}")
 # if (CMAKE_BUILD_TYPE MATCHES "Debug")
 #     message("Building engine with easy_profiler")

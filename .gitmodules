@@ -6,3 +6,6 @@
 	path = lib/spdlog
 	url = https://github.com/gabime/spdlog.git
 	branch = v1.10.0
+[submodule "lib/easy_profiler"]
+	path = lib/easy_profiler
+	url = https://github.com/yse/easy_profiler.git
