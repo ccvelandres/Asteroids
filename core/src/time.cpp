@@ -2,7 +2,7 @@
 
 using namespace std::chrono;
 
-const high_resolution_clock::time_point Time::m_startTime = high_resolution_clock::now();
+high_resolution_clock::time_point Time::m_startTime = high_resolution_clock::now();
 
 void Time::preUpdate()
 {

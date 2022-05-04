@@ -17,7 +17,7 @@ public:
     typedef std::chrono::high_resolution_clock clock;
 
 private:
-    const static clock::time_point m_startTime;
+    static clock::time_point m_startTime;
 
     time_ds m_unscaledFrameDelta;
     time_ds m_unscaledFrameTime;
