@@ -3,6 +3,8 @@
 #include <vector>
 #include <iostream>
 
+#include <utils/logging.hpp>
+
 template <typename Ty, std::enable_if_t<std::is_arithmetic<Ty>::value, bool> = true>
 class Vector2Base
 {
@@ -306,6 +308,22 @@ public:
 
     template <typename T>
     friend std::ostream &operator<<(std::ostream &os, const Vector2Base<T> &vect);
+};
+
+template<typename T> 
+struct fmt::formatter<Vector2Base<T>> {
+
+    template <typename ParseContext>
+        constexpr auto parse(ParseContext& ctx)
+        {
+            return ctx.begin();
+        }
+
+    template <typename FormatContext>
+        auto format(const Vector2Base<T>& s, FormatContext& ctx)
+        {
+            return format_to(ctx.begin(), "{},{}", s.x, s.y);
+        }
 };
 
 using Vector2F = Vector2Base<float>;
@@ -665,3 +683,19 @@ std::ostream &operator<<(std::ostream &os, const Vector3Base<T> &vect)
 {
     return os << "(" << vect.x << "," << vect.y << "," << vect.z << ")";
 }
+
+template<typename T> 
+struct fmt::formatter<Vector3Base<T>> {
+
+    template <typename ParseContext>
+        constexpr auto parse(ParseContext& ctx)
+        {
+            return ctx.begin();
+        }
+
+    template <typename FormatContext>
+        auto format(const Vector3Base<T>& s, FormatContext& ctx)
+        {
+            return format_to(ctx.out(), "{},{},{}", s.x, s.y, s.z);
+        }
+};
