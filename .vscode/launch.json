@@ -8,7 +8,7 @@
             "name": "(gdb) Launch",
             "type": "lldb",
             "request": "launch",
-            "program": "${workspaceFolder}/build/${workspaceFolderBasename}",
+            "program": "${workspaceFolder}/build/out/${workspaceFolderBasename}",
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}/build",
             "preLaunchTask": "CMake Build : Debug",

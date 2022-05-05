@@ -6,6 +6,11 @@ SET(CMAKE_SKIP_BUILD_RPATH  FALSE)
 SET(CMAKE_BUILD_WITH_INSTALL_RPATH TRUE)
 SET(CMAKE_INSTALL_RPATH "$\{ORIGIN\}")
 
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/out")
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/out")
+set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/out")
+# set(BUILD_SHARED_LIBS OFF)
+
 set(CMAKE_C_STANDARD 11) # Requires C11 standard
 set(CMAKE_CXX_STANDARD 20) # Requires C++20 standard
 
@@ -70,8 +75,16 @@ add_subdirectory(${PROJECT_LIBRARY_DIR}/spdlog)
 target_link_libraries(${PROJECT_NAME} PUBLIC spdlog)
 
 # easy_profiler
-add_subdirectory(${PROJECT_LIBRARY_DIR}/easy_profiler)
-target_link_libraries(${PROJECT_NAME} PUBLIC easy_profiler)
+ExternalProject_Add(proj_easy_profiler
+    SOURCE_DIR ${PROJECT_LIBRARY_DIR}/easy_profiler
+    INSTALL_COMMAND ""
+    CMAKE_ARGS -DEASY_OPTION_LISTEN=ON
+    )
+ExternalProject_Get_Property(proj_easy_profiler BINARY_DIR)
+# Copy outputs to output dir
+add_custom_command(TARGET proj_easy_profiler POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_directory  ${BINARY_DIR}/bin/ ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}
+)
 
 # message("BuildType: ${CMAKE_BUILD_TYPE}")
 # if (CMAKE_BUILD_TYPE MATCHES "Debug")
@@ -89,4 +102,4 @@ target_link_libraries(${PROJECT_NAME} PUBLIC easy_profiler)
 # target_include_directories(${PROJECT_NAME} PRIVATE ${SDL2_PATH}/include)
 
 # Package assets with binary
-file(COPY assets DESTINATION ${CMAKE_BINARY_DIR})
+file(COPY assets DESTINATION ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})

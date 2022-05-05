@@ -19,9 +19,12 @@
             "label": "CMake Build : Debug",
             "command": "cmake",
             "args": [
-                "--build", "${workspaceFolder}/build",
-                "--config", "Debug",
-                "--target", "all",
+                "--build",
+                "${workspaceFolder}/build",
+                "--config",
+                "Debug",
+                "--target",
+                "all",
                 "--parallel"
             ],
             "problemMatcher": [
@@ -34,7 +37,7 @@
             "dependsOn": [
                 "CMake Configure : Debug"
             ],
-            "dependsOrder": "sequence",
+            "dependsOrder": "sequence"
         },
         {
             "label": "CMake Configure : Release",
@@ -52,9 +55,12 @@
             "label": "CMake Build : Release",
             "command": "cmake",
             "args": [
-                "--build", "${workspaceFolder}/build",
-                "--config", "Release",
-                "--target", "all",
+                "--build",
+                "${workspaceFolder}/build",
+                "--config",
+                "Release",
+                "--target",
+                "all",
                 "--parallel"
             ],
             "dependsOn": [
@@ -64,11 +70,12 @@
         },
         {
             "label": "Launch Profiler",
-            "command": "${workspaceFolder}/build/lib/arctic/lib/easy_profiler/bin/profiler_gui",
+            "command": "${workspaceFolder}/build/lib/easy_profiler/bin/profiler_gui",
             "dependsOn": [
                 "CMake Build : Debug"
             ],
-            "dependsOrder": "sequence"
+            "dependsOrder": "sequence",
+            "problemMatcher": []
         }
     ]
 }
