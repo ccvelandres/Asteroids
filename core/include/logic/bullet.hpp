@@ -17,7 +17,7 @@ protected:
 
     Vector3F m_velocity;
     bool m_isShot;
-    unsigned int m_shootTime;
+    time_ms m_shootTime;
 public:
     Bullet(Entity &parent);
     ~Bullet();
