@@ -58,8 +58,8 @@ void Player::update(time_ms delta)
     if (l_inputForce)
     {
         Vector3F offset = l_inputForce * delta.count() * (speed / 1000.f);
-        logging::debug("{},{}: InputForce {},{}", 
-            __LINE__, __func__, offset.x, offset.y);
+        logging::trace("{},{}: InputForce {}", 
+            __LINE__, __func__, offset);
         m_transform->position += offset;
     }
 

@@ -23,7 +23,7 @@ auto app_start = std::chrono::high_resolution_clock::now();
 
 int main(int arc, char **argv)
 {
-    logging::set_level(logging::level::off);
+    logging::set_level(logging::level::debug);
 
     Game *game = new Game("Asteroids", windowWidth, windowHeight);
     game->init();
@@ -47,5 +47,6 @@ int main(int arc, char **argv)
 
     game->startGameLoop();
 
+    delete game;
     return 0;
 }

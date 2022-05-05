@@ -21,6 +21,10 @@ Game::Game(const std::string &windowTitle,
                                       m_windowWidth(windowWidth),
                                       m_windowHeight(windowHeight)
 {
+    /** Start profiling */
+    EASY_PROFILER_ENABLE;
+    profiler::startListen();
+
     if (SDL_Init(SDL_INIT_EVERYTHING) != 0)
     {
         exit(1);
@@ -55,6 +59,8 @@ Game::~Game()
     delete m_renderer;
     delete m_time;
     m_game = nullptr;
+
+    profiler::dumpBlocksToFile("dump.prof");
 }
 
 void Game::init()
@@ -85,67 +91,95 @@ void Game::startGameLoop()
 
     while (isRunning)
     {
-        m_time->preUpdate();
+        EASY_BLOCK("FRAME", profiler::colors::Red100);
+        {
+            EASY_BLOCK("Time::preupdate");
+            m_time->preUpdate();
+        }
 
         /** Manager PreUpdates */
 
         /** Handle SDL Events here */
         {
+            EASY_BLOCK("EventManager::handleEvents");
             m_eventManager->handleEvents();
         }
 
-        m_entityManager->preUpdate();
+        {
+            EASY_BLOCK("ECS::preupdate");
+            m_entityManager->preUpdate();
+        }
 
         /* Update inputs */
-        m_inputManager->update();
+        {
+            EASY_BLOCK("InputManager::update");
+            m_inputManager->update();
+        }
 
         /** Manager Update */
         {
+            EASY_BLOCK("ECS::update");
             time_ms delta = m_time->scaledDeltaTime<time_ms>();
             m_entityManager->update(delta);
             m_componentManager->update<TransformComponent>(delta);
             m_componentManager->update<SpriteComponent>(delta);
         }
 
-        m_entityManager->postUpdate();
-        m_inputManager->postUpdate();
+        {
+            EASY_BLOCK("ECS::postupdate");
+            m_entityManager->postUpdate();
+            m_inputManager->postUpdate();
+        }
 
         /** Render */
         {
+            EASY_BLOCK("FrameRender");
             m_renderer->startRender();
-            ComponentList<RenderComponent> rComponents = m_componentManager->getComponents<RenderComponent>();
-            for (auto &c : rComponents)
-            {
-                if (c->enabled())
-                    c->render();
-            }
+            m_componentManager->foreach<RenderComponent>([](RenderComponent &c)
+                                                         {
+                if (c.enabled()) c.render(); });
             m_renderer->endRender();
         }
 
         /** Refresh manager objects */
-        m_componentManager->refresh();
-        m_entityManager->refresh();
-
-        m_time->postUpdate();
-        if (m_targetDelta > m_time->unscaledFrameTime())
         {
-            std::this_thread::sleep_for((m_targetDelta - m_time->unscaledFrameTime()));
+            EASY_BLOCK("Managers::Refresh");
+            m_componentManager->refresh();
+            m_entityManager->refresh();
         }
 
-        logging::trace("{},{}: m_targetDelta:      ({})", __LINE__, __func__, m_targetDelta.count());
-        logging::trace("{},{}: unscaledDeltaTime:  ({})", __LINE__, __func__, m_time->unscaledDeltaTime().count());
-        logging::trace("{},{}: unscaledFrameStart: ({})", __LINE__, __func__, m_time->unscaledFrameStart().count());
-        logging::trace("{},{}: unscaledFrameEnd:   ({})", __LINE__, __func__, m_time->unscaledFrameEnd().count());
-        logging::trace("{},{}: unscaledFrameTime:  ({})", __LINE__, __func__, m_time->unscaledFrameTime().count());
-        logging::trace("{},{}: scaledDeltaTime:    ({})", __LINE__, __func__, m_time->scaledDeltaTime().count());
-        logging::trace("{},{}: scaledFrameTime:    ({})", __LINE__, __func__, m_time->scaledFrameTime().count());
-        logging::trace("{},{}: unscaledTime:       ({})", __LINE__, __func__, m_time->unscaledTime().count());
-        float fps = time_fs::period::den / (Time::getTime<time_fs>() - m_time->unscaledFrameStart<time_fs>()).count();
-        m_minfps = (fps < m_minfps ? fps : m_minfps);
-        m_maxfps = (fps > m_maxfps ? fps : m_maxfps);
-        m_fps = fps;
-        logging::debug("{},{}: FPS: ({})", __LINE__, __func__, m_fps);
-        logging::trace("{},{}: MIN: ({})", __LINE__, __func__, m_minfps);
+        {
+            EASY_BLOCK("Time::postUpdate");
+            m_time->postUpdate();
+        }
+
+        if (m_targetDelta > m_time->unscaledFrameTime())
+        {
+            EASY_BLOCK("FrameSleep");
+            auto s = m_targetDelta - m_time->unscaledFrameTime();
+            EASY_VALUE("FRAME_DELAY_US", s.count(), EASY_VIN("FRAME_DELAY_US"));
+            std::this_thread::sleep_for(s);
+            // SDL_Delay(std::chrono::duration_cast<std::chrono::milliseconds>(s).count());
+        }
+
+        {
+            EASY_BLOCK("FPS Calculation");
+            logging::trace("{},{}: m_targetDelta:      ({})", __LINE__, __func__, m_targetDelta.count());
+            logging::trace("{},{}: unscaledDeltaTime:  ({})", __LINE__, __func__, m_time->unscaledDeltaTime().count());
+            logging::trace("{},{}: unscaledFrameStart: ({})", __LINE__, __func__, m_time->unscaledFrameStart().count());
+            logging::trace("{},{}: unscaledFrameEnd:   ({})", __LINE__, __func__, m_time->unscaledFrameEnd().count());
+            logging::trace("{},{}: unscaledFrameTime:  ({})", __LINE__, __func__, m_time->unscaledFrameTime().count());
+            logging::trace("{},{}: scaledDeltaTime:    ({})", __LINE__, __func__, m_time->scaledDeltaTime().count());
+            logging::trace("{},{}: scaledFrameTime:    ({})", __LINE__, __func__, m_time->scaledFrameTime().count());
+            logging::trace("{},{}: unscaledTime:       ({})", __LINE__, __func__, m_time->unscaledTime().count());
+            float fps = time_fs::period::den / (Time::getTime<time_fs>() - m_time->unscaledFrameStart<time_fs>()).count();
+            m_minfps = (fps < m_minfps ? fps : m_minfps);
+            m_maxfps = (fps > m_maxfps ? fps : m_maxfps);
+            m_fps = fps;
+            logging::trace("{},{}: FPS: ({})", __LINE__, __func__, m_fps);
+            logging::trace("{},{}: MIN: ({})", __LINE__, __func__, m_minfps);
+            EASY_VALUE("FPS", fps, EASY_VIN("FPS"));
+        }
     }
 }
 

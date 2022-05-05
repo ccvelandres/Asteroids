@@ -6,7 +6,7 @@
 
 #include <SDL.h>
 #include <time.hpp>
-#include <utils/average.hpp>
+#include <utils/profiler.hpp>
 
 class EntityManager;
 class ComponentManager;
