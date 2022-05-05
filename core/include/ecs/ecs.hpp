@@ -121,7 +121,9 @@ public:
         auto &a = m_components[getComponentID<T>()];
         for (auto &c : a)
         {
-            callback(c);
+            /** @todo: maybe build vector of shared_ptrs first */
+            auto p = c.lock();
+            callback(dynamic_cast<T&>(*p.get()));
         }
     }
 
@@ -284,7 +286,8 @@ public:
         auto &a = m_entities[std::type_index(typeid(T))];
         for (auto &c : a)
         {
-            callback(c);
+            /** @todo: maybe build vector of shared_ptrs first */
+            callback(dynamic_cast<T&>(*c.get()));
         }
     }
 
