@@ -10,7 +10,7 @@
             "request": "launch",
             "program": "${workspaceFolder}/build/out/${workspaceFolderBasename}",
             "stopAtEntry": false,
-            "cwd": "${workspaceFolder}/build",
+            "cwd": "${workspaceFolder}/build/out",
             "preLaunchTask": "CMake Build : Debug",
             "externalConsole": false,
         }
