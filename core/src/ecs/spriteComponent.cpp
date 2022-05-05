@@ -8,6 +8,14 @@ SpriteComponent::~SpriteComponent()
 {
 }
 
+void SpriteComponent::init() {
+    this->m_lastUpdate = time_ms(0);
+    this-> m_spriteIndex = 0;
+    this->m_timingIndex = 0;
+    this->m_sprites.clear();
+    this->m_spriteTiming.clear();
+}
+
 void SpriteComponent::update(time_ms delta)
 {
     if (!m_sprites.size())
