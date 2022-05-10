@@ -29,8 +29,8 @@ int main(int arc, char **argv)
     game->init();
     game->setTargetFPS(90);
     
-    Player player = Game::entityManager().addEntity<Player>();
-    EntityList<Enemy> enemies = Game::entityManager().addEntities<Enemy>(8);
+    Player player = Game::entityManager()->addEntity<Player>();
+    EntityList<Enemy> enemies = Game::entityManager()->addEntities<Enemy>(8);
 
     for (int i = 0; i < enemies.size(); i++)
     {

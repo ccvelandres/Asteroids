@@ -29,7 +29,7 @@ void Player::init()
     m_sprite->appendSpriteSet(4, "assets/ship.png", 16, 24, 64, 24, time_ms(60));
 
     /** Preallocate bullet objects */
-    m_bullets = Game::entityManager().addEntities<Bullet>(32, *this);
+    m_bullets = Game::entityManager()->addEntities<Bullet>(32, *this);
 
     speed = 300;
     shootInterval = time_ms(100);
@@ -42,16 +42,16 @@ void Player::preUpdate()
 
 void Player::update(time_ms delta)
 {
-    float d = Game::time().scaledDeltaTime<time_fs>().count();
+    float d = Game::time()->scaledDeltaTime<time_fs>().count();
     /** Movement */
     Vector3F l_inputForce(0);
-    if (Game::inputManager().isPressed(SDL_SCANCODE_UP))
+    if (Game::inputManager()->isPressed(SDL_SCANCODE_UP))
         l_inputForce.y = -1;
-    else if (Game::inputManager().isPressed(SDL_SCANCODE_DOWN))
+    else if (Game::inputManager()->isPressed(SDL_SCANCODE_DOWN))
         l_inputForce.y = 1;
-    if (Game::inputManager().isPressed(SDL_SCANCODE_LEFT))
+    if (Game::inputManager()->isPressed(SDL_SCANCODE_LEFT))
         l_inputForce.x = -1;
-    else if (Game::inputManager().isPressed(SDL_SCANCODE_RIGHT))
+    else if (Game::inputManager()->isPressed(SDL_SCANCODE_RIGHT))
         l_inputForce.x = 1;
 
     Vector3F::normalize(l_inputForce);
@@ -64,8 +64,8 @@ void Player::update(time_ms delta)
     }
 
     /** Shooting */
-    if (Game::inputManager().isPressed(SDL_SCANCODE_SPACE) &&
-        (m_lastShoot + shootInterval < Game::time().unscaledTime()))
+    if (Game::inputManager()->isPressed(SDL_SCANCODE_SPACE) &&
+        (m_lastShoot + shootInterval < Game::time()->unscaledTime()))
     {
         /** Look for free bullet object */
         auto it = std::find_if(m_bullets.begin(),
@@ -79,7 +79,7 @@ void Player::update(time_ms delta)
             Bullet &bullet = (*it->get());
             bullet.shoot(m_transform->position + Vector3F(0, 0, 0),
                          Vector3F(0, -500, 0));
-            m_lastShoot = Game::time().unscaledTime();
+            m_lastShoot = Game::time()->unscaledTime();
             logging::trace("{},{}: Shooting bullet object", 
                 __LINE__, __func__);
         }

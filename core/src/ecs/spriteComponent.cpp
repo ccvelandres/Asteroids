@@ -50,7 +50,7 @@ void SpriteComponent::addSpriteSet(std::size_t spriteHandle,
                                    const int &rows, const int &cols,
                                    const std::vector<time_ds> &timing)
 {
-    std::vector<Texture2D> spriteSet = Game::renderer().loadTextureAtlas(filename,
+    std::vector<Texture2D> spriteSet = Game::renderer()->loadTextureAtlas(filename,
                                                                          rW, rH,
                                                                          rows, cols);
 
@@ -70,7 +70,7 @@ void SpriteComponent::appendSpriteSet(std::size_t spriteHandle,
     std::vector<Texture2D> &v = m_sprites[spriteHandle];
     std::vector<time_ds> &t = m_spriteTiming[spriteHandle];
 
-    Texture2D tex = Game::renderer().loadTexture(filename);
+    Texture2D tex = Game::renderer()->loadTexture(filename);
     tex.position(Vector2(posX, posY));
     tex.size(Vector2(rW, rH));
 

@@ -180,7 +180,7 @@ public:
 
             m_components[getComponentID<T>()] = p;
             m_componentBitset[getComponentID<T>()] = true;
-            Game::componentManager().registerComponent<T>(p);
+            Game::componentManager()->registerComponent<T>(p);
         }
         else {
             c = dynamic_cast<T*>(m_components[getComponentID<T>()].get());

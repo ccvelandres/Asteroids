@@ -5,7 +5,7 @@
 
 Renderer::Renderer()
 {
-    m_renderer = SDL_CreateRenderer(Game::this_game().m_window,
+    m_renderer = SDL_CreateRenderer(Game::this_game()->m_window,
                                     -1,
                                     SDL_RENDERER_ACCELERATED);
 }

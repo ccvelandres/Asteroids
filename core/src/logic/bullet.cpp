@@ -38,7 +38,7 @@ void Bullet::update(time_ms delta)
         return;
 
     if ((m_transform->position.y < -50) ||
-        (m_shootTime + time_ms(5000) < Game::time().getTime<time_ms>()))
+        (m_shootTime + time_ms(5000) < Game::time()->getTime<time_ms>()))
     {
         m_isShot = false;
         logging::trace("{},{}: Freeing bullet object",
@@ -65,5 +65,5 @@ void Bullet::shoot(const Vector3F &position,
 
     m_isShot = true;
     m_render->enabled(true);
-    m_shootTime = Game::time().getTime<time_ms>();
+    m_shootTime = Game::time()->getTime<time_ms>();
 }

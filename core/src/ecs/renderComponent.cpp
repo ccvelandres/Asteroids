@@ -9,9 +9,9 @@ void RenderComponent::init()
 
 void RenderComponent::render()
 {
-    Renderer &r = Game::renderer();
+    Renderer *r = Game::renderer();
 
-    r.drawTexture2D(sprite->texture(),
+    r->drawTexture2D(sprite->texture(),
                     transform->position.x,
                     transform->position.y,
                     transform->scale.x,
