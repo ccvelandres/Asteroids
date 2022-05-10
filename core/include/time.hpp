@@ -34,7 +34,7 @@ private:
 
 protected:
 public:
-    Time() : m_timeScale(1) {}
+    Time();
     /** Unless needing the exact time, use unscaledTime as much as possible */
     template <typename T>
     static T getTime() { return std::chrono::duration_cast<T>(clock::now() - m_startTime); }
