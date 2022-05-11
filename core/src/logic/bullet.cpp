@@ -43,8 +43,7 @@ void Bullet::update(time_ms delta)
         (m_shootTime + time_ms(5000) < Game::time()->getTime<time_ms>()))
     {
         m_isShot = false;
-        logging::trace("{},{}: Freeing bullet object",
-                       __LINE__, __func__);
+        L_DEBUG("Freeing bullet object");
     }
 
     m_transform->position += (m_velocity / 1000.f) * delta.count();
@@ -61,8 +60,7 @@ void Bullet::shoot(const Vector3F &position,
     
     assert(m_isShot == false);
 
-    logging::debug("{},{}: Shooting bullet object",
-                   __LINE__, __func__);
+   L_DEBUG("Shooting bullet object");
 
     m_transform->position = position;
     m_velocity = velocity;

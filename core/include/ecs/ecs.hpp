@@ -243,8 +243,9 @@ public:
     template <typename T, typename... TArgs>
     T &addEntity(TArgs &&...args)
     {
-        logging::debug("{},{}: {}, hash({})", 
-            __LINE__, __func__,
+        L_TAG("EntityManager::addEntity");
+
+        L_DEBUG("{}, hash({})", 
             typeid(T).name(), 
             typeid(T).hash_code());
         T *e = new T(std::forward<TArgs>(args)...);
@@ -259,8 +260,9 @@ public:
     EntityList<T> addEntities(const int numEntities,
                               TArgs &&...args)
     {
-        logging::debug("{},{}: {}, count({}), hash({})", 
-            __LINE__, __func__,
+        L_TAG("EntityManager::addEntities");
+
+        L_DEBUG("{}, count({}), hash({})", 
             typeid(T).name(), 
             numEntities,
             typeid(T).hash_code());
