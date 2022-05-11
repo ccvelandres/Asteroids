@@ -11,6 +11,8 @@ Player::~Player()
 
 void Player::init()
 {
+    L_TAG("Player::init");
+    
     m_transform = &this->addComponent<TransformComponent>();
     m_sprite = &this->addComponent<SpriteComponent>();
     m_render = &this->addComponent<RenderComponent>();
@@ -38,10 +40,13 @@ void Player::init()
 
 void Player::preUpdate()
 {
+    L_TAG("Player::preUpdate");
 }
 
 void Player::update(time_ms delta)
 {
+    L_TAG("Player::update");
+
     float d = Game::time()->scaledDeltaTime<time_fs>().count();
     /** Movement */
     Vector3F l_inputForce(0);
@@ -96,4 +101,5 @@ void Player::update(time_ms delta)
 
 void Player::postUpdate()
 {
+    L_TAG("Player::postUpdate");
 }

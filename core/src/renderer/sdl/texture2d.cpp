@@ -29,6 +29,8 @@ Texture2D::Texture2D(std::shared_ptr<SDL_Texture> texture,
 std::shared_ptr<SDL_Texture> Texture2D::openTexture(SDL_Renderer *const renderer,
                                                     const std::string &filename)
 {
+    L_TAG("Texture2D::openTexture");
+
     SDL_Texture *t = IMG_LoadTexture(renderer, filename.c_str());
     if (t == NULL)
     {
@@ -50,6 +52,8 @@ std::shared_ptr<SDL_Texture> Texture2D::openTexture(SDL_Renderer *const renderer
 
 void Texture2D::deallocTexture(SDL_Texture *tex)
 {
+    L_TAG("Texture2D::deallocTexture");
+    
     logging::debug("{},{}: Texture unload ({})",
                    __LINE__, __func__, fmt::ptr(tex));
     SDL_DestroyTexture(tex);

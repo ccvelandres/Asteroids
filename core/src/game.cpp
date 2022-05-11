@@ -21,6 +21,8 @@ Game::Game(const std::string &windowTitle,
                                       m_windowWidth(windowWidth),
                                       m_windowHeight(windowHeight)
 {
+    L_TAG("Game::Game");
+
     /** Start profiling */
     EASY_PROFILER_ENABLE;
     profiler::startListen();
@@ -71,6 +73,7 @@ void Game::init()
 
 void Game::startGameLoop()
 {
+    L_TAG("Game::startGameLoop");
     bool isRunning = true;
 
     /** Register Event filter for exit @todo: replace this */

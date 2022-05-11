@@ -10,6 +10,8 @@ Enemy::~Enemy()
 
 void Enemy::init()
 {
+    L_TAG("Player::init");
+    
     m_transform = &this->addComponent<TransformComponent>();
     m_sprite = &this->addComponent<SpriteComponent>();
     m_render = &this->addComponent<RenderComponent>();
@@ -26,10 +28,14 @@ void Enemy::init()
 
 void Enemy::preUpdate()
 {
+    L_TAG("Player::preUpdate");
+
 }
 
 void Enemy::update(time_ms delta)
 {
+    L_TAG("Player::update");
+
     if (!m_isActive)
         return;
 
@@ -37,10 +43,14 @@ void Enemy::update(time_ms delta)
 
 void Enemy::postUpdate()
 {
+    L_TAG("Player::postUpdate");
+
 }
 
 void Enemy::spawn(int type, const Vector3F &position)
 {
+    L_TAG("Player::spawn");
+
     assert(m_isActive == false);
     m_sprite->setSpriteHandle(type);
     m_transform->position = position;

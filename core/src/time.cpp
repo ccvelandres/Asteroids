@@ -6,6 +6,8 @@ using namespace std::chrono;
 high_resolution_clock::time_point Time::m_startTime = high_resolution_clock::now();
 
 Time::Time() : m_timeScale(1) {
+    L_TAG("Time::Time");
+
     L_DEBUG("startTime {}", m_startTime.time_since_epoch().count());
     
     this->m_unscaledFrameDelta = time_ds(0);

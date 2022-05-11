@@ -1,13 +1,21 @@
 #include <game.hpp>
 #include <renderer.hpp>
 
+#include <utils/logging.hpp>
+
 #include <SDL_image.h>
 
 Renderer::Renderer()
 {
+    L_TAG("Renderer::Renderer");
+
     m_renderer = SDL_CreateRenderer(Game::this_game()->m_window,
                                     -1,
                                     SDL_RENDERER_ACCELERATED);
+    if (m_renderer = NULL)
+    {
+        L_ERROR("Failed to initialize renderer");
+    }
 }
 
 Renderer::~Renderer()

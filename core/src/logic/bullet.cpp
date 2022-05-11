@@ -34,6 +34,8 @@ void Bullet::preUpdate()
 
 void Bullet::update(time_ms delta)
 {
+    L_TAG("Bullet::update");
+
     if (!m_isShot)
         return;
 
@@ -55,6 +57,8 @@ void Bullet::postUpdate()
 void Bullet::shoot(const Vector3F &position,
                    const Vector3F &velocity)
 {
+    L_TAG("Bullet::shoot");
+    
     assert(m_isShot == false);
 
     logging::debug("{},{}: Shooting bullet object",
