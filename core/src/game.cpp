@@ -38,6 +38,11 @@ Game::Game(const std::string &windowTitle,
                                 m_windowHeight,
                                 SDL_WINDOW_SHOWN);
 
+    if (m_window == NULL)
+    {
+        L_ERROR("Failed to initialize window");
+    }
+
     if (m_game)
         assert("Only one Game class object may exist");
     m_game = this;
