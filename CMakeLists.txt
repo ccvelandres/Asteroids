@@ -35,22 +35,6 @@ target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_SOURCE_DIR}/core/inclu
 
 set(PROJECT_LIBRARY_DIR "${CMAKE_SOURCE_DIR}/lib")
 
-# set(CMAKE_MODULE_PATH "${CMAKE_MODULE_PATH} ${CMAKE_SOURCE_DIR}/lib/sdl2-cmake-scripts")
-# set(SDL2_PATH "${CMAKE_SOURCE_DIR}/lib/SDL")
-# message("CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH}")
-# message("SDL2_PATH ${SDL2_PATH}")
-
-# set(SDL2_PATH "${CMAKE_SOURCE_DIR}/lib/SDL")
-# ExternalProject_Add(sdl_project
-# SOURCE_DIR ${SDL2_PATH}
-#     BUILD_COMMAND $(MAKE)
-#     INSTALL_COMMAND $(MAKE) DESTDIR=${EXTERNAL_INSTALL_DIR} install
-#     CMAKE_ARGS
-#         -DSDL_STATIC=OFF
-#         -DCMAKE_TOOLCHAIN_FILE:FILEPATH=${CMAKE_TOOLCHAIN_FILE}
-#     )
-# set(SDL2_IMAGE_SRC "${CMAKE_SOURCE_DIR}/lib/SDL")
-
 # SDL2 can be replaced with find_package
 find_library(SDL2_LIBRARY NAME SDL2 PATHS ${SDL2_DIR})
 find_path(SDL2_INCLUDE_DIR SDL.h PATHS ${SDL2_DIR} PATH_SUFFIXES SDL2)
@@ -65,6 +49,10 @@ target_link_libraries(${PROJECT_NAME} PUBLIC ${SDL2_IMAGE_LIBRARY})
 target_include_directories(${PROJECT_NAME} PUBLIC ${SDL2_IMAGE_INCLUDE_DIR})
 message("SDL_image Library: ${SDL2_IMAGE_LIBRARY}")
 message("SDL_image IncludeDir: ${SDL2_IMAGE_INCLUDE_DIR}")
+
+# Vulkan
+find_package(Vulkan REQUIRED)
+target_link_libraries(${PROJECT_NAME} PUBLIC Vulkan::Vulkan)
 
 # fmt
 # add_subdirectory(${PROJECT_LIBRARY_DIR}/fmt)
@@ -85,15 +73,6 @@ ExternalProject_Get_Property(proj_easy_profiler BINARY_DIR)
 add_custom_command(TARGET proj_easy_profiler POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy_directory  ${BINARY_DIR}/bin/ ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}
 )
-
-# message("BuildType: ${CMAKE_BUILD_TYPE}")
-# if (CMAKE_BUILD_TYPE MATCHES "Debug")
-#     message("Building engine with easy_profiler")
-#     add_subdirectory(lib/easy_profiler)
-#     target_compile_definitions(${LIBRARY_NAME} PUBLIC BUILD_WITH_EASY_PROFILER)
-#     target_link_libraries(${LIBRARY_NAME} PUBLIC easy_profiler)
-# endif()
-
 #################################################################
 ## Core
 

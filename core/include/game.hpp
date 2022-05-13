@@ -12,7 +12,11 @@ class EntityManager;
 class ComponentManager;
 class EventManager;
 class InputManager;
+
 class Renderer;
+class SDLRenderer;
+class BaseRenderer;
+class VulkanRenderer;
 
 class Game
 {
@@ -33,8 +37,11 @@ private:
     static InputManager *m_inputManager;
     static Time* m_time;
 
-    friend Renderer;
+    static BaseRenderer *m_baseRenderer;
 
+    friend Renderer;
+    friend SDLRenderer;
+    friend VulkanRenderer;
 protected:
 public:
     Game(const std::string &windowTitle,

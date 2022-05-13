@@ -12,6 +12,7 @@ EntityManager *Game::m_entityManager = nullptr;
 ComponentManager *Game::m_componentManager = nullptr;
 EventManager *Game::m_eventManager = nullptr;
 Renderer *Game::m_renderer = nullptr;
+BaseRenderer *Game::m_baseRenderer = nullptr;
 InputManager *Game::m_inputManager = nullptr;
 Time *Game::m_time = nullptr;
 
@@ -36,7 +37,7 @@ Game::Game(const std::string &windowTitle,
                                 SDL_WINDOWPOS_CENTERED,
                                 m_windowWidth,
                                 m_windowHeight,
-                                SDL_WINDOW_SHOWN);
+                                SDL_WINDOW_SHOWN | SDL_WINDOW_VULKAN);
 
     if (m_window == NULL)
     {
@@ -47,7 +48,8 @@ Game::Game(const std::string &windowTitle,
         assert("Only one Game class object may exist");
     m_game = this;
     m_time = new Time();
-    m_renderer = new Renderer();
+    m_baseRenderer = new VulkanRenderer(m_window);
+    // m_renderer = new Renderer();
     m_inputManager = new InputManager();
     m_eventManager = new EventManager();
     m_componentManager = new ComponentManager();
