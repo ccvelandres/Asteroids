@@ -109,6 +109,17 @@ VulkanSwapchain::VulkanSwapchain(SDL_Window *window,
 
     vk::SurfaceCapabilitiesKHR surfaceCapabilities =
         physicalDevice.getPhysicalDevice().getSurfaceCapabilitiesKHR(surface);
+
+    L_DEBUG("minImageCount: {}", surfaceCapabilities.minImageCount);
+    L_DEBUG("maxImageCount: {}", surfaceCapabilities.maxImageCount);
+    
+    uint32_t minImageCount = surfaceCapabilities.minImageCount + 1;
+    if (surfaceCapabilities.maxImageCount == 0)
+        minImageCount = 4; // Request 4 images if there's no limit
+    else if (minImageCount > surfaceCapabilities.maxImageCount)
+        minImageCount = surfaceCapabilities.maxImageCount;
+    L_DEBUG("Requesting {} images for the swapchain", minImageCount);
+
     std::vector<vk::SurfaceFormatKHR> surfaceFormats =
         physicalDevice.getPhysicalDevice().getSurfaceFormatsKHR(surface);
     std::vector<vk::PresentModeKHR> presentModes =
@@ -152,7 +163,6 @@ VulkanSwapchain::VulkanSwapchain(SDL_Window *window,
 
     m_swapchain = device.getDevice().createSwapchainKHRUnique(swapchainCreateInfo);
     L_DEBUG("VulkanSwapchain successfully created");
-
 }
 
 VulkanSwapchain::~VulkanSwapchain()
