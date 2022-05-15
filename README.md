@@ -9,3 +9,7 @@
 
 
 ## Windows 
+
+# References
+- https://vulkan-tutorial.com/Introduction
+- http://marcelbraghetto.github.io/a-simple-triangle/
