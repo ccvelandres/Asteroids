@@ -2,6 +2,7 @@
 #include <ecs/ecs.hpp>
 #include <ecs/components.hpp>
 #include <renderer.hpp>
+#include <renderer/vulkan/vk-renderer.hpp>
 #include <event.hpp>
 #include <input/inputManager.hpp>
 
@@ -27,6 +28,8 @@ Game::Game(const std::string &windowTitle,
     /** Start profiling */
     EASY_PROFILER_ENABLE;
     profiler::startListen();
+    
+    m_game = this;
 
     if (SDL_Init(SDL_INIT_EVERYTHING) != 0)
     {
@@ -46,7 +49,7 @@ Game::Game(const std::string &windowTitle,
 
     if (m_game)
         assert("Only one Game class object may exist");
-    m_game = this;
+        
     m_time = new Time();
     m_baseRenderer = new VulkanRenderer(m_window);
     // m_renderer = new Renderer();

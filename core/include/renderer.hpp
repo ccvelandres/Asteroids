@@ -112,27 +112,3 @@ public:
     virtual void clean() {}
     virtual void refresh() {}
 };
-
-class VulkanRenderer : public BaseRenderer {
-private:
-    SDL_Window * const m_window;
-
-    vk::Instance m_instance;
-    vk::PhysicalDevice m_physicalDevice;
-    vk::PhysicalDeviceProperties m_physicalDeviceProperties;
-    vk::Device m_device;
-
-    vk::Queue m_graphicsQueue;
-    vk::Queue m_presentQueue;
-    vk::SurfaceKHR m_surface;
-
-    uint32_t m_graphicsQueueIndex;
-    uint32_t m_presentQueueIndex;
-
-    static vk::SurfaceKHR createSurface(SDL_Window *window, vk::Instance &instance);
-    static bool checkSwapchainSupport(vk::PhysicalDevice &device);
-protected:
-public:
-    VulkanRenderer(SDL_Window *window);
-    ~VulkanRenderer();
-};
