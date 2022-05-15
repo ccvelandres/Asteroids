@@ -2,7 +2,7 @@
 
 # Dependencies
 ## Linux
-- sudo apt install 
+- sudo apt install cmake build-essentials libsdl2-dev libsdl2-gfx-dev libsdl2-image-dev libvulkan-dev vulkan-validationlayers
 
 ### Cross-Compile - Windows
 - sudo apt install mingw-w64 binutils-mingw-w64
