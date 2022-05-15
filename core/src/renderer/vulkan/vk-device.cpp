@@ -138,3 +138,13 @@ vk::Queue &VulkanDevice::getPresentQueue()
 {
     return m_presentQueue;
 }
+
+uint32_t VulkanDevice::getGraphicsQueueIndex()
+{
+    return m_graphicsQueueIndex;
+}
+
+uint32_t VulkanDevice::getPresentQueueIndex()
+{
+    return m_presentQueueIndex;
+}

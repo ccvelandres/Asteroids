@@ -39,7 +39,7 @@ std::vector<const char *> VulkanInstance::getRequiredExtensions(SDL_Window *wind
         SDL_Vulkan_GetInstanceExtensions(window, &extensionCount, sdlExtensions.data());
         for (int i = 0; i < extensionCount; i++)
         {
-            L_DEBUG("Adding SDL InstanceExtension: {}", sdlExtensions[i]);
+            L_DEBUG("Adding SDLRequiredInstanceExtension: {}", sdlExtensions[i]);
             extensionNames.push_back(sdlExtensions[i]);
         }
     }

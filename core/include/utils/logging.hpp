@@ -10,6 +10,7 @@ namespace logging
 }
 
 /** Helper macros for appending the line and function */
+#define L_STRING(STR) #STR
 #define L_TAG(STR) \
     static const std::string tag__ { STR }
 
