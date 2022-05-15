@@ -4,7 +4,7 @@
 
 #include <utils/logging.hpp>
 
-std::vector<const char*> VulkanInstance::getValidationLayers()
+std::vector<const char *> VulkanInstance::getValidationLayers()
 {
     L_TAG("VulkanInstance::getValidationLayers");
 
@@ -26,7 +26,7 @@ std::vector<const char*> VulkanInstance::getValidationLayers()
     return desiredValidationLayers;
 }
 
-std::vector<const char*> VulkanInstance::getRequiredExtensions(SDL_Window *window)
+std::vector<const char *> VulkanInstance::getRequiredExtensions(SDL_Window *window)
 {
     L_TAG("VulkanInstance::getRequiredExtensions");
 
@@ -44,7 +44,8 @@ std::vector<const char*> VulkanInstance::getRequiredExtensions(SDL_Window *windo
         }
     }
 
-    for (const auto& extension : VulkanConfig::getInstanceExtensions()){
+    for (const auto &extension : VulkanConfig::getInstanceExtensions())
+    {
         extensionNames.push_back(extension);
     }
 
@@ -57,10 +58,10 @@ VulkanInstance::VulkanInstance(SDL_Window *window)
 
     /** Query some stuff about vulkan instance */
     uint32_t version = vk::enumerateInstanceVersion();
-    L_DEBUG("Vulkan API Version: {}.{}.{}", 
-        VK_VERSION_MAJOR(version),
-        VK_VERSION_MINOR(version),
-        VK_VERSION_PATCH(version));
+    L_DEBUG("Vulkan API Version: {}.{}.{}",
+            VK_VERSION_MAJOR(version),
+            VK_VERSION_MINOR(version),
+            VK_VERSION_PATCH(version));
 
     /** Check if validation layers are available and create a desired layers */
     std::vector<const char *> desiredValidationLayers = getValidationLayers();
@@ -80,7 +81,11 @@ VulkanInstance::VulkanInstance(SDL_Window *window)
     L_DEBUG("VulkanInstance successfully created");
 }
 
-vk::Instance& VulkanInstance::getInstance()
+VulkanInstance::~VulkanInstance()
+{
+}
+
+vk::Instance &VulkanInstance::getInstance()
 {
     return *m_instance;
 }

@@ -2,8 +2,9 @@
 
 #include <vulkan/vulkan.hpp>
 
-struct VulkanUtils {
+struct VulkanUtils
+{
     static bool checkSwapchainSupport(vk::PhysicalDevice &device);
-    static bool checkValidationLayerSupport(const char* validationLayers,
+    static bool checkValidationLayerSupport(const char *validationLayers,
                                             const std::vector<vk::LayerProperties> &availableLayers);
 };

@@ -3,7 +3,8 @@
 #include <SDL2/SDL_vulkan.h>
 #include <utils/logging.hpp>
 
-VulkanSurface::VulkanSurface(const vk::Instance &instance, SDL_Window *window)
+VulkanSurface::VulkanSurface(SDL_Window *window,
+                             const vk::Instance &instance)
 {
     L_TAG("VulkanSurface::VulkanSurface");
 
@@ -17,7 +18,11 @@ VulkanSurface::VulkanSurface(const vk::Instance &instance, SDL_Window *window)
     L_DEBUG("VulkanSurface successfully created");
 }
 
-vk::SurfaceKHR& VulkanSurface::getSurface()
+VulkanSurface::~VulkanSurface()
+{
+}
+
+vk::SurfaceKHR &VulkanSurface::getSurface()
 {
     return *m_surface;
 }

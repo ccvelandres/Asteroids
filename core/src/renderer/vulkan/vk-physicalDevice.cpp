@@ -7,7 +7,7 @@ VulkanPhysicalDevice::VulkanPhysicalDevice(const vk::Instance &instance)
 {
     L_TAG("VulkanPhysicalDevice::VulkanPhysicalDevice");
 
-    std::vector<vk::PhysicalDevice> physicalDevices = 
+    std::vector<vk::PhysicalDevice> physicalDevices =
         instance.enumeratePhysicalDevices();
 
     if (physicalDevices.empty())
@@ -16,7 +16,7 @@ VulkanPhysicalDevice::VulkanPhysicalDevice(const vk::Instance &instance)
     }
 
     m_physicalDevice = physicalDevices[0];
-    
+
     // Look if there is a discrete GPU, if not, stick with the first device
     for (auto &physicalDevice : physicalDevices)
     {
@@ -37,11 +37,15 @@ VulkanPhysicalDevice::VulkanPhysicalDevice(const vk::Instance &instance)
     L_INFO("Selected PhysicalDevice: {}", m_physicalDeviceProperties.deviceName);
     if (VulkanUtils::checkSwapchainSupport(m_physicalDevice))
         L_INFO("\tSwapchain support found");
-    else 
+    else
         L_THROW_RUNTIME("Device does not support swapchain");
 }
 
-vk::PhysicalDevice& VulkanPhysicalDevice::getPhysicalDevice()
+VulkanPhysicalDevice::~VulkanPhysicalDevice()
+{
+}
+
+vk::PhysicalDevice &VulkanPhysicalDevice::getPhysicalDevice()
 {
     return m_physicalDevice;
 }

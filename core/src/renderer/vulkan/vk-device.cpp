@@ -67,10 +67,10 @@ VulkanDevice::QueueConfig VulkanDevice::getQueueConfig(const vk::PhysicalDevice 
     return QueueConfig{graphicsQueueIndex, presentQueueIndex};
 }
 
-VulkanDevice::VulkanDevice(const vk::Instance &instance,
+VulkanDevice::VulkanDevice(SDL_Window *window,
+                           const vk::Instance &instance,
                            const vk::PhysicalDevice &physicalDevice,
-                           const vk::SurfaceKHR &surface,
-                           SDL_Window *window)
+                           const vk::SurfaceKHR &surface)
 {
     L_TAG("VulkanDevice::VulkanDevice");
 
@@ -118,6 +118,10 @@ VulkanDevice::VulkanDevice(const vk::Instance &instance,
     m_presentQueue = m_device->getQueue(queueConfig.presentQueueIndex, 0);
 
     L_DEBUG("VulkanDevice successfully created");
+}
+
+VulkanDevice::~VulkanDevice()
+{
 }
 
 vk::Device &VulkanDevice::getDevice()

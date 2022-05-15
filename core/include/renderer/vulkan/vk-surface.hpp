@@ -2,15 +2,19 @@
 
 #include <SDL2/SDL.h>
 #include <vulkan/vulkan.hpp>
-#include <memory> 
+#include <memory>
 
-class VulkanSurface {
+class VulkanSurface
+{
 private:
     vk::UniqueSurfaceKHR m_surface;
+
 protected:
 public:
-    VulkanSurface(const vk::Instance &instance, SDL_Window *window);
+    VulkanSurface(SDL_Window *window,
+                  const vk::Instance &instance);
+    ~VulkanSurface();
 
-    vk::SurfaceKHR& getSurface();
+    vk::SurfaceKHR &getSurface();
     operator vk::SurfaceKHR() { return getSurface(); }
 };

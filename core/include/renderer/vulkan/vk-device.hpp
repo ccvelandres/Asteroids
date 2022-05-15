@@ -18,10 +18,11 @@ private:
 
 protected:
 public:
-    VulkanDevice(const vk::Instance &instance,
-                const vk::PhysicalDevice &physicalDevice,
-                const vk::SurfaceKHR &surface,
-                SDL_Window *window);
+    VulkanDevice(SDL_Window *window,
+                 const vk::Instance &instance,
+                 const vk::PhysicalDevice &physicalDevice,
+                 const vk::SurfaceKHR &surface);
+    ~VulkanDevice();
 
     vk::Device &getDevice();
     vk::Queue &getGraphicsQueue();

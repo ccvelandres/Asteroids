@@ -1,10 +1,11 @@
 #pragma once
 
 #include <vulkan/vulkan.hpp>
-#include <vector> 
+#include <vector>
 
-struct VulkanConfig {
+struct VulkanConfig
+{
     static const vk::ApplicationInfo *getApplicationInfo();
-    static const std::vector<const char*> getValidationLayers();
-    static const std::vector<const char*> getInstanceExtensions();
+    static const std::vector<const char *> getValidationLayers();
+    static const std::vector<const char *> getInstanceExtensions();
 };

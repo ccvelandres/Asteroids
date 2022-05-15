@@ -14,6 +14,7 @@ private:
 protected:
 public:
     VulkanInstance(SDL_Window *window);
+    ~VulkanInstance();
 
     vk::Instance& getInstance();
     operator vk::Instance() { return getInstance(); }
