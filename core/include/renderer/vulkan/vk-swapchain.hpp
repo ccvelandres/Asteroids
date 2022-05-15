@@ -8,10 +8,16 @@
 #include "vk-surface.hpp"
 #include "vk-device.hpp"
 
+#include <vector>
+
 class VulkanSwapchain
 {
 private:
     vk::UniqueSwapchainKHR m_swapchain;
+    std::vector<vk::Image> m_images;
+    vk::SurfaceFormatKHR m_format;
+    vk::PresentModeKHR m_presentMode;
+    vk::Extent2D m_extent;
 
     static vk::SurfaceFormatKHR chooseSurfaceFormat(std::vector<vk::SurfaceFormatKHR> &surfaceFormats);
     static vk::PresentModeKHR choosePresentMode(std::vector<vk::PresentModeKHR> &presentModes);
@@ -29,4 +35,9 @@ public:
 
     vk::SwapchainKHR &getSwapchain();
     operator vk::SwapchainKHR() { return getSwapchain(); }
+
+    std::vector<vk::Image> &getImages();
+    vk::SurfaceFormatKHR &getFormat();
+    vk::PresentModeKHR &getPresentMode();
+    vk::Extent2D &getExtent();
 };

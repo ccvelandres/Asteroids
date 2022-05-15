@@ -103,16 +103,12 @@ VulkanSwapchain::VulkanSwapchain(SDL_Window *window,
 {
     L_TAG("VulkanSwapchain::VulkanSwapchain");
 
-    vk::SurfaceFormatKHR format;
-    vk::PresentModeKHR presentMode;
-    vk::Extent2D extent;
-
     vk::SurfaceCapabilitiesKHR surfaceCapabilities =
         physicalDevice.getPhysicalDevice().getSurfaceCapabilitiesKHR(surface);
 
     L_DEBUG("minImageCount: {}", surfaceCapabilities.minImageCount);
     L_DEBUG("maxImageCount: {}", surfaceCapabilities.maxImageCount);
-    
+
     uint32_t minImageCount = surfaceCapabilities.minImageCount + 1;
     if (surfaceCapabilities.maxImageCount == 0)
         minImageCount = 4; // Request 4 images if there's no limit
@@ -125,28 +121,27 @@ VulkanSwapchain::VulkanSwapchain(SDL_Window *window,
     std::vector<vk::PresentModeKHR> presentModes =
         physicalDevice.getPhysicalDevice().getSurfacePresentModesKHR(surface);
 
-    format = chooseSurfaceFormat(surfaceFormats);
-    L_DEBUG("vk::Format: {}", vk::to_string(format.format));
-    L_DEBUG("vk::ColorSpaceKHR: {}", vk::to_string(format.colorSpace));
+    m_format = chooseSurfaceFormat(surfaceFormats);
+    L_DEBUG("vk::Format: {}", vk::to_string(m_format.format));
+    L_DEBUG("vk::ColorSpaceKHR: {}", vk::to_string(m_format.colorSpace));
 
-    presentMode = choosePresentMode(presentModes);
-    L_DEBUG("vk::PresentModeKHR: {}", vk::to_string(presentMode));
+    m_presentMode = choosePresentMode(presentModes);
+    L_DEBUG("vk::PresentModeKHR: {}", vk::to_string(m_presentMode));
 
-    extent = getSwapExtent(window, surfaceCapabilities);
-    L_DEBUG("SwapExtent: {},{}", extent.width, extent.height);
+    m_extent = getSwapExtent(window, surfaceCapabilities);
+    L_DEBUG("SwapExtent: {},{}", m_extent.width, m_extent.height);
 
     vk::SwapchainCreateInfoKHR swapchainCreateInfo;
     swapchainCreateInfo.setSurface(surface)
         .setMinImageCount(surfaceCapabilities.minImageCount + 1)
-        .setImageFormat(format.format)
-        .setImageColorSpace(format.colorSpace)
-        .setImageExtent(extent)
+        .setImageFormat(m_format.format)
+        .setImageColorSpace(m_format.colorSpace)
+        .setImageExtent(m_extent)
         .setImageArrayLayers(1)
         .setImageUsage(vk::ImageUsageFlagBits::eColorAttachment)
-        .setImageSharingMode(vk::SharingMode::eConcurrent)
         .setPreTransform(surfaceCapabilities.currentTransform)
         .setCompositeAlpha(vk::CompositeAlphaFlagBitsKHR::eOpaque)
-        .setPresentMode(presentMode)
+        .setPresentMode(m_presentMode)
         .setClipped(VK_TRUE);
 
     uint32_t queueFamilyIndices[] =
@@ -162,7 +157,9 @@ VulkanSwapchain::VulkanSwapchain(SDL_Window *window,
     }
 
     m_swapchain = device.getDevice().createSwapchainKHRUnique(swapchainCreateInfo);
-    L_DEBUG("VulkanSwapchain successfully created");
+    L_DEBUG("Swapchain successfully created");
+
+    m_images = device.getDevice().getSwapchainImagesKHR(*m_swapchain);
 }
 
 VulkanSwapchain::~VulkanSwapchain()
@@ -172,4 +169,24 @@ VulkanSwapchain::~VulkanSwapchain()
 vk::SwapchainKHR &VulkanSwapchain::getSwapchain()
 {
     return *m_swapchain;
+}
+
+std::vector<vk::Image> &VulkanSwapchain::getImages()
+{
+    return m_images;
+}
+
+vk::SurfaceFormatKHR &VulkanSwapchain::getFormat()
+{
+    return m_format;
+}
+
+vk::PresentModeKHR &VulkanSwapchain::getPresentMode()
+{
+    return m_presentMode;
+}
+
+vk::Extent2D &VulkanSwapchain::getExtent()
+{
+    return m_extent;
 }
