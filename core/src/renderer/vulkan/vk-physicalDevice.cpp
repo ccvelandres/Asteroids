@@ -3,12 +3,12 @@
 
 #include <utils/logging.hpp>
 
-VulkanPhysicalDevice::VulkanPhysicalDevice(const vk::Instance &instance)
+VulkanPhysicalDevice::VulkanPhysicalDevice(VulkanInstance &instance)
 {
     L_TAG("VulkanPhysicalDevice::VulkanPhysicalDevice");
 
     std::vector<vk::PhysicalDevice> physicalDevices =
-        instance.enumeratePhysicalDevices();
+        instance.getInstance().enumeratePhysicalDevices();
 
     if (physicalDevices.empty())
     {

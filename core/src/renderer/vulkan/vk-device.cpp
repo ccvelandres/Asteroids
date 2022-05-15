@@ -9,8 +9,8 @@ struct VulkanDevice::QueueConfig
     uint32_t presentQueueIndex;
 };
 
-VulkanDevice::QueueConfig VulkanDevice::getQueueConfig(const vk::PhysicalDevice &physicalDevice,
-                                                       const vk::SurfaceKHR &surface)
+VulkanDevice::QueueConfig VulkanDevice::getQueueConfig(VulkanPhysicalDevice &physicalDevice,
+                                                       VulkanSurface &surface)
 {
     L_TAG("VulkanDevice::getQueueConfig");
 
@@ -18,8 +18,10 @@ VulkanDevice::QueueConfig VulkanDevice::getQueueConfig(const vk::PhysicalDevice 
     uint32_t graphicsQueueIndex = maxIndex;
     uint32_t presentQueueIndex = maxIndex;
 
+    auto phyDevice = physicalDevice.getPhysicalDevice();
+
     std::vector<vk::QueueFamilyProperties> queueFamilyProperties =
-        physicalDevice.getQueueFamilyProperties();
+        phyDevice.getQueueFamilyProperties();
 
     for (uint32_t i = 0; i < queueFamilyProperties.size(); i++)
     {
@@ -30,7 +32,7 @@ VulkanDevice::QueueConfig VulkanDevice::getQueueConfig(const vk::PhysicalDevice 
             if (graphicsQueueIndex == maxIndex)
                 graphicsQueueIndex = i;
 
-            if (physicalDevice.getSurfaceSupportKHR(i, surface))
+            if (phyDevice.getSurfaceSupportKHR(i, surface))
             {
                 graphicsQueueIndex = presentQueueIndex = i;
                 L_DEBUG("Using same queue for graphics and presentation");
@@ -50,7 +52,7 @@ VulkanDevice::QueueConfig VulkanDevice::getQueueConfig(const vk::PhysicalDevice 
     {
         for (uint32_t i = 0; i < queueFamilyProperties.size(); i++)
         {
-            if (physicalDevice.getSurfaceSupportKHR(i, surface))
+            if (phyDevice.getSurfaceSupportKHR(i, surface))
             {
                 presentQueueIndex = i;
                 break;
@@ -68,13 +70,13 @@ VulkanDevice::QueueConfig VulkanDevice::getQueueConfig(const vk::PhysicalDevice 
 }
 
 VulkanDevice::VulkanDevice(SDL_Window *window,
-                           const vk::Instance &instance,
-                           const vk::PhysicalDevice &physicalDevice,
-                           const vk::SurfaceKHR &surface)
+                           VulkanPhysicalDevice &physicalDevice,
+                           VulkanSurface &surface)
 {
     L_TAG("VulkanDevice::VulkanDevice");
 
     const float queuePriority = 1.0f;
+    auto phyDevice = physicalDevice.getPhysicalDevice();
 
     QueueConfig queueConfig = getQueueConfig(physicalDevice, surface);
 
@@ -111,7 +113,7 @@ VulkanDevice::VulkanDevice(SDL_Window *window,
         nullptr);
 
     // Create the device
-    m_device = physicalDevice.createDeviceUnique(deviceCreateInfo);
+    m_device = phyDevice.createDeviceUnique(deviceCreateInfo);
 
     // Get the queues
     m_graphicsQueue = m_device->getQueue(queueConfig.graphicsQueueIndex, 0);

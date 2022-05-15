@@ -4,6 +4,8 @@
 #include <vulkan/vulkan.hpp>
 #include <memory>
 
+#include "vk-instance.hpp"
+
 class VulkanSurface
 {
 private:
@@ -12,7 +14,7 @@ private:
 protected:
 public:
     VulkanSurface(SDL_Window *window,
-                  const vk::Instance &instance);
+                  VulkanInstance &instance);
     ~VulkanSurface();
 
     vk::SurfaceKHR &getSurface();

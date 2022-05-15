@@ -3,6 +3,8 @@
 #include <vulkan/vulkan.hpp>
 #include <memory>
 
+#include "vk-instance.hpp"
+
 class VulkanPhysicalDevice
 {
 private:
@@ -10,7 +12,7 @@ private:
 
 protected:
 public:
-    VulkanPhysicalDevice(const vk::Instance &instance);
+    VulkanPhysicalDevice(VulkanInstance &instance);
     ~VulkanPhysicalDevice();
 
     vk::PhysicalDevice &getPhysicalDevice();

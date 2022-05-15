@@ -4,6 +4,10 @@
 #include <vulkan/vulkan.hpp>
 #include <memory>
 
+#include "vk-instance.hpp"
+#include "vk-phyiscalDevice.hpp"
+#include "vk-surface.hpp"
+
 class VulkanDevice
 {
 private:
@@ -14,14 +18,13 @@ private:
     vk::Queue m_presentQueue;
 
     struct QueueConfig;
-    static QueueConfig getQueueConfig(const vk::PhysicalDevice &physicalDevice,
-                                      const vk::SurfaceKHR &surface);
+    static QueueConfig getQueueConfig(VulkanPhysicalDevice &physicalDevice,
+                                      VulkanSurface &surface);
 protected:
 public:
     VulkanDevice(SDL_Window *window,
-                 const vk::Instance &instance,
-                 const vk::PhysicalDevice &physicalDevice,
-                 const vk::SurfaceKHR &surface);
+                 VulkanPhysicalDevice &physicalDevice,
+                 VulkanSurface &surface);
     ~VulkanDevice();
 
     vk::Device &getDevice();
