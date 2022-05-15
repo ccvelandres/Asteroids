@@ -116,6 +116,8 @@ VulkanDevice::VulkanDevice(SDL_Window *window,
     m_device = phyDevice.createDeviceUnique(deviceCreateInfo);
 
     // Get the queues
+    m_graphicsQueueIndex = queueConfig.graphicsQueueIndex;
+    m_presentQueueIndex = queueConfig.presentQueueIndex;
     m_graphicsQueue = m_device->getQueue(queueConfig.graphicsQueueIndex, 0);
     m_presentQueue = m_device->getQueue(queueConfig.presentQueueIndex, 0);
 
