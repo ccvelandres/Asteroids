@@ -3,9 +3,6 @@
 #include <SDL2/SDL.h>
 #include <vulkan/vulkan.hpp>
 
-#include "vk-instance.hpp"
-#include "vk-phyiscalDevice.hpp"
-#include "vk-surface.hpp"
 #include "vk-device.hpp"
 #include "vk-swapchain.hpp"
 
@@ -14,17 +11,15 @@
 class VulkanImageView
 {
 private:
-    std::vector<vk::ImageView> m_imageViews;
+    std::vector<vk::UniqueImageView> m_imageViews;
 
 protected:
 public:
-    VulkanImageView(SDL_Window *window,
-                    VulkanInstance &instance,
-                    VulkanPhysicalDevice &physicalDevice,
-                    VulkanSurface &surface,
-                    VulkanDevice &device,
+    VulkanImageView(VulkanDevice &device,
                     VulkanSwapchain &swapchain);
-                    
+
     ~VulkanImageView();
 
+    vk::ImageView &getImageViews(const int index);
+    vk::ImageView &operator[] (std::size_t index) { return getImageViews(index); }
 };

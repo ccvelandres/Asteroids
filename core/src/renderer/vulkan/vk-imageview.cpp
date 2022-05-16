@@ -7,23 +7,41 @@
 #include <limits>
 #include <algorithm>
 
-VulkanImageView::VulkanImageView(SDL_Window *window,
-                                 VulkanInstance &instance,
-                                 VulkanPhysicalDevice &physicalDevice,
-                                 VulkanSurface &surface,
-                                 VulkanDevice &device,
+VulkanImageView::VulkanImageView(VulkanDevice &device,
                                  VulkanSwapchain &swapchain)
 {
     L_TAG("VulkanImageView::VulkanImageView");
 
-    std::vector<vk::Image> images = swapchain.getImages();
+    vk::ImageSubresourceRange imageSubresourceRange(vk::ImageAspectFlags(), 0, 1, 0, 1);
+    vk::ComponentMapping componentMapping(vk::ComponentSwizzle::eIdentity,
+                                          vk::ComponentSwizzle::eIdentity,
+                                          vk::ComponentSwizzle::eIdentity,
+                                          vk::ComponentSwizzle::eIdentity);
 
-    m_imageViews.resize(images.size());
+    for (const auto &image : swapchain.getImages())
+    {
+        vk::ImageViewCreateInfo imageViewCreateInfo = {};
+        imageViewCreateInfo.setImage(image)
+            .setViewType(vk::ImageViewType::e2D)
+            .setFormat(swapchain.getFormat().format)
+            .setComponents(componentMapping)
+            .setSubresourceRange(imageSubresourceRange);
 
-    
+        m_imageViews.push_back(device.getDevice().createImageViewUnique(imageViewCreateInfo));
+    }
 }
 
 VulkanImageView::~VulkanImageView()
 {
-    
+}
+
+vk::ImageView &VulkanImageView::getImageViews(const int index)
+{
+    L_TAG("VulkanImageView::getImageViews");
+
+    if (index >= m_imageViews.size())
+    {
+        L_THROW(std::out_of_range, "MaxIndex: {} Argument: {}", m_imageViews.size(), index);
+    }
+    return *m_imageViews[index];
 }
