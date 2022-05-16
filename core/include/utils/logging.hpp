@@ -21,4 +21,6 @@ namespace logging
 #define L_DEBUG(STR, ...) L_LOG(debug, STR, ##__VA_ARGS__)
 #define L_TRACE(STR, ...) L_LOG(trace, STR, ##__VA_ARGS__)
 
-#define L_THROW_RUNTIME(STR, ...) throw std::runtime_error(fmt::format("[{}] " STR, tag__, ##__VA_ARGS__));
+#define L_THROW(EX, STR, ...) throw EX(fmt::format("[{}] " STR, tag__, ##__VA_ARGS__))
+#define L_THROW_RUNTIME(STR, ...) L_THROW(std::runtime_error, STR, ##__VA_ARGS__)
+#define L_THROW_LOGIC(STR, ...) L_THROW(std::logic_error, STR, ##__VA_ARGS__)
