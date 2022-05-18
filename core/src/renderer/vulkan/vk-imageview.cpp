@@ -4,15 +4,15 @@
 
 #include <utils/logging.hpp>
 
-#include <limits>
 #include <algorithm>
+#include <limits>
 
 VulkanImageView::VulkanImageView(VulkanDevice &device,
                                  VulkanSwapchain &swapchain)
 {
     L_TAG("VulkanImageView::VulkanImageView");
 
-    vk::ImageSubresourceRange imageSubresourceRange(vk::ImageAspectFlags(), 0, 1, 0, 1);
+    vk::ImageSubresourceRange imageSubresourceRange(vk::ImageAspectFlagBits::eColor, 0, 1, 0, 1);
     vk::ComponentMapping componentMapping(vk::ComponentSwizzle::eIdentity,
                                           vk::ComponentSwizzle::eIdentity,
                                           vk::ComponentSwizzle::eIdentity,
