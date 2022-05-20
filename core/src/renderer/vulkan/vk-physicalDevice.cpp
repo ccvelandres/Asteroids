@@ -49,3 +49,39 @@ vk::PhysicalDevice &VulkanPhysicalDevice::getPhysicalDevice()
 {
     return m_physicalDevice;
 }
+
+vk::SampleCountFlagBits VulkanPhysicalDevice::getMultisampling()
+{
+    L_TAG("VulkanPhysicalDevice::getMultisampling");
+
+    vk::PhysicalDeviceProperties deviceProperties = m_physicalDevice.getProperties();
+    vk::SampleCountFlags deviceSampleCounts = deviceProperties.limits.framebufferColorSampleCounts;
+    const std::vector<vk::SampleCountFlagBits> preferredSampleCounts = {vk::SampleCountFlagBits::e8,
+                                                                        vk::SampleCountFlagBits::e4,
+                                                                        vk::SampleCountFlagBits::e2,
+                                                                        vk::SampleCountFlagBits::e1};
+
+    for (const auto &sampleCount : preferredSampleCounts)
+    {
+        if (deviceSampleCounts & sampleCount)
+        {
+            return sampleCount;
+        }
+    }
+
+    L_THROW_RUNTIME("Multisampling not supported");
+}
+
+vk::Format VulkanPhysicalDevice::getDepthFormat()
+{
+    L_TAG("VulkanPhysicalDevice::getDepthFormat");
+
+    vk::FormatProperties formatProperties = m_physicalDevice.getFormatProperties(vk::Format::eD32Sfloat);
+
+    if (formatProperties.optimalTilingFeatures & vk::FormatFeatureFlagBits::eDepthStencilAttachment)
+    {
+        return vk::Format::eD32Sfloat;
+    }
+
+    L_THROW_RUNTIME("32bit signed depth stencil format unsupported");
+}
