@@ -17,4 +17,7 @@ public:
 
     vk::PhysicalDevice &getPhysicalDevice();
     operator vk::PhysicalDevice() { return getPhysicalDevice(); }
+
+    vk::SampleCountFlagBits getMultisampling();
+    vk::Format getDepthFormat();
 };

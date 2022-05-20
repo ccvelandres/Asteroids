@@ -1,4 +1,4 @@
-#include <renderer/vulkan/vk-phyiscalDevice.hpp>
+#include <renderer/vulkan/vk-physicalDevice.hpp>
 #include <renderer/vulkan/vk-utils.hpp>
 
 #include <utils/logging.hpp>

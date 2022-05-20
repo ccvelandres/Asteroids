@@ -4,7 +4,7 @@
 #include <vulkan/vulkan.hpp>
 
 #include "vk-instance.hpp"
-#include "vk-phyiscalDevice.hpp"
+#include "vk-physicalDevice.hpp"
 #include "vk-surface.hpp"
 #include "vk-device.hpp"
 

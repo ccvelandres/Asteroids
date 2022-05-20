@@ -5,7 +5,7 @@
 #include <memory>
 
 #include "vk-instance.hpp"
-#include "vk-phyiscalDevice.hpp"
+#include "vk-physicalDevice.hpp"
 #include "vk-surface.hpp"
 
 class VulkanDevice
