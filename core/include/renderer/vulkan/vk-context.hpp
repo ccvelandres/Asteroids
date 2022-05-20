@@ -6,8 +6,7 @@
 #include "vk-physicalDevice.hpp"
 #include "vk-surface.hpp"
 #include "vk-device.hpp"
-#include "vk-swapchain.hpp"
-#include "vk-imageview.hpp"
+#include "vk-rendercontext.hpp"
 
 class VulkanContext
 {
@@ -16,8 +15,7 @@ private:
     VulkanPhysicalDevice m_physicalDevice;
     VulkanSurface m_surface;
     VulkanDevice m_device;
-    VulkanSwapchain m_swapchain;
-    VulkanImageView m_imageview;
+    VulkanRenderContext m_renderContext;
 protected:
 public:
     VulkanContext(SDL_Window *window);
