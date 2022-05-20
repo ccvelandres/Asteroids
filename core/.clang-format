@@ -2,8 +2,8 @@
 Language:        Cpp
 BasedOnStyle:  LLVM
 AccessModifierOffset: -4
-# AlignAfterOpenBracket: Align
-# AlignArrayOfStructures: Right
+AlignAfterOpenBracket: Align
+AlignArrayOfStructures: Right
 # AlignConsecutiveAssignments: None
 # AlignConsecutiveBitFields: None
 # AlignConsecutiveDeclarations: None
@@ -28,29 +28,29 @@ AllowShortIfStatementsOnASingleLine: WithoutElse
 # AttributeMacros: [ '__unused' ] # used for language extenstions
 BinPackArguments: false
 BinPackParameters: false
-# BitFieldColonSpacing: Both
-# BraceWrapping:
-#   AfterCaseLabel:  false
-#   AfterClass:      true
-#   AfterControlStatement: Always
-#   AfterEnum:       true
-#   AfterFunction:   true
-#   AfterNamespace:  true
-#   AfterObjCDeclaration: true
-#   AfterStruct:     true
-#   AfterUnion:      true
-#   AfterExternBlock : true
-#   BeforeLambdaBody: false
-#   BeforeWhile : false
-#   BeforeCatch:     true
-#   BeforeElse:      true
-#   IndentBraces:    false
-#   SplitEmptyFunction: true
-#   SplitEmptyRecord : true
-#   SplitEmptyNamespace : true
+BitFieldColonSpacing: Both
+BraceWrapping:
+  AfterCaseLabel:  false
+  AfterClass:      true
+  AfterControlStatement: Always
+  AfterEnum:       true
+  AfterFunction:   true
+  AfterNamespace:  true
+  AfterObjCDeclaration: true
+  AfterStruct:     true
+  AfterUnion:      true
+  AfterExternBlock : true
+  BeforeLambdaBody: false
+  BeforeWhile : false
+  BeforeCatch:     true
+  BeforeElse:      true
+  IndentBraces:    false
+  SplitEmptyFunction: true
+  SplitEmptyRecord : true
+  SplitEmptyNamespace : true
 # BreakAfterJavaFieldAnnotations: true
 BreakBeforeBinaryOperators: NonAssignment
-BreakBeforeBraces: Allman
+BreakBeforeBraces: Custom
 # BreakBeforeTernaryOperators: false
 # BreakConstructorInitializers: AfterColon
 # BreakInheritanceList: AfterColon
