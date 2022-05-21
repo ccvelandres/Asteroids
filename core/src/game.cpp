@@ -52,6 +52,7 @@ Game::Game(const std::string &windowTitle,
         
     m_time = new Time();
     m_baseRenderer = new VulkanRenderer(m_window);
+    while(1);
     // m_renderer = new Renderer();
     m_inputManager = new InputManager();
     m_eventManager = new EventManager();
