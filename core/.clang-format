@@ -4,16 +4,16 @@ BasedOnStyle:  LLVM
 AccessModifierOffset: -4
 AlignAfterOpenBracket: Align
 AlignArrayOfStructures: Right
-# AlignConsecutiveAssignments: None
-# AlignConsecutiveBitFields: None
-# AlignConsecutiveDeclarations: None
-# AlignConsecutiveMacros: Consecutive
-# AlignEscapedNewlines: Left
-# AlignOperands: AlignAfterOperator
-# AlignTrailingComments: true
-# AllowAllArgumentsOnNextLine: false
-# AllowAllConstructorInitializersOnNextLine: false
-# AllowAllParametersOfDeclarationOnNextLine: false
+AlignConsecutiveAssignments : Consecutive
+AlignConsecutiveBitFields : Consecutive
+AlignConsecutiveDeclarations : Consecutive
+AlignConsecutiveMacros: Consecutive
+AlignEscapedNewlines: Left
+AlignOperands: AlignAfterOperator
+AlignTrailingComments: true
+AllowAllArgumentsOnNextLine: true
+AllowAllConstructorInitializersOnNextLine: true
+AllowAllParametersOfDeclarationOnNextLine: true
 # AllowShortBlocksOnASingleLine: true
 # AllowShortCaseLabelsOnASingleLine: false
 # AllowShortEnumsOnASingleLine: false
@@ -22,9 +22,9 @@ AllowShortIfStatementsOnASingleLine: WithoutElse
 # AllowShortLambdasOnASingleLine: None
 # AllowShortLoopsOnASingleLine: true
 # AlwaysBreakAfterDefinitionReturnType: None
-# AlwaysBreakAfterReturnType: None
-# AlwaysBreakBeforeMultilineStrings: false
-# AlwaysBreakTemplateDeclarations: Yes
+AlwaysBreakAfterReturnType: None
+AlwaysBreakBeforeMultilineStrings: false
+AlwaysBreakTemplateDeclarations: Yes
 # AttributeMacros: [ '__unused' ] # used for language extenstions
 BinPackArguments: false
 BinPackParameters: false
@@ -54,8 +54,8 @@ BreakBeforeBraces: Custom
 # BreakBeforeTernaryOperators: false
 # BreakConstructorInitializers: AfterColon
 # BreakInheritanceList: AfterColon
-# BreakStringLiterals: true
-ColumnLimit:     0
+BreakStringLiterals: true
+ColumnLimit:     100
 # CommentPragmas:  '^ IWYU pragma:'
 # CompactNamespaces: false
 ConstructorInitializerIndentWidth: 4
@@ -115,26 +115,26 @@ SortIncludes: CaseInsensitive
 # SpaceAfterLogicalNot: false
 # SpaceAfterTemplateKeyword: false
 # SpaceAroundPointerQualifiers: Default
-# SpaceBeforeAssignmentOperators: true
-# SpaceBeforeCaseColon: false
-# SpaceBeforeCpp11BracedList: false
-# SpaceBeforeCtorInitializerColon: true
-# SpaceBeforeInheritanceColon: true
-# SpaceBeforeParens: ControlStatements
-# SpaceBeforeRangeBasedForLoopColon: true
-# SpaceBeforeSquareBrackets: true
-# SpaceInEmptyBlock: false
-# SpaceInEmptyParentheses: false
-# SpacesBeforeTrailingComments: 1
-# SpacesInAngles:  false
-# SpacesInCStyleCastParentheses: false
-# SpacesInConditionalStatement: false
-# SpacesInContainerLiterals: false
+SpaceBeforeAssignmentOperators: true
+SpaceBeforeCaseColon: false
+SpaceBeforeCpp11BracedList: false
+SpaceBeforeCtorInitializerColon: true
+SpaceBeforeInheritanceColon: true
+SpaceBeforeParens: ControlStatements
+SpaceBeforeRangeBasedForLoopColon: true
+SpaceBeforeSquareBrackets: true
+SpaceInEmptyBlock: false
+SpaceInEmptyParentheses: false
+SpacesBeforeTrailingComments: 1
+SpacesInAngles:  false
+SpacesInCStyleCastParentheses: false
+SpacesInConditionalStatement: false
+SpacesInContainerLiterals: false
 # SpacesInLineCommentPrefix:
 #   Minimum: 1
 #   Maximum: -1
-# SpacesInParentheses: false
-# SpacesInSquareBrackets: false
+SpacesInParentheses: true
+SpacesInSquareBrackets: false
 # Standard: Auto
 # TabWidth:        4
 # UseTab:          Never
