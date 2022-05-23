@@ -12,6 +12,8 @@ VulkanRenderContext::VulkanRenderContext(SDL_Window *window,
                                                                    m_imageview(device, m_swapchain)
 {
     L_TAG("VulkanRenderContext::VulkanRenderContext");
+
+    
 }
 
 VulkanRenderContext::~VulkanRenderContext()
