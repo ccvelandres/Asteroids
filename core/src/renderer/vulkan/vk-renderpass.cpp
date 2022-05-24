@@ -38,8 +38,57 @@ VulkanRenderPass::VulkanRenderPass( VulkanPhysicalDevice &physicalDevice,
                                    vk::AttachmentStoreOp::eDontCare,
                                    vk::ImageLayout::eUndefined,
                                    vk::ImageLayout::eDepthStencilAttachmentOptimal );
+    vk::AttachmentReference depthAttachmentReference =
+        vk::AttachmentReference( 1, vk::ImageLayout::eDepthStencilAttachmentOptimal );
 
-    vk::RenderPassCreateInfo renderPassCreateInfo;
+    vk::AttachmentDescription multisamplingAttachment =
+        vk::AttachmentDescription( vk::AttachmentDescriptionFlags(),
+                                   colorFormat,
+                                   vk::SampleCountFlagBits::e1,
+                                   vk::AttachmentLoadOp::eDontCare,
+                                   vk::AttachmentStoreOp::eStore,
+                                   vk::AttachmentLoadOp::eDontCare,
+                                   vk::AttachmentStoreOp::eDontCare,
+                                   vk::ImageLayout::eUndefined,
+                                   vk::ImageLayout::ePresentSrcKHR );
+    vk::AttachmentReference multisamplingAttachmentReference =
+        vk::AttachmentReference( 2, vk::ImageLayout::eColorAttachmentOptimal );
+
+    std::array<vk::AttachmentDescription, 3> attachments = {
+        colorAttachment, depthAttachment, multisamplingAttachment };
+
+    vk::SubpassDescription subpassDescription =
+        vk::SubpassDescription( vk::SubpassDescriptionFlags(),
+                                vk::PipelineBindPoint::eGraphics,
+                                0,
+                                nullptr,
+                                1,
+                                &colorAttachmentReference,
+                                &multisamplingAttachmentReference,
+                                &depthAttachmentReference,
+                                0,
+                                nullptr );
+
+    vk::SubpassDependency subpassDependencies = vk::SubpassDependency(
+        0,
+        0,
+        vk::PipelineStageFlagBits::eColorAttachmentOutput,
+        vk::PipelineStageFlagBits::eColorAttachmentOutput,
+        vk::AccessFlags(),
+        vk::AccessFlagBits::eColorAttachmentRead | vk::AccessFlagBits::eColorAttachmentWrite,
+        vk::DependencyFlags() );
+
+    vk::RenderPassCreateInfo renderPassCreateInfo =
+        vk::RenderPassCreateInfo( vk::RenderPassCreateFlags(),
+                                  static_cast<uint32_t>( attachments.size() ),
+                                  attachments.data(),
+                                  1,
+                                  &subpassDescription,
+                                  1,
+                                  &subpassDependencies );
+
+    m_renderpass = device.getDevice().createRenderPassUnique( renderPassCreateInfo );
+    L_DEBUG("Renderpass created");
 }
 
 VulkanRenderPass::~VulkanRenderPass() {}
