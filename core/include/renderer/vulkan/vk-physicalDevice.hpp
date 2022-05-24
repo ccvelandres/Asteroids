@@ -16,8 +16,9 @@ public:
     ~VulkanPhysicalDevice();
 
     vk::PhysicalDevice     &getPhysicalDevice();
-    vk::SampleCountFlagBits getMultisampling();
     vk::Format              getDepthFormat();
+    vk::SampleCountFlagBits getMultisampling();
+    uint32_t getMemoryTypeIndex( const uint32_t filter, const vk::MemoryPropertyFlags &flags );
 
     operator vk::PhysicalDevice() { return getPhysicalDevice(); }
 };

@@ -85,3 +85,22 @@ vk::Format VulkanPhysicalDevice::getDepthFormat()
 
     L_THROW_RUNTIME("32bit signed depth stencil format unsupported");
 }
+
+uint32_t VulkanPhysicalDevice::getMemoryTypeIndex( const uint32_t                 filter,
+                                                   const vk::MemoryPropertyFlags &flags )
+{
+    L_TAG( "VulkanPhysicalDevice::getMemoryTypeIndex" );
+
+    vk::PhysicalDeviceMemoryProperties memoryProperties = m_physicalDevice.getMemoryProperties();
+
+    for ( uint32_t i = 0; i < memoryProperties.memoryTypeCount; i++ )
+    {
+        if ( filter & ( 1 << i )
+             && ( memoryProperties.memoryTypes [i].propertyFlags & flags ) == flags )
+        {
+            return i;
+        }
+    }
+
+    L_THROW_RUNTIME( "Failed to find suitable memory type" );
+}
