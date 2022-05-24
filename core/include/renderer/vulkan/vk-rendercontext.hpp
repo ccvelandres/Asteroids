@@ -17,7 +17,7 @@ private:
     VulkanSwapchain  m_swapchain;
     VulkanImageView  m_imageview;
     VulkanRenderPass m_renderpass;
-    
+
 protected:
 public:
     VulkanRenderContext( SDL_Window           *window,

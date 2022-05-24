@@ -1,7 +1,7 @@
 #pragma once
 
-#include <vulkan/vulkan.hpp>
 #include <memory>
+#include <vulkan/vulkan.hpp>
 
 #include "vk-instance.hpp"
 
@@ -12,12 +12,12 @@ private:
 
 protected:
 public:
-    VulkanPhysicalDevice(VulkanInstance &instance);
+    VulkanPhysicalDevice( VulkanInstance &instance );
     ~VulkanPhysicalDevice();
 
-    vk::PhysicalDevice &getPhysicalDevice();
-    operator vk::PhysicalDevice() { return getPhysicalDevice(); }
-
+    vk::PhysicalDevice     &getPhysicalDevice();
     vk::SampleCountFlagBits getMultisampling();
-    vk::Format getDepthFormat();
+    vk::Format              getDepthFormat();
+
+    operator vk::PhysicalDevice() { return getPhysicalDevice(); }
 };

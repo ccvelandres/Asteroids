@@ -15,11 +15,11 @@ private:
 
 protected:
 public:
-    VulkanImageView(VulkanDevice &device,
-                    VulkanSwapchain &swapchain);
+    VulkanImageView( VulkanDevice &device, VulkanSwapchain &swapchain );
 
     ~VulkanImageView();
 
-    vk::ImageView &getImageViews(const int index);
-    vk::ImageView &operator[] (std::size_t index) { return getImageViews(index); }
+    vk::ImageView &getImageViews( const int index );
+
+    vk::ImageView &operator[]( std::size_t index ) { return getImageViews( index ); }
 };

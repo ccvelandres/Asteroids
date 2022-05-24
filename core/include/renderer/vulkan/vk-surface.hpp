@@ -1,8 +1,8 @@
 #pragma once
 
+#include <memory>
 #include <SDL2/SDL.h>
 #include <vulkan/vulkan.hpp>
-#include <memory>
 
 #include "vk-instance.hpp"
 
@@ -13,10 +13,10 @@ private:
 
 protected:
 public:
-    VulkanSurface(SDL_Window *window,
-                  VulkanInstance &instance);
+    VulkanSurface( SDL_Window *window, VulkanInstance &instance );
     ~VulkanSurface();
 
     vk::SurfaceKHR &getSurface();
+
     operator vk::SurfaceKHR() { return getSurface(); }
 };

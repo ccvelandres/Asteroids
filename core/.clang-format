@@ -11,9 +11,9 @@ AlignConsecutiveMacros: Consecutive
 AlignEscapedNewlines: Left
 AlignOperands: AlignAfterOperator
 AlignTrailingComments: true
-AllowAllArgumentsOnNextLine: true
-AllowAllConstructorInitializersOnNextLine: true
-AllowAllParametersOfDeclarationOnNextLine: true
+AllowAllArgumentsOnNextLine: false
+AllowAllConstructorInitializersOnNextLine: false
+AllowAllParametersOfDeclarationOnNextLine: false
 # AllowShortBlocksOnASingleLine: true
 # AllowShortCaseLabelsOnASingleLine: false
 # AllowShortEnumsOnASingleLine: false
@@ -98,8 +98,8 @@ NamespaceIndentation: All
 # PenaltyBreakComment: 300
 # PenaltyBreakFirstLessLess: 120
 # PenaltyBreakString: 1000
-# PenaltyExcessCharacter: 1000000
-# PenaltyReturnTypeOnItsOwnLine: 60
+PenaltyExcessCharacter: 10
+PenaltyReturnTypeOnItsOwnLine: 100000000
 # PointerAlignment: Left
 # # QualifierAlignment: Right # Clang 14
 # # QualifierOrder: ['inline', 'static', 'type', 'const', 'volatile' ] # Clang 14

@@ -9,10 +9,10 @@ class VulkanRenderer : public BaseRenderer
 {
 private:
     SDL_Window *const m_window;
-    VulkanContext *context;
+    VulkanContext    *context;
 
 protected:
 public:
-    VulkanRenderer(SDL_Window *window);
+    VulkanRenderer( SDL_Window *window );
     ~VulkanRenderer();
 };
