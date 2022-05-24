@@ -3,6 +3,7 @@
 #include <SDL2/SDL.h>
 #include <vulkan/vulkan.hpp>
 
+#include "vk-commandpool.hpp"
 #include "vk-device.hpp"
 #include "vk-imageview.hpp"
 #include "vk-instance.hpp"
@@ -24,6 +25,7 @@ public:
                          VulkanInstance       &instance,
                          VulkanPhysicalDevice &physicalDevice,
                          VulkanDevice         &device,
-                         VulkanSurface        &surface );
+                         VulkanSurface        &surface,
+                         VulkanCommandPool    &commandPool );
     ~VulkanRenderContext();
 };

@@ -8,9 +8,11 @@ VulkanRenderContext::VulkanRenderContext( SDL_Window           *window,
                                           VulkanInstance       &instance,
                                           VulkanPhysicalDevice &physicalDevice,
                                           VulkanDevice         &device,
-                                          VulkanSurface        &surface )
+                                          VulkanSurface        &surface,
+                                          VulkanCommandPool    &commandPool )
     : m_swapchain( window, instance, physicalDevice, surface, device ),
-      m_imageview( device, m_swapchain ), m_renderpass( physicalDevice, device, m_swapchain )
+      m_imageview( device, m_swapchain ),
+      m_renderpass( physicalDevice, device, m_swapchain )
 {
     L_TAG( "VulkanRenderContext::VulkanRenderContext" );
 }

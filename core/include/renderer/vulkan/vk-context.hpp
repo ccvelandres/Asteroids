@@ -2,6 +2,7 @@
 
 #include <vulkan/vulkan.hpp>
 
+#include "vk-commandpool.hpp"
 #include "vk-device.hpp"
 #include "vk-instance.hpp"
 #include "vk-physicalDevice.hpp"
@@ -16,6 +17,7 @@ private:
     VulkanSurface        m_surface;
     VulkanDevice         m_device;
     VulkanRenderContext  m_renderContext;
+    VulkanCommandPool    m_commandPool;
 protected:
 public:
     VulkanContext( SDL_Window *window );
