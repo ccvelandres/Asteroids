@@ -9,9 +9,9 @@ vk::UniqueCommandPool createCommandPool( const VulkanDevice &device )
     L_TAG( "createCommandPool" );
 
     /** Create a command pool for the device */
-    vk::CommandPoolCreateInfo commandPoolCreateInfo = vk::CommandPoolCreateInfo(
-        vk::CommandPoolCreateFlagBits::eResetCommandBuffer,
-        device.getGraphicsQueueIndex() );
+    vk::CommandPoolCreateInfo commandPoolCreateInfo =
+        vk::CommandPoolCreateInfo( vk::CommandPoolCreateFlagBits::eResetCommandBuffer,
+                                   device.getGraphicsQueueIndex() );
 
     return device.getDevice().createCommandPoolUnique( commandPoolCreateInfo );
 }
@@ -20,8 +20,7 @@ struct VulkanCommandPool::Internal
 {
     const vk::UniqueCommandPool commandPool;
 
-    Internal( const VulkanDevice &device )
-        : commandPool( ::createCommandPool( device ) )
+    Internal( const VulkanDevice &device ) : commandPool( ::createCommandPool( device ) )
     {
         L_TAG( "VulkanCommandPool::Internal" );
         L_DEBUG( "CommandPool successfully created" );
@@ -35,23 +34,26 @@ VulkanCommandPool::VulkanCommandPool( const VulkanDevice &device )
 
 VulkanCommandPool::~VulkanCommandPool() {}
 
-vk::UniqueCommandBuffer VulkanCommandPool::createCommandBuffer(
-    const VulkanDevice &device ) const
+std::vector<vk::UniqueCommandBuffer> VulkanCommandPool::createCommandBuffers( const VulkanDevice &device,
+                                                                              const uint32_t count ) const
+{
+    L_TAG( "VulkanCommandPool::createCommandBuffers" );
+
+    vk::CommandBufferAllocateInfo commandBufferAllocateInfo( *m_internal->commandPool,
+                                                             vk::CommandBufferLevel::ePrimary,
+                                                             count );
+
+    return device.getDevice().allocateCommandBuffersUnique( commandBufferAllocateInfo );
+}
+
+vk::UniqueCommandBuffer VulkanCommandPool::createCommandBuffer( const VulkanDevice &device ) const
 {
     L_TAG( "VulkanCommandPool::createCommandBuffer" );
 
-    vk::CommandBufferAllocateInfo commandBufferAllocateInfo =
-        vk::CommandBufferAllocateInfo( *m_internal->commandPool,
-                                       vk::CommandBufferLevel::ePrimary,
-                                       1 );
+    vk::UniqueCommandBuffer buffer( std::move( createCommandBuffers( device, 1 ) [0] ) );
 
-    vk::UniqueCommandBuffer buffer(
-        std::move( device.getDevice().allocateCommandBuffersUnique(
-            commandBufferAllocateInfo ) [0] ) );
-
-    vk::CommandBufferBeginInfo beginInfo = vk::CommandBufferBeginInfo(
-        vk::CommandBufferUsageFlagBits::eOneTimeSubmit,
-        nullptr );
+    vk::CommandBufferBeginInfo beginInfo =
+        vk::CommandBufferBeginInfo( vk::CommandBufferUsageFlagBits::eOneTimeSubmit, nullptr );
 
     /** Request to begin the buffer */
     buffer->begin( beginInfo );
@@ -59,8 +61,7 @@ vk::UniqueCommandBuffer VulkanCommandPool::createCommandBuffer(
     return buffer;
 }
 
-void VulkanCommandPool::endCommandBuffer( vk::CommandBuffer  &buffer,
-                                          const VulkanDevice &device ) const
+void VulkanCommandPool::endCommandBuffer( vk::CommandBuffer &buffer, const VulkanDevice &device ) const
 {
     L_TAG( "VulkanCommandPool::endCommandBuffer" );
 

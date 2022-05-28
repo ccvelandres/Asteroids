@@ -2,6 +2,7 @@
 
 #include <memory>
 #include <SDL2/SDL.h>
+#include <vector>
 #include <vulkan/vulkan.hpp>
 
 #include "vk-device.hpp"
@@ -17,6 +18,8 @@ public:
     VulkanCommandPool( const VulkanDevice &device );
     ~VulkanCommandPool();
 
-    vk::UniqueCommandBuffer createCommandBuffer( const VulkanDevice &device ) const;
+    std::vector<vk::UniqueCommandBuffer> createCommandBuffers( const VulkanDevice &device,
+                                                               const uint32_t      count ) const;
+    vk::UniqueCommandBuffer              createCommandBuffer( const VulkanDevice &device ) const;
     void endCommandBuffer( vk::CommandBuffer &buffer, const VulkanDevice &device ) const;
 };
