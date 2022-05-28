@@ -8,16 +8,14 @@
 class VulkanInstance
 {
 private:
-    vk::UniqueInstance m_instance;
+    const vk::UniqueInstance m_instance;
 
-    static std::vector<const char *> getValidationLayers();
-    static std::vector<const char *> getRequiredExtensions( SDL_Window *window );
 protected:
 public:
     VulkanInstance( SDL_Window *window );
     ~VulkanInstance();
 
-    vk::Instance &getInstance();
+    const vk::Instance &getInstance() const;
 
     operator vk::Instance() { return getInstance(); }
 };
