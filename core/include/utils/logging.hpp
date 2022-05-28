@@ -9,10 +9,19 @@ namespace logging
     using namespace spdlog;
 }
 
+/** Retrieves the base filename from __FILE__ */ 
+constexpr const char *baseFileName( const char *path )
+{
+    const char *base = path;
+    while ( *path )
+        ( *path == '/' || *path == '\\' ) ? base = ++path : path++;
+    return base;
+}
+
 /** Helper macros for appending the line and function */
 #define L_STRING(STR) #STR
 #define L_TAG(STR) \
-    static const std::string tag__ { STR }
+    static const std::string tag__ { std::string(baseFileName(__FILE__)) + std::string(": " STR) }
 
 #define L_LOG(level, STR, ...) logging::level("[{}] " STR, tag__, ##__VA_ARGS__)
 #define L_ERROR(STR, ...) L_LOG(error, STR, ##__VA_ARGS__)

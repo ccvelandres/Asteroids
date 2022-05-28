@@ -6,7 +6,7 @@
 
 std::vector<const char *> getValidationLayers()
 {
-    L_TAG( "VulkanInstance::getValidationLayers" );
+    L_TAG( "getValidationLayers" );
 
     std::vector<const char *>        desiredValidationLayers;
     std::vector<vk::LayerProperties> availableLayers = vk::enumerateInstanceLayerProperties();
@@ -28,7 +28,7 @@ std::vector<const char *> getValidationLayers()
 
 std::vector<const char *> getRequiredExtensions( SDL_Window *window )
 {
-    L_TAG( "VulkanInstance::getRequiredExtensions" );
+    L_TAG( "getRequiredExtensions" );
 
     std::vector<const char *> extensionNames;
     {
@@ -54,7 +54,7 @@ std::vector<const char *> getRequiredExtensions( SDL_Window *window )
 
 vk::UniqueInstance createInstance( SDL_Window *window )
 {
-    L_TAG( "VulkanInstance::VulkanInstance" );
+    L_TAG( "createInstance" );
 
     uint32_t version = vk::enumerateInstanceVersion();
     L_DEBUG( "Vulkan API Version: {}.{}.{}",
