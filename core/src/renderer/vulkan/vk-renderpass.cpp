@@ -26,19 +26,18 @@ vk::UniqueRenderPass createRenderPass( const VulkanPhysicalDevice &physicalDevic
     vk::AttachmentReference colorAttachmentReference =
         vk::AttachmentReference( 0, vk::ImageLayout::eColorAttachmentOptimal );
 
-    vk::AttachmentDescription depthAttachment = vk::AttachmentDescription(
-        vk::AttachmentDescriptionFlags(),
-        depthFormat,
-        multisampling,
-        vk::AttachmentLoadOp::eClear,
-        vk::AttachmentStoreOp::eDontCare,
-        vk::AttachmentLoadOp::eDontCare,
-        vk::AttachmentStoreOp::eDontCare,
-        vk::ImageLayout::eUndefined,
-        vk::ImageLayout::eDepthStencilAttachmentOptimal );
-    vk::AttachmentReference depthAttachmentReference = vk::AttachmentReference(
-        1,
-        vk::ImageLayout::eDepthStencilAttachmentOptimal );
+    vk::AttachmentDescription depthAttachment =
+        vk::AttachmentDescription( vk::AttachmentDescriptionFlags(),
+                                   depthFormat,
+                                   multisampling,
+                                   vk::AttachmentLoadOp::eClear,
+                                   vk::AttachmentStoreOp::eDontCare,
+                                   vk::AttachmentLoadOp::eDontCare,
+                                   vk::AttachmentStoreOp::eDontCare,
+                                   vk::ImageLayout::eUndefined,
+                                   vk::ImageLayout::eDepthStencilAttachmentOptimal );
+    vk::AttachmentReference depthAttachmentReference =
+        vk::AttachmentReference( 1, vk::ImageLayout::eDepthStencilAttachmentOptimal );
 
     vk::AttachmentDescription multisamplingAttachment =
         vk::AttachmentDescription( vk::AttachmentDescriptionFlags(),
@@ -53,10 +52,9 @@ vk::UniqueRenderPass createRenderPass( const VulkanPhysicalDevice &physicalDevic
     vk::AttachmentReference multisamplingAttachmentReference =
         vk::AttachmentReference( 2, vk::ImageLayout::eColorAttachmentOptimal );
 
-    std::array<vk::AttachmentDescription, 3> attachments = {
-        colorAttachment,
-        depthAttachment,
-        multisamplingAttachment };
+    std::array<vk::AttachmentDescription, 3> attachments = { colorAttachment,
+                                                             depthAttachment,
+                                                             multisamplingAttachment };
 
     vk::SubpassDescription subpassDescription =
         vk::SubpassDescription( vk::SubpassDescriptionFlags(),
@@ -102,3 +100,5 @@ VulkanRenderPass::VulkanRenderPass( const VulkanPhysicalDevice &physicalDevice,
 }
 
 VulkanRenderPass::~VulkanRenderPass() {}
+
+const vk::RenderPass &VulkanRenderPass::getRenderPass() const { return *m_renderpass; }

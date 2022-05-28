@@ -18,4 +18,6 @@ public:
                       const VulkanDevice         &device,
                       const VulkanSwapchain      &swapchain );
     ~VulkanRenderPass();
+
+    const vk::RenderPass &getRenderPass() const;
 };
