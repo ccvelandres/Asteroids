@@ -8,17 +8,19 @@
 class VulkanPhysicalDevice
 {
 private:
-    const vk::PhysicalDevice m_physicalDevice;
+    struct Internal;
+    std::unique_ptr<Internal> m_internal;
 
 protected:
 public:
     VulkanPhysicalDevice( const VulkanInstance &instance );
     ~VulkanPhysicalDevice();
 
-    const vk::PhysicalDevice &getPhysicalDevice() const;
-    vk::Format                getDepthFormat();
-    vk::SampleCountFlagBits   getMultisampling();
-    uint32_t getMemoryTypeIndex( const uint32_t filter, const vk::MemoryPropertyFlags &flags );
+    const vk::PhysicalDevice     &getPhysicalDevice() const;
+    const vk::SampleCountFlagBits getMultisampling() const;
+    const vk::Format              getDepthFormat() const;
+    uint32_t                      getMemoryTypeIndex( const uint32_t                 filter,
+                                                      const vk::MemoryPropertyFlags &flags );
 
     operator vk::PhysicalDevice() { return getPhysicalDevice(); }
 };

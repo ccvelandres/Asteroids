@@ -9,7 +9,8 @@ vk::PhysicalDevice createPhysicalDevice( const vk::Instance &instance )
 
     vk::PhysicalDevice physicalDevice;
 
-    std::vector<vk::PhysicalDevice> physicalDevices = instance.enumeratePhysicalDevices();
+    std::vector<vk::PhysicalDevice> physicalDevices =
+        instance.enumeratePhysicalDevices();
 
     if ( physicalDevices.empty() )
     {
@@ -21,7 +22,8 @@ vk::PhysicalDevice createPhysicalDevice( const vk::Instance &instance )
     // Look if there is a discrete GPU, if not, stick with the first device
     for ( auto &physicalDevice : physicalDevices )
     {
-        vk::PhysicalDeviceProperties deviceProperties = physicalDevice.getProperties();
+        vk::PhysicalDeviceProperties deviceProperties =
+            physicalDevice.getProperties();
 
         L_DEBUG( "Found PhysicalDevice: {}", deviceProperties.deviceName );
 
@@ -32,7 +34,8 @@ vk::PhysicalDevice createPhysicalDevice( const vk::Instance &instance )
     }
 
     // Store device properties
-    vk::PhysicalDeviceProperties physicalDeviceProperties = physicalDevice.getProperties();
+    vk::PhysicalDeviceProperties physicalDeviceProperties =
+        physicalDevice.getProperties();
 
     L_INFO( "Selected PhysicalDevice: {}", physicalDeviceProperties.deviceName );
     if ( VulkanUtils::checkSwapchainSupport( physicalDevice ) )
@@ -43,25 +46,14 @@ vk::PhysicalDevice createPhysicalDevice( const vk::Instance &instance )
     return physicalDevice;
 }
 
-VulkanPhysicalDevice::VulkanPhysicalDevice( const VulkanInstance &instance )
-    : m_physicalDevice( createPhysicalDevice( instance.getInstance() ) )
+vk::SampleCountFlagBits getMultisampling( const vk::PhysicalDevice &physicalDevice )
 {
-    L_TAG( "VulkanPhysicalDevice::VulkanPhysicalDevice" );
-}
+    L_TAG( "getMultisampling" );
 
-VulkanPhysicalDevice::~VulkanPhysicalDevice() {}
-
-const vk::PhysicalDevice &VulkanPhysicalDevice::getPhysicalDevice() const
-{
-    return m_physicalDevice;
-}
-
-vk::SampleCountFlagBits VulkanPhysicalDevice::getMultisampling()
-{
-    L_TAG( "VulkanPhysicalDevice::getMultisampling" );
-
-    vk::PhysicalDeviceProperties deviceProperties = m_physicalDevice.getProperties();
-    vk::SampleCountFlags deviceSampleCounts = deviceProperties.limits.framebufferColorSampleCounts;
+    vk::PhysicalDeviceProperties deviceProperties =
+        physicalDevice.getProperties();
+    vk::SampleCountFlags deviceSampleCounts =
+        deviceProperties.limits.framebufferColorSampleCounts;
     const std::vector<vk::SampleCountFlagBits> preferredSampleCounts = {
         vk::SampleCountFlagBits::e8,
         vk::SampleCountFlagBits::e4,
@@ -79,14 +71,15 @@ vk::SampleCountFlagBits VulkanPhysicalDevice::getMultisampling()
     L_THROW_RUNTIME( "Multisampling not supported" );
 }
 
-vk::Format VulkanPhysicalDevice::getDepthFormat()
+vk::Format getDepthFormat( const vk::PhysicalDevice &physicalDevice )
 {
-    L_TAG( "VulkanPhysicalDevice::getDepthFormat" );
+    L_TAG( "getDepthFormat" );
 
     vk::FormatProperties formatProperties =
-        m_physicalDevice.getFormatProperties( vk::Format::eD32Sfloat );
+        physicalDevice.getFormatProperties( vk::Format::eD32Sfloat );
 
-    if ( formatProperties.optimalTilingFeatures & vk::FormatFeatureFlagBits::eDepthStencilAttachment )
+    if ( formatProperties.optimalTilingFeatures
+         & vk::FormatFeatureFlagBits::eDepthStencilAttachment )
     {
         return vk::Format::eD32Sfloat;
     }
@@ -94,17 +87,57 @@ vk::Format VulkanPhysicalDevice::getDepthFormat()
     L_THROW_RUNTIME( "32bit signed depth stencil format unsupported" );
 }
 
-uint32_t VulkanPhysicalDevice::getMemoryTypeIndex( const uint32_t                 filter,
-                                                   const vk::MemoryPropertyFlags &flags )
+struct VulkanPhysicalDevice::Internal
+{
+    const vk::PhysicalDevice      physicalDevice;
+    const vk::SampleCountFlagBits multisampling;
+    const vk::Format              depthFormat;
+
+    Internal( const vk::Instance &instance )
+        : physicalDevice( ::createPhysicalDevice( instance ) ),
+          multisampling( ::getMultisampling( physicalDevice ) ),
+          depthFormat( ::getDepthFormat( physicalDevice ) )
+    {
+    }
+};
+
+VulkanPhysicalDevice::VulkanPhysicalDevice( const VulkanInstance &instance )
+    : m_internal( std::make_unique<Internal>( instance.getInstance() ) )
+{
+    L_TAG( "VulkanPhysicalDevice::VulkanPhysicalDevice" );
+}
+
+VulkanPhysicalDevice::~VulkanPhysicalDevice() {}
+
+const vk::PhysicalDevice &VulkanPhysicalDevice::getPhysicalDevice() const
+{
+    return m_internal->physicalDevice;
+}
+
+const vk::SampleCountFlagBits VulkanPhysicalDevice::getMultisampling() const
+{
+    return m_internal->multisampling;
+}
+
+const vk::Format VulkanPhysicalDevice::getDepthFormat() const
+{
+    return m_internal->depthFormat;
+}
+
+uint32_t VulkanPhysicalDevice::getMemoryTypeIndex(
+    const uint32_t                 filter,
+    const vk::MemoryPropertyFlags &flags )
 {
     L_TAG( "VulkanPhysicalDevice::getMemoryTypeIndex" );
 
-    vk::PhysicalDeviceMemoryProperties memoryProperties = m_physicalDevice.getMemoryProperties();
+    vk::PhysicalDeviceMemoryProperties memoryProperties =
+        m_internal->physicalDevice.getMemoryProperties();
 
     for ( uint32_t i = 0; i < memoryProperties.memoryTypeCount; i++ )
     {
         if ( filter & ( 1 << i )
-             && ( memoryProperties.memoryTypes [i].propertyFlags & flags ) == flags )
+             && ( memoryProperties.memoryTypes [i].propertyFlags & flags )
+                    == flags )
         {
             return i;
         }
