@@ -10,12 +10,12 @@
 class VulkanRenderPass
 {
 private:
-    vk::UniqueRenderPass m_renderpass;
+    const vk::UniqueRenderPass m_renderpass;
 
 protected:
 public:
-    VulkanRenderPass( VulkanPhysicalDevice &physicalDevice,
-                      VulkanDevice         &device,
-                      VulkanSwapchain      &swapchain );
+    VulkanRenderPass( const VulkanPhysicalDevice &physicalDevice,
+                      const VulkanDevice         &device,
+                      const VulkanSwapchain      &swapchain );
     ~VulkanRenderPass();
 };

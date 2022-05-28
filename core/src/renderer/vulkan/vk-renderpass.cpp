@@ -4,12 +4,10 @@
 
 #include <utils/logging.hpp>
 
-VulkanRenderPass::VulkanRenderPass( VulkanPhysicalDevice &physicalDevice,
-                                    VulkanDevice         &device,
-                                    VulkanSwapchain      &swapchain )
+vk::UniqueRenderPass createRenderPass( const VulkanPhysicalDevice &physicalDevice,
+                                       const VulkanDevice         &device,
+                                       const VulkanSwapchain      &swapchain )
 {
-    L_TAG( "VulkanRenderPass::VulkanRenderPass" );
-
     vk::Format              depthFormat   = physicalDevice.getDepthFormat();
     vk::Format              colorFormat   = swapchain.getFormat().format;
     vk::SampleCountFlagBits multisampling = physicalDevice.getMultisampling();
@@ -28,18 +26,19 @@ VulkanRenderPass::VulkanRenderPass( VulkanPhysicalDevice &physicalDevice,
     vk::AttachmentReference colorAttachmentReference =
         vk::AttachmentReference( 0, vk::ImageLayout::eColorAttachmentOptimal );
 
-    vk::AttachmentDescription depthAttachment =
-        vk::AttachmentDescription( vk::AttachmentDescriptionFlags(),
-                                   depthFormat,
-                                   multisampling,
-                                   vk::AttachmentLoadOp::eClear,
-                                   vk::AttachmentStoreOp::eDontCare,
-                                   vk::AttachmentLoadOp::eDontCare,
-                                   vk::AttachmentStoreOp::eDontCare,
-                                   vk::ImageLayout::eUndefined,
-                                   vk::ImageLayout::eDepthStencilAttachmentOptimal );
-    vk::AttachmentReference depthAttachmentReference =
-        vk::AttachmentReference( 1, vk::ImageLayout::eDepthStencilAttachmentOptimal );
+    vk::AttachmentDescription depthAttachment = vk::AttachmentDescription(
+        vk::AttachmentDescriptionFlags(),
+        depthFormat,
+        multisampling,
+        vk::AttachmentLoadOp::eClear,
+        vk::AttachmentStoreOp::eDontCare,
+        vk::AttachmentLoadOp::eDontCare,
+        vk::AttachmentStoreOp::eDontCare,
+        vk::ImageLayout::eUndefined,
+        vk::ImageLayout::eDepthStencilAttachmentOptimal );
+    vk::AttachmentReference depthAttachmentReference = vk::AttachmentReference(
+        1,
+        vk::ImageLayout::eDepthStencilAttachmentOptimal );
 
     vk::AttachmentDescription multisamplingAttachment =
         vk::AttachmentDescription( vk::AttachmentDescriptionFlags(),
@@ -55,7 +54,9 @@ VulkanRenderPass::VulkanRenderPass( VulkanPhysicalDevice &physicalDevice,
         vk::AttachmentReference( 2, vk::ImageLayout::eColorAttachmentOptimal );
 
     std::array<vk::AttachmentDescription, 3> attachments = {
-        colorAttachment, depthAttachment, multisamplingAttachment };
+        colorAttachment,
+        depthAttachment,
+        multisamplingAttachment };
 
     vk::SubpassDescription subpassDescription =
         vk::SubpassDescription( vk::SubpassDescriptionFlags(),
@@ -69,14 +70,15 @@ VulkanRenderPass::VulkanRenderPass( VulkanPhysicalDevice &physicalDevice,
                                 0,
                                 nullptr );
 
-    vk::SubpassDependency subpassDependencies = vk::SubpassDependency(
-        0,
-        0,
-        vk::PipelineStageFlagBits::eColorAttachmentOutput,
-        vk::PipelineStageFlagBits::eColorAttachmentOutput,
-        vk::AccessFlags(),
-        vk::AccessFlagBits::eColorAttachmentRead | vk::AccessFlagBits::eColorAttachmentWrite,
-        vk::DependencyFlags() );
+    vk::SubpassDependency subpassDependencies =
+        vk::SubpassDependency( 0,
+                               0,
+                               vk::PipelineStageFlagBits::eColorAttachmentOutput,
+                               vk::PipelineStageFlagBits::eColorAttachmentOutput,
+                               vk::AccessFlags(),
+                               vk::AccessFlagBits::eColorAttachmentRead
+                                   | vk::AccessFlagBits::eColorAttachmentWrite,
+                               vk::DependencyFlags() );
 
     vk::RenderPassCreateInfo renderPassCreateInfo =
         vk::RenderPassCreateInfo( vk::RenderPassCreateFlags(),
@@ -87,8 +89,16 @@ VulkanRenderPass::VulkanRenderPass( VulkanPhysicalDevice &physicalDevice,
                                   1,
                                   &subpassDependencies );
 
-    m_renderpass = device.getDevice().createRenderPassUnique( renderPassCreateInfo );
-    L_DEBUG("Renderpass created");
+    return device.getDevice().createRenderPassUnique( renderPassCreateInfo );
+}
+
+VulkanRenderPass::VulkanRenderPass( const VulkanPhysicalDevice &physicalDevice,
+                                    const VulkanDevice         &device,
+                                    const VulkanSwapchain      &swapchain )
+    : m_renderpass( ::createRenderPass( physicalDevice, device, swapchain ) )
+{
+    L_TAG( "VulkanRenderPass::VulkanRenderPass" );
+    L_DEBUG( "Renderpass created" );
 }
 
 VulkanRenderPass::~VulkanRenderPass() {}
