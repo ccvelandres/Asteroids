@@ -2,6 +2,7 @@
 
 #include <SDL2/SDL.h>
 #include <vulkan/vulkan.hpp>
+#include <memory>
 
 #include "vk-commandpool.hpp"
 #include "vk-device.hpp"
@@ -18,6 +19,9 @@ private:
     VulkanSwapchain  m_swapchain;
     VulkanImageView  m_imageview;
     VulkanRenderPass m_renderpass;
+
+    struct internal;
+    std::unique_ptr<internal> m_internal;
 
 protected:
 public:

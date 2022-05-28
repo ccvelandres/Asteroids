@@ -4,6 +4,14 @@
 
 #include <utils/logging.hpp>
 
+struct VulkanRenderContext::internal {
+    // const VulkanSwapchain  m_swapchain;
+    // const VulkanImageView  m_imageview;
+    // const VulkanRenderPass m_renderpass;
+
+    internal() {}
+};
+
 VulkanRenderContext::VulkanRenderContext( SDL_Window           *window,
                                           VulkanInstance       &instance,
                                           VulkanPhysicalDevice &physicalDevice,
