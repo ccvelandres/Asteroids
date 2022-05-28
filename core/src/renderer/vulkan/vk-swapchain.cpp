@@ -190,10 +190,10 @@ struct VulkanSwapchain::Internal
 };
 
 VulkanSwapchain::VulkanSwapchain( SDL_Window           *window,
-                                  VulkanInstance       &instance,
-                                  VulkanPhysicalDevice &physicalDevice,
-                                  VulkanSurface        &surface,
-                                  VulkanDevice         &device )
+                                  const VulkanInstance       &instance,
+                                  const VulkanPhysicalDevice &physicalDevice,
+                                  const VulkanSurface        &surface,
+                                  const VulkanDevice         &device )
     : m_internal( std::make_unique<Internal>( window,
                                               instance,
                                               physicalDevice,
