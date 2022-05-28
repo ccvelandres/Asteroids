@@ -4,24 +4,21 @@
 #include <SDL2/SDL.h>
 #include <vulkan/vulkan.hpp>
 
+#include "vk-commandpool.hpp"
 #include "vk-device.hpp"
 #include "vk-physicalDevice.hpp"
 
 class VulkanImage
 {
 private:
-
-    const uint32_t               m_height;
-    const uint32_t               m_width;
-    const uint32_t               m_mipLevels;
-    const vk::Format             m_format;
-    const vk::UniqueImage        m_image;
-    const vk::UniqueDeviceMemory m_imageMemory;
+    struct Internal;
+    std::unique_ptr<Internal> m_internal;
 
 protected:
 public:
     VulkanImage( const VulkanPhysicalDevice    &physicalDevice,
                  const VulkanDevice            &device,
+                 const VulkanCommandPool       &commandPool,
                  const uint32_t                 width,
                  const uint32_t                 height,
                  const uint32_t                 mipLevels,
@@ -29,7 +26,9 @@ public:
                  const vk::Format              &format,
                  const vk::ImageTiling         &imageTiling,
                  const vk::ImageUsageFlags     &usageFlags,
-                 const vk::MemoryPropertyFlags &memoryFlags );
+                 const vk::MemoryPropertyFlags &memoryFlags,
+                 const vk::ImageLayout         oldLayout,
+                 const vk::ImageLayout         newLayout );
 
     uint32_t                getWidth() const;
     uint32_t                getHeight() const;
