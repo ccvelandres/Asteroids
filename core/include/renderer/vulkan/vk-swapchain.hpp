@@ -29,6 +29,7 @@ public:
     const vk::SwapchainKHR             &getSwapchain() const;
     const std::vector<vk::Image>       &getImages() const;
     const std::vector<VulkanImageView> &getImageViews() const;
+    const uint32_t                      getImageCount() const;
     const vk::SurfaceFormatKHR          getFormat() const;
     const vk::PresentModeKHR            getPresentMode() const;
     const vk::Extent2D                  getExtent() const;
