@@ -4,6 +4,7 @@
 #include <vulkan/vulkan.hpp>
 
 #include "vk-device.hpp"
+#include "vk-imageview.hpp"
 #include "vk-instance.hpp"
 #include "vk-physicalDevice.hpp"
 #include "vk-surface.hpp"
@@ -18,18 +19,19 @@ private:
 
 protected:
 public:
-    VulkanSwapchain( SDL_Window           *window,
+    VulkanSwapchain( SDL_Window                 *window,
                      const VulkanInstance       &instance,
                      const VulkanPhysicalDevice &physicalDevice,
                      const VulkanSurface        &surface,
                      const VulkanDevice         &device );
     ~VulkanSwapchain();
 
-    const vk::SwapchainKHR       &getSwapchain() const;
-    const std::vector<vk::Image> &getImages() const;
-    const vk::SurfaceFormatKHR   getFormat() const;
-    const vk::PresentModeKHR     getPresentMode() const;
-    const vk::Extent2D           getExtent() const;
+    const vk::SwapchainKHR             &getSwapchain() const;
+    const std::vector<vk::Image>       &getImages() const;
+    const std::vector<VulkanImageView> &getImageViews() const;
+    const vk::SurfaceFormatKHR          getFormat() const;
+    const vk::PresentModeKHR            getPresentMode() const;
+    const vk::Extent2D                  getExtent() const;
 
     operator vk::SwapchainKHR() { return getSwapchain(); }
 };

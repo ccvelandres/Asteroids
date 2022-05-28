@@ -160,13 +160,39 @@ vk::UniqueSwapchainKHR createSwapchain( const VulkanPhysicalDevice &physicalDevi
     return device.getDevice().createSwapchainKHRUnique( swapchainCreateInfo );
 }
 
+std::vector<VulkanImageView> createImageViews( const VulkanDevice &device,
+                                               const std::vector<vk::Image> &images,
+                                               const vk::SwapchainKHR &swapChain,
+                                               const vk::SurfaceFormatKHR &format )
+{
+    L_TAG( "createImageViews" );
+
+    std::vector<VulkanImageView> imageViews;
+
+    // For each of the images in the swap chain, we need to create a new 'image view'.
+    L_TRACE("Creating imageViews for each swapchain images");
+    for ( const vk::Image &image : images )
+    {
+        VulkanImageView imageView( device,
+                                   image,
+                                   format.format,
+                                   vk::ImageAspectFlagBits::eColor,
+                                   1 );
+
+        imageViews.push_back( std::move( imageView ) );
+    }
+
+    return imageViews;
+}
+
 struct VulkanSwapchain::Internal
 {
-    const vk::SurfaceFormatKHR   format;
-    const vk::PresentModeKHR     presentMode;
-    const vk::Extent2D           extent;
-    const vk::UniqueSwapchainKHR swapchain;
-    const std::vector<vk::Image> images;
+    const vk::SurfaceFormatKHR         format;
+    const vk::PresentModeKHR           presentMode;
+    const vk::Extent2D                 extent;
+    const vk::UniqueSwapchainKHR       swapchain;
+    const std::vector<vk::Image>       images;
+    const std::vector<VulkanImageView> imageViews;
 
     Internal( SDL_Window                 *window,
               const VulkanInstance       &instance,
@@ -182,14 +208,15 @@ struct VulkanSwapchain::Internal
                                         format,
                                         presentMode,
                                         extent ) ),
-          images( device.getDevice().getSwapchainImagesKHR( *swapchain ) )
+          images( device.getDevice().getSwapchainImagesKHR( *swapchain ) ),
+          imageViews( ::createImageViews( device, images, *swapchain, format ) )
     {
         L_TAG( "VulkanSwapchain::Internal" );
         L_DEBUG( "Swapchain successfully created" );
     }
 };
 
-VulkanSwapchain::VulkanSwapchain( SDL_Window           *window,
+VulkanSwapchain::VulkanSwapchain( SDL_Window                 *window,
                                   const VulkanInstance       &instance,
                                   const VulkanPhysicalDevice &physicalDevice,
                                   const VulkanSurface        &surface,
@@ -213,6 +240,10 @@ const vk::SwapchainKHR &VulkanSwapchain::getSwapchain() const
 const std::vector<vk::Image> &VulkanSwapchain::getImages() const
 {
     return m_internal->images;
+}
+
+const std::vector<VulkanImageView> &VulkanSwapchain::getImageViews() const {
+    return m_internal->imageViews;
 }
 
 const vk::SurfaceFormatKHR VulkanSwapchain::getFormat() const
