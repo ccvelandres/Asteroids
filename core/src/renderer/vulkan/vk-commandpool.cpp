@@ -4,48 +4,71 @@
 
 #include <utils/logging.hpp>
 
-vk::UniqueCommandPool VulkanCommandPool::createCommandPool( vk::Device &device, uint32_t queueIndex )
+vk::UniqueCommandPool createCommandPool( const VulkanDevice &device )
 {
-    vk::CommandPoolCreateInfo commandPoolCreateInfo =
-        vk::CommandPoolCreateInfo( vk::CommandPoolCreateFlagBits::eResetCommandBuffer, queueIndex );
+    L_TAG( "createCommandPool" );
 
-    return device.createCommandPoolUnique( commandPoolCreateInfo );
+    /** Create a command pool for the device */
+    vk::CommandPoolCreateInfo commandPoolCreateInfo = vk::CommandPoolCreateInfo(
+        vk::CommandPoolCreateFlagBits::eResetCommandBuffer,
+        device.getGraphicsQueueIndex() );
+
+    return device.getDevice().createCommandPoolUnique( commandPoolCreateInfo );
 }
 
-VulkanCommandPool::VulkanCommandPool( VulkanDevice &device ) : m_device( device )
+struct VulkanCommandPool::Internal
 {
-    L_TAG( "VulkanCommandPool::VulkanCommandPool" );
+    const vk::UniqueCommandPool commandPool;
 
-    m_commandPool = createCommandPool( device.getDevice(), device.getGraphicsQueueIndex() );
+    Internal( const VulkanDevice &device )
+        : commandPool( createCommandPool( device ) )
+    {
+    }
+};
 
-    L_DEBUG("VulkanCommandPool created");
+VulkanCommandPool::VulkanCommandPool( const VulkanDevice &device )
+    : m_internal( std::make_unique<Internal>( device ) )
+{
 }
 
 VulkanCommandPool::~VulkanCommandPool() {}
 
-vk::UniqueCommandBuffer VulkanCommandPool::createCommandBuffer()
+vk::UniqueCommandBuffer VulkanCommandPool::createCommandBuffer(
+    const VulkanDevice &device )
 {
+    L_TAG( "VulkanCommandPool::createCommandBuffer" );
+
     vk::CommandBufferAllocateInfo commandBufferAllocateInfo =
-        vk::CommandBufferAllocateInfo( *m_commandPool, vk::CommandBufferLevel::ePrimary, 1 );
+        vk::CommandBufferAllocateInfo( *m_internal->commandPool,
+                                       vk::CommandBufferLevel::ePrimary,
+                                       1 );
 
-    vk::UniqueCommandBuffer buffer( std::move(
-        m_device.getDevice().allocateCommandBuffersUnique( commandBufferAllocateInfo ) [0] ) );
+    vk::UniqueCommandBuffer buffer(
+        std::move( device.getDevice().allocateCommandBuffersUnique(
+            commandBufferAllocateInfo ) [0] ) );
 
-    vk::CommandBufferBeginInfo beginInfo =
-        vk::CommandBufferBeginInfo( vk::CommandBufferUsageFlagBits::eOneTimeSubmit, nullptr );
+    vk::CommandBufferBeginInfo beginInfo = vk::CommandBufferBeginInfo(
+        vk::CommandBufferUsageFlagBits::eOneTimeSubmit,
+        nullptr );
 
-    // Request to begin the buffer
+    /** Request to begin the buffer */
     buffer->begin( beginInfo );
+    L_TRACE("(%p) created and started", (void*) &buffer.get());
     return buffer;
 }
 
-void VulkanCommandPool::endCommandBuffer( vk::CommandBuffer &commandBuffer )
+void VulkanCommandPool::endCommandBuffer( vk::CommandBuffer  &buffer,
+                                          const VulkanDevice &device )
 {
+    L_TAG( "VulkanCommandPool::endCommandBuffer" );
+
     /** Stop the command buffer */
-    commandBuffer.end();
+    buffer.end();
     /** Submit command buffer to graphics queue */
-    vk::SubmitInfo submitInfo( 0, nullptr, nullptr, 1, &commandBuffer, 0, nullptr );
-    m_device.getGraphicsQueue().submit( 1, &submitInfo, vk::Fence() );
+    vk::SubmitInfo submitInfo( 0, nullptr, nullptr, 1, &buffer, 0, nullptr );
+    device.getGraphicsQueue().submit( 1, &submitInfo, vk::Fence() );
+
+    L_TRACE("(%p) stopped and submitted", (void*) &buffer);
     /** Wait will the graphics queue is idle */
-    m_device.getGraphicsQueue().waitIdle();
+    device.getGraphicsQueue().waitIdle();
 }
