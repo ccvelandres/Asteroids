@@ -55,7 +55,7 @@ vk::UniqueCommandBuffer VulkanCommandPool::createCommandBuffer(
 
     /** Request to begin the buffer */
     buffer->begin( beginInfo );
-    L_TRACE( "(%p) created and started", (void *)&buffer.get() );
+    L_TRACE( "({}) created and started", (void *)&buffer.get() );
     return buffer;
 }
 
@@ -70,7 +70,7 @@ void VulkanCommandPool::endCommandBuffer( vk::CommandBuffer  &buffer,
     vk::SubmitInfo submitInfo( 0, nullptr, nullptr, 1, &buffer, 0, nullptr );
     device.getGraphicsQueue().submit( 1, &submitInfo, vk::Fence() );
 
-    L_TRACE( "(%p) stopped and submitted", (void *)&buffer );
+    L_TRACE( "({}) stopped and submitted", (void *)&buffer );
     /** Wait will the graphics queue is idle */
     device.getGraphicsQueue().waitIdle();
 }
