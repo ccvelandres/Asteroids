@@ -8,7 +8,8 @@
 class VulkanInstance
 {
 private:
-    const vk::UniqueInstance m_instance;
+    struct Internal;
+    std::unique_ptr<Internal> m_internal;
 
 protected:
 public:
