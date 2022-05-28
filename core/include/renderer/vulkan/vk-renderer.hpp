@@ -1,15 +1,14 @@
 #pragma once
 
+#include <memory>
 #include <renderer.hpp>
 #include <vulkan/vulkan.hpp>
-
-#include "vk-context.hpp"
 
 class VulkanRenderer : public BaseRenderer
 {
 private:
-    SDL_Window *const m_window;
-    VulkanContext    *context;
+    struct Internal;
+    std::unique_ptr<Internal> m_internal;
 
 protected:
 public:
