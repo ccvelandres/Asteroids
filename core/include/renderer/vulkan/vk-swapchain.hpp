@@ -13,17 +13,8 @@
 class VulkanSwapchain
 {
 private:
-    vk::UniqueSwapchainKHR m_swapchain;
-    std::vector<vk::Image> m_images;
-    vk::SurfaceFormatKHR   m_format;
-    vk::PresentModeKHR     m_presentMode;
-    vk::Extent2D           m_extent;
-
-    static vk::SurfaceFormatKHR
-    chooseSurfaceFormat( std::vector<vk::SurfaceFormatKHR> &surfaceFormats );
-    static vk::PresentModeKHR choosePresentMode( std::vector<vk::PresentModeKHR> &presentModes );
-    static vk::Extent2D       getSwapExtent( SDL_Window                       *window,
-                                             const vk::SurfaceCapabilitiesKHR &surfaceCapabilities );
+    struct Internal;
+    std::unique_ptr<Internal> m_internal;
 
 protected:
 public:
@@ -34,11 +25,11 @@ public:
                      VulkanDevice         &device );
     ~VulkanSwapchain();
 
-    vk::SwapchainKHR       &getSwapchain();
-    std::vector<vk::Image> &getImages();
-    vk::SurfaceFormatKHR   &getFormat();
-    vk::PresentModeKHR     &getPresentMode();
-    vk::Extent2D           &getExtent();
+    const vk::SwapchainKHR       &getSwapchain() const;
+    const std::vector<vk::Image> &getImages() const;
+    const vk::SurfaceFormatKHR   getFormat() const;
+    const vk::PresentModeKHR     getPresentMode() const;
+    const vk::Extent2D           getExtent() const;
 
     operator vk::SwapchainKHR() { return getSwapchain(); }
 };
