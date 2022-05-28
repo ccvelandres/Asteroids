@@ -23,6 +23,8 @@ auto app_start = std::chrono::high_resolution_clock::now();
 
 int main(int arc, char **argv)
 {
+    /** Set compact pattern for logging */
+    logging::set_pattern("[%H:%M:%S.%e] %L : %v");
     logging::set_level(logging::level::debug);
 
     Game *game = new Game("Asteroids", windowWidth, windowHeight);
