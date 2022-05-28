@@ -1,4 +1,5 @@
 #include <renderer/vulkan/vk-config.hpp>
+#include <renderer/vulkan/vk-debug.hpp>
 #include <renderer/vulkan/vk-instance.hpp>
 #include <renderer/vulkan/vk-utils.hpp>
 
@@ -9,8 +10,7 @@ std::vector<const char *> getValidationLayers()
     L_TAG( "getValidationLayers" );
 
     std::vector<const char *>        desiredValidationLayers;
-    std::vector<vk::LayerProperties> availableLayers =
-        vk::enumerateInstanceLayerProperties();
+    std::vector<vk::LayerProperties> availableLayers = vk::enumerateInstanceLayerProperties();
     for ( const auto &layer : VulkanConfig::getValidationLayers() )
     {
         if ( VulkanUtils::checkValidationLayerSupport( layer, availableLayers ) )
@@ -37,13 +37,10 @@ std::vector<const char *> getRequiredExtensions( SDL_Window *window )
         std::vector<const char *> sdlExtensions;
         SDL_Vulkan_GetInstanceExtensions( window, &extensionCount, nullptr );
         sdlExtensions.reserve( extensionCount );
-        SDL_Vulkan_GetInstanceExtensions( window,
-                                          &extensionCount,
-                                          sdlExtensions.data() );
+        SDL_Vulkan_GetInstanceExtensions( window, &extensionCount, sdlExtensions.data() );
         for ( int i = 0; i < extensionCount; i++ )
         {
-            L_DEBUG( "Adding SDLRequiredInstanceExtension: {}",
-                     sdlExtensions [i] );
+            L_DEBUG( "Adding SDLRequiredInstanceExtension: {}", sdlExtensions [i] );
             extensionNames.push_back( sdlExtensions [i] );
         }
     }
@@ -72,13 +69,12 @@ vk::UniqueInstance createInstance( SDL_Window *window )
     /** Get Instance extensions */
     std::vector<const char *> extensionNames = getRequiredExtensions( window );
 
-    vk::InstanceCreateInfo instanceCreateInfo(
-        vk::InstanceCreateFlags(),
-        VulkanConfig::getApplicationInfo(),
-        static_cast<uint32_t>( desiredValidationLayers.size() ),
-        desiredValidationLayers.data(),
-        static_cast<uint32_t>( extensionNames.size() ),
-        extensionNames.data() );
+    vk::InstanceCreateInfo instanceCreateInfo( vk::InstanceCreateFlags(),
+                                               VulkanConfig::getApplicationInfo(),
+                                               static_cast<uint32_t>( desiredValidationLayers.size() ),
+                                               desiredValidationLayers.data(),
+                                               static_cast<uint32_t>( extensionNames.size() ),
+                                               extensionNames.data() );
 
     return vk::createInstanceUnique( instanceCreateInfo );
 }
@@ -86,11 +82,18 @@ vk::UniqueInstance createInstance( SDL_Window *window )
 struct VulkanInstance::Internal
 {
     const vk::UniqueInstance instance;
+    const VulkanDebugUtils   debugUtils;
 
-    Internal( SDL_Window *window ) : instance( ::createInstance( window ) )
+    Internal( SDL_Window *window ) : instance( ::createInstance( window ) ), debugUtils( *instance )
     {
         L_TAG( "VulkanInstance::Internal" );
         L_DEBUG( "Instance successfully created" );
+    }
+
+    ~Internal()
+    {
+        L_TAG( "VulkanInstance::~Internal" );
+        L_DEBUG( "Internal data cleaned up" );
     }
 };
 
@@ -101,7 +104,4 @@ VulkanInstance::VulkanInstance( SDL_Window *window )
 
 VulkanInstance::~VulkanInstance() {}
 
-const vk::Instance &VulkanInstance::getInstance() const
-{
-    return *m_internal->instance;
-}
+const vk::Instance &VulkanInstance::getInstance() const { return *m_internal->instance; }

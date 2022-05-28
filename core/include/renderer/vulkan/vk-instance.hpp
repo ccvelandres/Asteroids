@@ -17,6 +17,4 @@ public:
     ~VulkanInstance();
 
     const vk::Instance &getInstance() const;
-
-    operator vk::Instance() { return getInstance(); }
 };
