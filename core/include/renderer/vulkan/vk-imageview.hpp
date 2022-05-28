@@ -6,20 +6,26 @@
 #include "vk-device.hpp"
 #include "vk-swapchain.hpp"
 
+#include <memory>
 #include <vector>
 
 class VulkanImageView
 {
 private:
-    std::vector<vk::UniqueImageView> m_imageViews;
+    struct Internal;
+    std::unique_ptr<Internal> m_internal;
 
 protected:
 public:
-    VulkanImageView( VulkanDevice &device, VulkanSwapchain &swapchain );
+    VulkanImageView( const VulkanDevice    &device,
+                     const VulkanSwapchain &swapchain );
 
     ~VulkanImageView();
 
-    vk::ImageView &getImageViews( const int index );
+    const vk::ImageView &getImageViews( const int index ) const;
 
-    vk::ImageView &operator[]( std::size_t index ) { return getImageViews( index ); }
+    const vk::ImageView &operator[]( std::size_t index ) const
+    {
+        return getImageViews( index );
+    }
 };
