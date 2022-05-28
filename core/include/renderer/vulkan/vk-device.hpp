@@ -11,27 +11,22 @@
 class VulkanDevice
 {
 private:
-    vk::UniqueDevice m_device;
-    uint32_t         m_graphicsQueueIndex;
-    uint32_t         m_presentQueueIndex;
-    vk::Queue        m_graphicsQueue;
-    vk::Queue        m_presentQueue;
+    struct Internal;
+    std::unique_ptr<Internal> m_internal;
 
-    struct QueueConfig;
-    static QueueConfig getQueueConfig( VulkanPhysicalDevice &physicalDevice,
-                                       VulkanSurface        &surface );
 protected:
 public:
-    VulkanDevice( SDL_Window           *window,
-                  VulkanPhysicalDevice &physicalDevice,
-                  VulkanSurface        &surface );
+    VulkanDevice( SDL_Window                 *window,
+                  const VulkanPhysicalDevice &physicalDevice,
+                  const VulkanSurface        &surface );
     ~VulkanDevice();
 
-    vk::Device &getDevice();
-    vk::Queue  &getGraphicsQueue();
-    uint32_t    getGraphicsQueueIndex();
-    vk::Queue  &getPresentQueue();
-    uint32_t    getPresentQueueIndex();
+    const vk::Device &getDevice() const;
+    const vk::Queue  &getGraphicsQueue() const;
+    const uint32_t    getGraphicsQueueIndex() const;
+    const vk::Queue  &getPresentQueue() const;
+    const uint32_t    getPresentQueueIndex() const;
+    const bool        hasDiscreteQueue() const;
 
     operator vk::Device() { return getDevice(); }
 };
