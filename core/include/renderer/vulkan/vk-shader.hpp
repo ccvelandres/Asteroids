@@ -9,14 +9,14 @@
 class VulkanShaderModule
 {
 private:
-    vk::UniqueShaderModule m_shader;
+    const vk::UniqueShaderModule m_shader;
 
 protected:
 public:
     VulkanShaderModule( VulkanDevice &device, const std::string &filename );
     ~VulkanShaderModule();
 
-    vk::ShaderModule &getShaderModule();
+    const vk::ShaderModule &getShaderModule() const;
 
     operator vk::ShaderModule() { return getShaderModule(); }
 };

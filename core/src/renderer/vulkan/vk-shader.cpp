@@ -7,26 +7,32 @@
 
 #include <exception>
 
-VulkanShaderModule::VulkanShaderModule(VulkanDevice &device,
-                                       const std::string &filename)
+vk::UniqueShaderModule createShaderModule( const vk::Device  &device,
+                                           const std::string &filename )
 {
-    L_TAG("VulkanShaderModule::VulkanShaderModule");
+    L_TAG( "createShaderModule" );
 
     /** @todo exception handling, maybe define a proper exception and throw again */
-    auto bytecode = utils::readBinaryFile(filename);
+    auto bytecode = utils::readBinaryFile( filename );
 
     vk::ShaderModuleCreateInfo shaderCreateInfo = {};
-    shaderCreateInfo.setCodeSize(bytecode.size())
-        .setPCode(reinterpret_cast<uint32_t *>(bytecode.data()));
+    shaderCreateInfo.setCodeSize( bytecode.size() )
+        .setPCode( reinterpret_cast<uint32_t *>( bytecode.data() ) );
 
-    m_shader = device.getDevice().createShaderModuleUnique(shaderCreateInfo);
+    return device.createShaderModuleUnique( shaderCreateInfo );
 }
 
-VulkanShaderModule::~VulkanShaderModule()
+VulkanShaderModule::VulkanShaderModule( VulkanDevice      &device,
+                                        const std::string &filename )
+    : m_shader( ::createShaderModule( device, filename ) )
 {
+    L_TAG( "VulkanShaderModule::VulkanShaderModule" );
+    L_DEBUG( "ShaderModule created ({})", filename );
 }
 
-vk::ShaderModule &VulkanShaderModule::getShaderModule()
+VulkanShaderModule::~VulkanShaderModule() {}
+
+const vk::ShaderModule &VulkanShaderModule::getShaderModule() const
 {
     return *m_shader;
 }
