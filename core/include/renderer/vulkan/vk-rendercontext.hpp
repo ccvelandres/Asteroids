@@ -1,11 +1,12 @@
 #pragma once
 
+#include <memory>
 #include <SDL2/SDL.h>
 #include <vulkan/vulkan.hpp>
 
 #include "vk-commandpool.hpp"
 #include "vk-device.hpp"
-#include "vk-imageview.hpp"
+#include "vk-image.hpp"
 #include "vk-instance.hpp"
 #include "vk-physicalDevice.hpp"
 #include "vk-renderpass.hpp"
@@ -15,17 +16,16 @@
 class VulkanRenderContext
 {
 private:
-    VulkanSwapchain  m_swapchain;
-    VulkanImageView  m_imageview;
-    VulkanRenderPass m_renderpass;
+    struct Internal;
+    std::unique_ptr<Internal> m_internal;
 
 protected:
 public:
-    VulkanRenderContext( SDL_Window           *window,
-                         VulkanInstance       &instance,
-                         VulkanPhysicalDevice &physicalDevice,
-                         VulkanDevice         &device,
-                         VulkanSurface        &surface,
-                         VulkanCommandPool    &commandPool );
+    VulkanRenderContext( SDL_Window                 *window,
+                         const VulkanInstance       &instance,
+                         const VulkanPhysicalDevice &physicalDevice,
+                         const VulkanDevice         &device,
+                         const VulkanSurface        &surface,
+                         const VulkanCommandPool    &commandPool );
     ~VulkanRenderContext();
 };
