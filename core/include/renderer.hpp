@@ -108,6 +108,7 @@ class BaseRenderer {
 private:
 protected:
 public:
+    virtual ~BaseRenderer() {}
     virtual void init() {}
     virtual void clean() {}
     virtual void refresh() {}
