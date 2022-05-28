@@ -36,7 +36,7 @@ VulkanCommandPool::VulkanCommandPool( const VulkanDevice &device )
 VulkanCommandPool::~VulkanCommandPool() {}
 
 vk::UniqueCommandBuffer VulkanCommandPool::createCommandBuffer(
-    const VulkanDevice &device )
+    const VulkanDevice &device ) const
 {
     L_TAG( "VulkanCommandPool::createCommandBuffer" );
 
@@ -60,7 +60,7 @@ vk::UniqueCommandBuffer VulkanCommandPool::createCommandBuffer(
 }
 
 void VulkanCommandPool::endCommandBuffer( vk::CommandBuffer  &buffer,
-                                          const VulkanDevice &device )
+                                          const VulkanDevice &device ) const
 {
     L_TAG( "VulkanCommandPool::endCommandBuffer" );
 

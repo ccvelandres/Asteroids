@@ -17,6 +17,6 @@ public:
     VulkanCommandPool( const VulkanDevice &device );
     ~VulkanCommandPool();
 
-    vk::UniqueCommandBuffer createCommandBuffer( const VulkanDevice &device );
-    void endCommandBuffer( vk::CommandBuffer &buffer, const VulkanDevice &device );
+    vk::UniqueCommandBuffer createCommandBuffer( const VulkanDevice &device ) const;
+    void endCommandBuffer( vk::CommandBuffer &buffer, const VulkanDevice &device ) const;
 };
