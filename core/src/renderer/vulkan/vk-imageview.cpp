@@ -25,6 +25,7 @@ std::vector<vk::UniqueImageView> createImageViews( const VulkanDevice &device,
     imageViews.reserve( images.size() );
 
     /** Create an image view for each image */
+    L_TRACE( "Creating image views for each swapchain image" );
     for ( const auto &image : images )
     {
         vk::ImageViewCreateInfo imageViewCreateInfo = {};
@@ -45,7 +46,7 @@ struct VulkanImageView::Internal
 {
     const std::vector<vk::UniqueImageView> imageViews;
 
-    Internal( VulkanDevice &device, VulkanSwapchain &swapchain )
+    Internal( const VulkanDevice &device, const VulkanSwapchain &swapchain )
         : imageViews( ::createImageViews( device, swapchain ) )
     {
         L_TAG( "VulkanImageView::Internal" );
@@ -55,6 +56,7 @@ struct VulkanImageView::Internal
 
 VulkanImageView::VulkanImageView( const VulkanDevice    &device,
                                   const VulkanSwapchain &swapchain )
+    : m_internal( std::make_unique<Internal>( device, swapchain ) )
 {
 }
 
