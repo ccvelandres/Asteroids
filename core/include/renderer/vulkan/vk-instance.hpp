@@ -10,9 +10,8 @@ class VulkanInstance
 private:
     vk::UniqueInstance m_instance;
 
-    struct internal;
-    std::unique_ptr<internal> m_internal;
-
+    static std::vector<const char *> getValidationLayers();
+    static std::vector<const char *> getRequiredExtensions( SDL_Window *window );
 protected:
 public:
     VulkanInstance( SDL_Window *window );
