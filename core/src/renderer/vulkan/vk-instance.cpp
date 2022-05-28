@@ -87,13 +87,16 @@ struct VulkanInstance::Internal
 {
     const vk::UniqueInstance instance;
 
-    Internal( SDL_Window *window ) : instance( ::createInstance( window ) ) {}
+    Internal( SDL_Window *window ) : instance( ::createInstance( window ) )
+    {
+        L_TAG( "VulkanInstance::Internal" );
+        L_DEBUG( "Instance successfully created" );
+    }
 };
 
 VulkanInstance::VulkanInstance( SDL_Window *window )
     : m_internal( std::make_unique<Internal>( window ) )
 {
-    L_TAG( "VulkanInstance::VulkanInstance" );
 }
 
 VulkanInstance::~VulkanInstance() {}

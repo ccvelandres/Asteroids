@@ -23,8 +23,10 @@ struct VulkanSurface::Internal
     const vk::UniqueSurfaceKHR surface;
 
     Internal( SDL_Window *window, const vk::Instance &instance )
-        : surface( createSurface( window, instance ) )
+        : surface( ::createSurface( window, instance ) )
     {
+        L_TAG( "VulkanSurface::Internal" );
+        L_DEBUG( "SurfaceKHR successfully created" );
     }
 };
 

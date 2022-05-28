@@ -98,13 +98,14 @@ struct VulkanPhysicalDevice::Internal
           multisampling( ::getMultisampling( physicalDevice ) ),
           depthFormat( ::getDepthFormat( physicalDevice ) )
     {
+        L_TAG( "VulkanPhysicalDevice::Internal" );
+        L_DEBUG( "PhysicalDevice successfully created" );
     }
 };
 
 VulkanPhysicalDevice::VulkanPhysicalDevice( const VulkanInstance &instance )
     : m_internal( std::make_unique<Internal>( instance.getInstance() ) )
 {
-    L_TAG( "VulkanPhysicalDevice::VulkanPhysicalDevice" );
 }
 
 VulkanPhysicalDevice::~VulkanPhysicalDevice() {}

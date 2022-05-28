@@ -70,7 +70,6 @@ QueueConfig getQueueConfig( const vk::PhysicalDevice &physicalDevice,
 vk::UniqueDevice createDevice( const vk::PhysicalDevice &physicalDevice,
                                const QueueConfig        &queueConfig )
 {
-
     L_TAG( "createDevice" );
 
     const float queuePriority = 1.0f;
@@ -124,6 +123,8 @@ struct VulkanDevice::Internal
           graphicsQueue( device->getQueue( queueConfig.graphicsQueueIndex, 0 ) ),
           presentQueue( device->getQueue( queueConfig.presentQueueIndex, 0 ) )
     {
+        L_TAG( "VulkanDevice::Internal" );
+        L_DEBUG( "Device successfully created" );
     }
 };
 
