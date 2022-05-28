@@ -7,13 +7,13 @@
 #include <algorithm>
 #include <limits>
 
-std::vector<vk::UniqueImageView> createImageViews( const VulkanDevice &device,
-                                                   const VulkanSwapchain &swapchain )
+vk::UniqueImageView createImageViews( const VulkanDevice         &device,
+                                      const vk::Image            &image,
+                                      const vk::Format           &format,
+                                      const vk::ImageAspectFlags &aspectFlags,
+                                      const uint32_t             &mipLevels )
 {
     L_TAG( "createImageViews" );
-
-    std::vector<vk::UniqueImageView> imageViews;
-    const std::vector<vk::Image>    &images = swapchain.getImages();
 
     vk::ImageSubresourceRange
         imageSubresourceRange( vk::ImageAspectFlagBits::eColor, 0, 1, 0, 1 );
@@ -21,57 +21,52 @@ std::vector<vk::UniqueImageView> createImageViews( const VulkanDevice &device,
                                            vk::ComponentSwizzle::eIdentity,
                                            vk::ComponentSwizzle::eIdentity,
                                            vk::ComponentSwizzle::eIdentity );
-    /** Reserve same size of images */
-    imageViews.reserve( images.size() );
 
     /** Create an image view for each image */
     L_TRACE( "Creating image views for each swapchain image" );
-    for ( const auto &image : images )
-    {
-        vk::ImageViewCreateInfo imageViewCreateInfo = {};
-        imageViewCreateInfo.setImage( image )
-            .setViewType( vk::ImageViewType::e2D )
-            .setFormat( swapchain.getFormat().format )
-            .setComponents( componentMapping )
-            .setSubresourceRange( imageSubresourceRange );
 
-        imageViews.push_back(
-            device.getDevice().createImageViewUnique( imageViewCreateInfo ) );
-    }
+    vk::ImageViewCreateInfo imageViewCreateInfo( vk::ImageViewCreateFlags(),
+                                                 image,
+                                                 vk::ImageViewType::e2D,
+                                                 format,
+                                                 componentMapping,
+                                                 imageSubresourceRange );
 
-    return imageViews;
+    return device.getDevice().createImageViewUnique( imageViewCreateInfo );
 }
 
 struct VulkanImageView::Internal
 {
-    const std::vector<vk::UniqueImageView> imageViews;
+    const vk::UniqueImageView imageView;
 
-    Internal( const VulkanDevice &device, const VulkanSwapchain &swapchain )
-        : imageViews( ::createImageViews( device, swapchain ) )
+    Internal( const VulkanDevice         &device,
+              const vk::Image            &image,
+              const vk::Format           &format,
+              const vk::ImageAspectFlags &aspectFlags,
+              const uint32_t             &mipLevels )
+        : imageView(
+            ::createImageViews( device, image, format, aspectFlags, mipLevels ) )
     {
         L_TAG( "VulkanImageView::Internal" );
-        L_DEBUG( "ImageViews successfully created" );
+        L_DEBUG( "ImageView successfully created" );
     }
 };
 
-VulkanImageView::VulkanImageView( const VulkanDevice    &device,
-                                  const VulkanSwapchain &swapchain )
-    : m_internal( std::make_unique<Internal>( device, swapchain ) )
+VulkanImageView::VulkanImageView(VulkanImageView&&) = default;
+VulkanImageView &VulkanImageView::operator=( VulkanImageView && ) = default;
+
+VulkanImageView::VulkanImageView( const VulkanDevice         &device,
+                                  const vk::Image            &image,
+                                  const vk::Format           &format,
+                                  const vk::ImageAspectFlags &aspectFlags,
+                                  const uint32_t             &mipLevels )
 {
 }
 
 VulkanImageView::~VulkanImageView() {}
 
-const vk::ImageView &VulkanImageView::getImageViews( const int index ) const
+const vk::ImageView &VulkanImageView::getImageView() const
 {
-    L_TAG( "VulkanImageView::getImageViews" );
-    const std::vector<vk::UniqueImageView> &imageViews = m_internal->imageViews;
-    if ( index >= imageViews.size() )
-    {
-        L_THROW( std::out_of_range,
-                 "MaxIndex: {} Argument: {}",
-                 imageViews.size(),
-                 index );
-    }
-    return *imageViews [index];
+    L_TAG( "VulkanImageView::getImageView" );
+    return *m_internal->imageView;
 }

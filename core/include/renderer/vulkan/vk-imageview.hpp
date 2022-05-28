@@ -4,10 +4,8 @@
 #include <vulkan/vulkan.hpp>
 
 #include "vk-device.hpp"
-#include "vk-swapchain.hpp"
 
 #include <memory>
-#include <vector>
 
 class VulkanImageView
 {
@@ -17,15 +15,14 @@ private:
 
 protected:
 public:
-    VulkanImageView( const VulkanDevice    &device,
-                     const VulkanSwapchain &swapchain );
-
+    VulkanImageView( VulkanImageView && );
+    VulkanImageView &operator=( VulkanImageView && );
+    VulkanImageView( const VulkanDevice         &device,
+                     const vk::Image            &image,
+                     const vk::Format           &format,
+                     const vk::ImageAspectFlags &aspectFlags,
+                     const uint32_t             &mipLevels );
     ~VulkanImageView();
 
-    const vk::ImageView &getImageViews( const int index ) const;
-
-    const vk::ImageView &operator[]( std::size_t index ) const
-    {
-        return getImageViews( index );
-    }
+    const vk::ImageView &getImageView() const;
 };
