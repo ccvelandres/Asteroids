@@ -12,12 +12,9 @@
 class VulkanContext
 {
 private:
-    VulkanInstance       m_instance;
-    VulkanPhysicalDevice m_physicalDevice;
-    VulkanSurface        m_surface;
-    VulkanDevice         m_device;
-    VulkanRenderContext  m_renderContext;
-    VulkanCommandPool    m_commandPool;
+    struct Internal;
+    std::unique_ptr<Internal> m_internal;
+    
 protected:
 public:
     VulkanContext( SDL_Window *window );

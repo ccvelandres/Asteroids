@@ -4,17 +4,36 @@
 
 #include <utils/logging.hpp>
 
-VulkanContext::VulkanContext( SDL_Window *window )
-    : m_instance( window ),
-      m_physicalDevice( m_instance ),
-      m_surface( window, m_instance ),
-      m_device( window, m_physicalDevice, m_surface ),
-      m_commandPool( m_device ),
-      m_renderContext( window, m_instance, m_physicalDevice, m_device, m_surface, m_commandPool )
+struct VulkanContext::Internal
 {
-    L_TAG( "VulkanContext::VulkanContext" );
+    const VulkanInstance       m_instance;
+    const VulkanPhysicalDevice m_physicalDevice;
+    const VulkanSurface        m_surface;
+    const VulkanDevice         m_device;
+    const VulkanCommandPool    m_commandPool;
+    const VulkanRenderContext  m_renderContext;
 
-    L_DEBUG( "VulkanContext successfully initialized" );
+    Internal( SDL_Window *window )
+        : m_instance( window ),
+          m_physicalDevice( m_instance ),
+          m_surface( window, m_instance ),
+          m_device( window, m_physicalDevice, m_surface ),
+          m_commandPool( m_device ),
+          m_renderContext( window,
+                           m_instance,
+                           m_physicalDevice,
+                           m_device,
+                           m_surface,
+                           m_commandPool )
+    {
+        L_TAG( "VulkanContext::Internal" );
+        L_DEBUG( "VulkanContext successfully initialized" );
+    }
+};
+
+VulkanContext::VulkanContext( SDL_Window *window )
+    : m_internal( std::make_unique<Internal>( window ) )
+{
 }
 
 VulkanContext::~VulkanContext() {}
