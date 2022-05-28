@@ -20,7 +20,7 @@ public:
     const vk::SampleCountFlagBits getMultisampling() const;
     const vk::Format              getDepthFormat() const;
     uint32_t                      getMemoryTypeIndex( const uint32_t                 filter,
-                                                      const vk::MemoryPropertyFlags &flags );
+                                                      const vk::MemoryPropertyFlags &flags ) const;
 
     operator vk::PhysicalDevice() { return getPhysicalDevice(); }
 };

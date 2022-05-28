@@ -127,7 +127,7 @@ const vk::Format VulkanPhysicalDevice::getDepthFormat() const
 
 uint32_t VulkanPhysicalDevice::getMemoryTypeIndex(
     const uint32_t                 filter,
-    const vk::MemoryPropertyFlags &flags )
+    const vk::MemoryPropertyFlags &flags ) const
 {
     L_TAG( "VulkanPhysicalDevice::getMemoryTypeIndex" );
 
