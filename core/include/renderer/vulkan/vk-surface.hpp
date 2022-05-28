@@ -9,14 +9,14 @@
 class VulkanSurface
 {
 private:
-    vk::UniqueSurfaceKHR m_surface;
+    const vk::UniqueSurfaceKHR m_surface;
 
 protected:
 public:
-    VulkanSurface( SDL_Window *window, VulkanInstance &instance );
+    VulkanSurface( SDL_Window *window, const VulkanInstance &instance );
     ~VulkanSurface();
 
-    vk::SurfaceKHR &getSurface();
+    const vk::SurfaceKHR &getSurface() const;
 
     operator vk::SurfaceKHR() { return getSurface(); }
 };

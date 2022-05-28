@@ -3,27 +3,25 @@
 #include <SDL2/SDL_vulkan.h>
 #include <utils/logging.hpp>
 
-VulkanSurface::VulkanSurface(SDL_Window *window,
-                             VulkanInstance &instance)
+vk::UniqueSurfaceKHR createSurface( SDL_Window *window, const vk::Instance &instance )
 {
-    L_TAG("VulkanSurface::VulkanSurface");
-    vk::Instance inst = instance.getInstance();
+
+    L_TAG( "createSurface" );
 
     VkSurfaceKHR surface;
-    if (SDL_Vulkan_CreateSurface(window, inst, &surface) != SDL_TRUE)
+    if ( SDL_Vulkan_CreateSurface( window, instance, &surface ) != SDL_TRUE )
     {
-        L_THROW_RUNTIME("Could not create Vulkan Surface");
+        L_THROW_RUNTIME( "Could not create Vulkan Surface" );
     }
 
-    m_surface = vk::UniqueSurfaceKHR(surface, inst);
-    L_DEBUG("VulkanSurface successfully created");
+    return vk::UniqueSurfaceKHR( surface, instance );
 }
 
-VulkanSurface::~VulkanSurface()
+VulkanSurface::VulkanSurface( SDL_Window *window, const VulkanInstance &instance )
+    : m_surface( createSurface( window, instance.getInstance() ) )
 {
 }
 
-vk::SurfaceKHR &VulkanSurface::getSurface()
-{
-    return *m_surface;
-}
+VulkanSurface::~VulkanSurface() {}
+
+const vk::SurfaceKHR &VulkanSurface::getSurface() const { return *m_surface; }
