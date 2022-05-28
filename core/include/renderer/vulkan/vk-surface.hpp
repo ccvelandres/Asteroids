@@ -9,7 +9,8 @@
 class VulkanSurface
 {
 private:
-    const vk::UniqueSurfaceKHR m_surface;
+    struct Internal;
+    std::unique_ptr<Internal> m_internal;
 
 protected:
 public:

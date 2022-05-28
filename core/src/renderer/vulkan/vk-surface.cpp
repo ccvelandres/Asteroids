@@ -3,7 +3,8 @@
 #include <SDL2/SDL_vulkan.h>
 #include <utils/logging.hpp>
 
-vk::UniqueSurfaceKHR createSurface( SDL_Window *window, const vk::Instance &instance )
+vk::UniqueSurfaceKHR createSurface( SDL_Window         *window,
+                                    const vk::Instance &instance )
 {
 
     L_TAG( "createSurface" );
@@ -17,11 +18,24 @@ vk::UniqueSurfaceKHR createSurface( SDL_Window *window, const vk::Instance &inst
     return vk::UniqueSurfaceKHR( surface, instance );
 }
 
+struct VulkanSurface::Internal
+{
+    const vk::UniqueSurfaceKHR surface;
+
+    Internal( SDL_Window *window, const vk::Instance &instance )
+        : surface( createSurface( window, instance ) )
+    {
+    }
+};
+
 VulkanSurface::VulkanSurface( SDL_Window *window, const VulkanInstance &instance )
-    : m_surface( createSurface( window, instance.getInstance() ) )
+    : m_internal( std::make_unique<Internal>( window, instance.getInstance() ) )
 {
 }
 
 VulkanSurface::~VulkanSurface() {}
 
-const vk::SurfaceKHR &VulkanSurface::getSurface() const { return *m_surface; }
+const vk::SurfaceKHR &VulkanSurface::getSurface() const
+{
+    return *m_internal->surface;
+}
