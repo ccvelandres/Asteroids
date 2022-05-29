@@ -111,6 +111,21 @@ std::vector<vk::UniqueSemaphore> createSemaphores( const vk::Device &device, con
     return semaphores;
 }
 
+std::vector<vk::UniqueFence> createFences( const vk::Device &device, const uint32_t count )
+{
+    L_TAG( "createFences" );
+    std::vector<vk::UniqueFence> fences;
+
+    vk::FenceCreateInfo fenceCreateinfo( vk::FenceCreateFlagBits::eSignaled );
+
+    for ( int i = 0; i < count; i++ )
+    {
+        fences.push_back( device.createFenceUnique( fenceCreateinfo ) );
+    }
+    L_TRACE( "Created {} fences", count );
+    return fences;
+}
+
 struct VulkanDevice::Internal
 {
     const QueueConfig      queueConfig;
@@ -160,4 +175,9 @@ const bool VulkanDevice::hasDiscreteQueue() const
 std::vector<vk::UniqueSemaphore> VulkanDevice::createSemaphores( const uint32_t count ) const
 {
     return ::createSemaphores( *m_internal->device, count );
+}
+
+std::vector<vk::UniqueFence> VulkanDevice::createFences( const uint32_t count ) const
+{
+    return ::createFences( *m_internal->device, count );
 }

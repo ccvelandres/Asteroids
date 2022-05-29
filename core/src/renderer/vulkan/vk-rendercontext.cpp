@@ -3,6 +3,7 @@
 #include <renderer/vulkan/vk-utils.hpp>
 
 #include <utils/logging.hpp>
+#include <utils/profiler.hpp>
 
 #include <array>
 
@@ -96,6 +97,32 @@ std::vector<vk::UniqueFramebuffer> createFramebuffers( const VulkanDevice     &d
     return framebuffers;
 }
 
+vk::Rect2D createScissor( const VulkanSwapchain &swapchain )
+{
+    vk::Offset2D offset( 0, 0 );
+
+    return vk::Rect2D( offset, swapchain.getExtent() );
+}
+
+vk::Viewport createViewport( const VulkanSwapchain &swapchain )
+{
+    vk::Extent2D extent         = swapchain.getExtent();
+    const float  viewportWidth  = static_cast<float>( extent.width );
+    const float  viewportHeight = static_cast<float>( extent.height );
+
+    return vk::Viewport( 0.f, 0.f, viewportWidth, viewportHeight, 0.f, 1.f );
+}
+
+std::array<vk::ClearValue, 2> createClearValues()
+{
+    std::array<vk::ClearValue, 2> clearValues;
+    clearValues [0].color =
+        vk::ClearColorValue( std::array<float, 4>{ 128.f / 256.f, 128.f / 256.f, 128.f / 256.f, 1.f } );
+    clearValues [1].depthStencil = vk::ClearDepthStencilValue( 1.f, 0 );
+
+    return clearValues;
+}
+
 struct VulkanRenderContext::Internal
 {
     const VulkanSwapchain                      swapchain;
@@ -109,6 +136,10 @@ struct VulkanRenderContext::Internal
     const uint32_t                             maxRenderFrames = 2;
     const std::vector<vk::UniqueSemaphore>     graphicsSemaphores;
     const std::vector<vk::UniqueSemaphore>     presentSemaphores;
+    const std::vector<vk::UniqueFence>         graphicsFences;
+    const vk::Rect2D                           scissor;
+    const vk::Viewport                         viewport;
+    const std::array<vk::ClearValue, 2>        clearValues;
 
     Internal( SDL_Window                 *window,
               const VulkanInstance       &instance,
@@ -125,7 +156,11 @@ struct VulkanRenderContext::Internal
           framebuffers( ::createFramebuffers( device, swapchain, renderpass, multisampleImageView, depthImageView ) ),
           commandBuffers( commandPool.createCommandBuffers( device, swapchain.getImageCount() ) ),
           graphicsSemaphores( device.createSemaphores( maxRenderFrames ) ),
-          presentSemaphores( device.createSemaphores( maxRenderFrames ) )
+          presentSemaphores( device.createSemaphores( maxRenderFrames ) ),
+          graphicsFences( device.createFences( maxRenderFrames ) ),
+          scissor( ::createScissor( swapchain ) ),
+          viewport( ::createViewport( swapchain ) ),
+          clearValues( ::createClearValues() )
     {
         L_TAG( "VulkanRenderContext::Internal" );
         L_TRACE( "Internal resources initialized ({})", static_cast<void *>( this ) );

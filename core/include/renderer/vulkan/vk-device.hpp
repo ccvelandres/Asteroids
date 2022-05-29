@@ -26,6 +26,7 @@ public:
     const uint32_t                   getPresentQueueIndex() const;
     const bool                       hasDiscreteQueue() const;
     std::vector<vk::UniqueSemaphore> createSemaphores( const uint32_t count ) const;
+    std::vector<vk::UniqueFence>     createFences( const uint32_t count ) const;
 
     operator vk::Device() { return getDevice(); }
 };
