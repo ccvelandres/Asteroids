@@ -1,5 +1,5 @@
 #include <game.hpp>
-#include <renderer.hpp>
+#include <renderer/renderer.hpp>
 
 #include <utils/logging.hpp>
 

@@ -3,7 +3,7 @@
 #include <ecs/ecs.hpp>
 #include <ecs/transformComponent.hpp>
 #include <ecs/spriteComponent.hpp>
-#include <renderer.hpp>
+#include <renderer/renderer.hpp>
 
 class RenderComponent : public Component {
     SpriteComponent *sprite;

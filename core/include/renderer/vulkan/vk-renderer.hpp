@@ -1,7 +1,7 @@
 #pragma once
 
 #include <memory>
-#include <renderer.hpp>
+#include <renderer/renderer.hpp>
 #include <vulkan/vulkan.hpp>
 
 class VulkanRenderer : public BaseRenderer

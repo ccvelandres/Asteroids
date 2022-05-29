@@ -4,7 +4,7 @@
 
 #include "ecs.hpp"
 #include <game.hpp>
-#include <renderer.hpp>
+#include <renderer/renderer.hpp>
 #include <time.hpp>
 
 class SpriteComponent : public Component

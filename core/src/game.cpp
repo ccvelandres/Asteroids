@@ -1,7 +1,7 @@
 #include <game.hpp>
 #include <ecs/ecs.hpp>
 #include <ecs/components.hpp>
-#include <renderer.hpp>
+#include <renderer/renderer.hpp>
 #include <renderer/vulkan/vk-renderer.hpp>
 #include <event.hpp>
 #include <input/inputManager.hpp>
