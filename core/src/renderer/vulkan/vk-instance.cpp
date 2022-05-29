@@ -87,13 +87,13 @@ struct VulkanInstance::Internal
     Internal( SDL_Window *window ) : instance( ::createInstance( window ) ), debugUtils( *instance )
     {
         L_TAG( "VulkanInstance::Internal" );
-        L_DEBUG( "Instance successfully created" );
+        L_TRACE( "Internal resources initialized ({})", static_cast<void*>(this) );
     }
 
     ~Internal()
     {
         L_TAG( "VulkanInstance::~Internal" );
-        L_DEBUG( "Internal data cleaned up" );
+        L_TRACE( "Internal resources freed ({})", static_cast<void*>(this) );
     }
 };
 

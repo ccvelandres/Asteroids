@@ -46,7 +46,13 @@ struct VulkanImageView::Internal
         : imageView( ::createImageViews( device, image, format, aspectFlags, mipLevels ) )
     {
         L_TAG( "VulkanImageView::Internal" );
-        L_DEBUG( "ImageView successfully created" );
+        L_TRACE( "Internal resources initialized ({})", static_cast<void*>(this) );
+    }
+
+    ~Internal()
+    {
+        L_TAG( "VulkanImageView::~Internal" );
+        L_TRACE( "Internal resources freed ({})", static_cast<void*>(this) );
     }
 };
 

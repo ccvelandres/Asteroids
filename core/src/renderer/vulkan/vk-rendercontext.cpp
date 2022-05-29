@@ -103,13 +103,14 @@ std::vector<vk::UniqueFramebuffer> createFramebuffers( const VulkanDevice     &d
 
 struct VulkanRenderContext::Internal
 {
-    const VulkanSwapchain                    swapchain;
-    const VulkanRenderPass                   renderpass;
-    const VulkanImage                        multisampleImage;
-    const VulkanImageView                    multisampleImageView;
-    const VulkanImage                        depthImage;
-    const VulkanImageView                    depthImageView;
-    const std::vector<vk::UniqueFramebuffer> framebuffers;
+    const VulkanSwapchain                      swapchain;
+    const VulkanRenderPass                     renderpass;
+    const VulkanImage                          multisampleImage;
+    const VulkanImageView                      multisampleImageView;
+    const VulkanImage                          depthImage;
+    const VulkanImageView                      depthImageView;
+    const std::vector<vk::UniqueFramebuffer>   framebuffers;
+    const std::vector<vk::UniqueCommandBuffer> commandBuffers;
 
     Internal( SDL_Window                 *window,
               const VulkanInstance       &instance,
@@ -125,12 +126,21 @@ struct VulkanRenderContext::Internal
               ::createImageView( device, multisampleImage, vk::ImageAspectFlagBits::eColor ) ),
           depthImage( ::createDepthImage( physicalDevice, device, swapchain, commandPool ) ),
           depthImageView( ::createImageView( device, depthImage, vk::ImageAspectFlagBits::eDepth ) ),
-          framebuffers(
-              ::createFramebuffers( device, swapchain, renderpass, multisampleImageView, depthImageView ) )
+          framebuffers( ::createFramebuffers( device,
+                                              swapchain,
+                                              renderpass,
+                                              multisampleImageView,
+                                              depthImageView ) ),
+          commandBuffers( commandPool.createCommandBuffers( device, swapchain.getImageCount() ) )
     {
         L_TAG( "VulkanRenderContext::Internal" );
+        L_TRACE( "Internal resources initialized ({})", static_cast<void*>(this) );
+    }
 
-        L_DEBUG( "RenderContext successfully created" );
+    ~Internal()
+    {
+        L_TAG( "VulkanRenderContext::~Internal" );
+        L_TRACE( "Internal resources freed ({})", static_cast<void*>(this) );
     }
 };
 

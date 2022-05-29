@@ -124,7 +124,13 @@ struct VulkanDevice::Internal
           presentQueue( device->getQueue( queueConfig.presentQueueIndex, 0 ) )
     {
         L_TAG( "VulkanDevice::Internal" );
-        L_DEBUG( "Device successfully created" );
+        L_TRACE( "Internal resources initialized ({})", static_cast<void*>(this) );
+    }
+
+    ~Internal()
+    {
+        L_TAG( "VulkanDevice::~Internal" );
+        L_TRACE( "Internal resources freed ({})", static_cast<void*>(this) );
     }
 };
 

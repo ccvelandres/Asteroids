@@ -73,14 +73,14 @@ struct VulkanDebugUtils::Internal
           debugUtilsMessenger( ::createDebugUtilsMessenger( instance, dispatcher ) )
     {
         L_TAG( "VulkanDebugUtils::Internal" );
-        L_DEBUG( "DebugUtils successful setup" );
+        L_TRACE( "Internal resources initialized ({})", static_cast<void*>(this) );
     }
 
     ~Internal()
     {
         L_TAG( "VulkanDebugUtils::~Internal" );
         instance.destroyDebugUtilsMessengerEXT( debugUtilsMessenger, nullptr, dispatcher );
-        L_DEBUG( "Internal data cleaned up" );
+        L_TRACE( "Internal resources freed ({})", static_cast<void*>(this) );
     }
 };
 

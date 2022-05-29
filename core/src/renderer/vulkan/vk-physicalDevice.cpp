@@ -99,7 +99,13 @@ struct VulkanPhysicalDevice::Internal
           depthFormat( ::getDepthFormat( physicalDevice ) )
     {
         L_TAG( "VulkanPhysicalDevice::Internal" );
-        L_DEBUG( "PhysicalDevice successfully created" );
+        L_TRACE( "Internal resources initialized ({})", static_cast<void*>(this) );
+    }
+
+    ~Internal()
+    {
+        L_TAG( "VulkanPhysicalDevice::~Internal" );
+        L_TRACE( "Internal resources freed ({})", static_cast<void*>(this) );
     }
 };
 

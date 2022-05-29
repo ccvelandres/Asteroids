@@ -27,7 +27,13 @@ struct VulkanContext::Internal
                            m_commandPool )
     {
         L_TAG( "VulkanContext::Internal" );
-        L_DEBUG( "VulkanContext successfully initialized" );
+        L_TRACE( "Internal resources initialized ({})", static_cast<void*>(this) );
+    }
+
+    ~Internal()
+    {
+        L_TAG( "VulkanContext::~Internal" );
+        L_TRACE( "Internal resources freed ({})", static_cast<void*>(this) );
     }
 };
 

@@ -26,7 +26,13 @@ struct VulkanSurface::Internal
         : surface( ::createSurface( window, instance ) )
     {
         L_TAG( "VulkanSurface::Internal" );
-        L_DEBUG( "SurfaceKHR successfully created" );
+        L_TRACE( "Internal resources initialized ({})", static_cast<void*>(this) );
+    }
+
+    ~Internal()
+    {
+        L_TAG( "VulkanSurface::~Internal" );
+        L_TRACE( "Internal resources freed ({})", static_cast<void*>(this) );
     }
 };
 

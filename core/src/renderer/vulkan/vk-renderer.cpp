@@ -15,13 +15,13 @@ struct VulkanRenderer::Internal
     Internal( SDL_Window *window ) : window( window ), context( window )
     {
         L_TAG( "VulkanRenderer::Internal" );
-        L_DEBUG( "Renderer created" );
+        L_TRACE( "Internal resources initialized ({})", static_cast<void*>(this) );
     }
 
     ~Internal()
     {
         L_TAG( "VulkanRenderer::~Internal" );
-        L_DEBUG( "Internal data cleaned up" );
+        L_TRACE( "Internal resources freed ({})", static_cast<void*>(this) );
     }
 };
 

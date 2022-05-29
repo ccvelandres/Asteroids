@@ -180,7 +180,13 @@ struct VulkanImage::Internal
                                  mipLevels,
                                  oldLayout,
                                  newLayout );
-        L_TRACE( "Image allocated and created" );
+        L_TRACE( "Internal resources initialized ({})", static_cast<void*>(this) );
+    }
+
+    ~Internal()
+    {
+        L_TAG( "VulkanImage::~Internal" );
+        L_TRACE( "Internal resources freed ({})", static_cast<void*>(this) );
     }
 };
 

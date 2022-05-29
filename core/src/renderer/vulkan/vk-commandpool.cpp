@@ -23,7 +23,13 @@ struct VulkanCommandPool::Internal
     Internal( const VulkanDevice &device ) : commandPool( ::createCommandPool( device ) )
     {
         L_TAG( "VulkanCommandPool::Internal" );
-        L_DEBUG( "CommandPool successfully created" );
+        L_TRACE( "Internal resources initialized ({})", static_cast<void*>(this) );
+    }
+
+    ~Internal()
+    {
+        L_TAG( "VulkanCommandPool::~Internal" );
+        L_TRACE( "Internal resources freed ({})", static_cast<void*>(this) );
     }
 };
 
@@ -57,7 +63,7 @@ vk::UniqueCommandBuffer VulkanCommandPool::createCommandBuffer( const VulkanDevi
 
     /** Request to begin the buffer */
     buffer->begin( beginInfo );
-    L_TRACE( "({}) created and started", (void *)&buffer.get() );
+    L_TRACE( "CommandBuffer created and started ({})", (void *)&buffer.get() );
     return buffer;
 }
 
@@ -71,7 +77,7 @@ void VulkanCommandPool::endCommandBuffer( vk::CommandBuffer &buffer, const Vulka
     vk::SubmitInfo submitInfo( 0, nullptr, nullptr, 1, &buffer, 0, nullptr );
     device.getGraphicsQueue().submit( 1, &submitInfo, vk::Fence() );
 
-    L_TRACE( "({}) stopped and submitted", (void *)&buffer );
+    L_TRACE( "CommandBuffer stopped and submitted ({})", (void *)&buffer );
     /** Wait will the graphics queue is idle */
     device.getGraphicsQueue().waitIdle();
 }
