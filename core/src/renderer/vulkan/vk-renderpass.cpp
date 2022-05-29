@@ -90,15 +90,33 @@ vk::UniqueRenderPass createRenderPass( const VulkanPhysicalDevice &physicalDevic
     return device.getDevice().createRenderPassUnique( renderPassCreateInfo );
 }
 
+struct VulkanRenderPass::Internal
+{
+    const vk::UniqueRenderPass renderpass;
+
+    Internal( const VulkanPhysicalDevice &physicalDevice,
+                                    const VulkanDevice         &device,
+                                    const VulkanSwapchain      &swapchain )
+    : renderpass( ::createRenderPass( physicalDevice, device, swapchain ) )
+    {
+        L_TAG( "VulkanRenderPass::Internal" );
+        L_TRACE( "Internal resources initialized ({})", static_cast<void*>(this) );
+    }
+
+    ~Internal()
+    {
+        L_TAG( "VulkanRenderPass::~Internal" );
+        L_TRACE( "Internal resources freed ({})", static_cast<void*>(this) );
+    }
+};
+
 VulkanRenderPass::VulkanRenderPass( const VulkanPhysicalDevice &physicalDevice,
                                     const VulkanDevice         &device,
                                     const VulkanSwapchain      &swapchain )
-    : m_renderpass( ::createRenderPass( physicalDevice, device, swapchain ) )
+    : m_internal( std::make_unique<Internal>( physicalDevice, device, swapchain ) )
 {
-    L_TAG( "VulkanRenderPass::VulkanRenderPass" );
-    L_DEBUG( "Renderpass created" );
 }
 
 VulkanRenderPass::~VulkanRenderPass() {}
 
-const vk::RenderPass &VulkanRenderPass::getRenderPass() const { return *m_renderpass; }
+const vk::RenderPass &VulkanRenderPass::getRenderPass() const { return *m_internal->renderpass; }

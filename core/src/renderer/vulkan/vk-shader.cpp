@@ -7,8 +7,7 @@
 
 #include <exception>
 
-vk::UniqueShaderModule createShaderModule( const vk::Device  &device,
-                                           const std::string &filename )
+vk::UniqueShaderModule createShaderModule( const vk::Device &device, const std::string &filename )
 {
     L_TAG( "createShaderModule" );
 
@@ -22,17 +21,33 @@ vk::UniqueShaderModule createShaderModule( const vk::Device  &device,
     return device.createShaderModuleUnique( shaderCreateInfo );
 }
 
-VulkanShaderModule::VulkanShaderModule( VulkanDevice      &device,
-                                        const std::string &filename )
-    : m_shader( ::createShaderModule( device, filename ) )
+struct VulkanShaderModule::Internal
 {
-    L_TAG( "VulkanShaderModule::VulkanShaderModule" );
-    L_DEBUG( "ShaderModule created ({})", filename );
+    const std::string            filename;
+    const vk::UniqueShaderModule shader;
+
+    Internal( VulkanDevice &device, const std::string &filename )
+        : filename( filename ),
+          shader( ::createShaderModule( device, filename ) )
+    {
+        L_TAG( "VulkanShaderModule::Internal" );
+        L_DEBUG( "Shader loaded ({})", filename );
+        L_TRACE( "Internal resources initialized ({})", static_cast<void *>( this ) );
+    }
+
+    ~Internal()
+    {
+        L_TAG( "VulkanShaderModule::~Internal" );
+        L_DEBUG( "Shader unloaded ({})", filename );
+        L_TRACE( "Internal resources freed ({})", static_cast<void *>( this ) );
+    }
+};
+
+VulkanShaderModule::VulkanShaderModule( VulkanDevice &device, const std::string &filename )
+    : m_internal( std::make_unique<Internal>( device, filename ) )
+{
 }
 
 VulkanShaderModule::~VulkanShaderModule() {}
 
-const vk::ShaderModule &VulkanShaderModule::getShaderModule() const
-{
-    return *m_shader;
-}
+const vk::ShaderModule &VulkanShaderModule::getShaderModule() const { return *m_internal->shader; }

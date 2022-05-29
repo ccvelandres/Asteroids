@@ -9,7 +9,8 @@
 class VulkanShaderModule
 {
 private:
-    const vk::UniqueShaderModule m_shader;
+    struct Internal;
+    std::unique_ptr<Internal> m_internal;
 
 protected:
 public:

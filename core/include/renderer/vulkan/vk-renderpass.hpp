@@ -10,7 +10,8 @@
 class VulkanRenderPass
 {
 private:
-    const vk::UniqueRenderPass m_renderpass;
+    struct Internal;
+    std::unique_ptr<Internal> m_internal;
 
 protected:
 public:
