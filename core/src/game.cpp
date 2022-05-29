@@ -5,6 +5,8 @@
 #include <renderer/vulkan/vk-renderer.hpp>
 #include <event.hpp>
 #include <input/inputManager.hpp>
+#include <utils/profiler.hpp>
+#include <utils/logging.hpp>
 
 #include <thread>
 
