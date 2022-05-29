@@ -55,7 +55,7 @@ BreakBeforeBraces: Custom
 # BreakConstructorInitializers: AfterColon
 # BreakInheritanceList: AfterColon
 BreakStringLiterals: true
-ColumnLimit:     80
+ColumnLimit:     120
 # CommentPragmas:  '^ IWYU pragma:'
 # CompactNamespaces: false
 ConstructorInitializerAllOnOneLineOrOnePerLine: true
