@@ -9,24 +9,21 @@ struct QueueConfig
     uint32_t presentQueueIndex;
 };
 
-QueueConfig getQueueConfig( const vk::PhysicalDevice &physicalDevice,
-                            const vk::SurfaceKHR     &surface )
+QueueConfig getQueueConfig( const vk::PhysicalDevice &physicalDevice, const vk::SurfaceKHR &surface )
 {
     L_TAG( "getQueueConfig" );
 
-    constexpr uint32_t maxIndex = std::numeric_limits<uint32_t>::max();
+    constexpr uint32_t maxIndex           = std::numeric_limits<uint32_t>::max();
     uint32_t           graphicsQueueIndex = maxIndex;
     uint32_t           presentQueueIndex  = maxIndex;
 
-    std::vector<vk::QueueFamilyProperties> queueFamilyProperties =
-        physicalDevice.getQueueFamilyProperties();
+    std::vector<vk::QueueFamilyProperties> queueFamilyProperties = physicalDevice.getQueueFamilyProperties();
 
     for ( uint32_t i = 0; i < queueFamilyProperties.size(); i++ )
     {
         vk::QueueFamilyProperties &queueProperties = queueFamilyProperties [i];
 
-        if ( queueProperties.queueCount > 0
-             && queueProperties.queueFlags & vk::QueueFlagBits::eGraphics )
+        if ( queueProperties.queueCount > 0 && queueProperties.queueFlags & vk::QueueFlagBits::eGraphics )
         {
             if ( graphicsQueueIndex == maxIndex ) graphicsQueueIndex = i;
 
@@ -67,8 +64,7 @@ QueueConfig getQueueConfig( const vk::PhysicalDevice &physicalDevice,
     return QueueConfig{ graphicsQueueIndex, presentQueueIndex };
 }
 
-vk::UniqueDevice createDevice( const vk::PhysicalDevice &physicalDevice,
-                               const QueueConfig        &queueConfig )
+vk::UniqueDevice createDevice( const vk::PhysicalDevice &physicalDevice, const QueueConfig &queueConfig )
 {
     L_TAG( "createDevice" );
 
@@ -76,36 +72,43 @@ vk::UniqueDevice createDevice( const vk::PhysicalDevice &physicalDevice,
 
     // Queue config for graphics queue
     std::vector<vk::DeviceQueueCreateInfo> queueCreateInfos = {
-        vk::DeviceQueueCreateInfo( vk::DeviceQueueCreateFlags(),
-                                   queueConfig.graphicsQueueIndex,
-                                   1,
-                                   &queuePriority ) };
+        vk::DeviceQueueCreateInfo( vk::DeviceQueueCreateFlags(), queueConfig.graphicsQueueIndex, 1, &queuePriority ) };
 
     // Queue config for presentation queue
     if ( queueConfig.graphicsQueueIndex != queueConfig.presentQueueIndex )
     {
         queueCreateInfos.push_back(
-            vk::DeviceQueueCreateInfo( vk::DeviceQueueCreateFlags(),
-                                       queueConfig.presentQueueIndex,
-                                       1,
-                                       &queuePriority ) );
+            vk::DeviceQueueCreateInfo( vk::DeviceQueueCreateFlags(), queueConfig.presentQueueIndex, 1, &queuePriority ) );
     }
 
-    std::vector<const char *> deviceExtensions = {
-        VK_KHR_SWAPCHAIN_EXTENSION_NAME };
+    std::vector<const char *> deviceExtensions = { VK_KHR_SWAPCHAIN_EXTENSION_NAME };
 
-    vk::DeviceCreateInfo deviceCreateInfo =
-        vk::DeviceCreateInfo( vk::DeviceCreateFlags(),
-                              static_cast<uint32_t>( queueCreateInfos.size() ),
-                              queueCreateInfos.data(),
-                              0,
-                              nullptr,
-                              static_cast<uint32_t>( deviceExtensions.size() ),
-                              deviceExtensions.data(),
-                              nullptr );
+    vk::DeviceCreateInfo deviceCreateInfo = vk::DeviceCreateInfo( vk::DeviceCreateFlags(),
+                                                                  static_cast<uint32_t>( queueCreateInfos.size() ),
+                                                                  queueCreateInfos.data(),
+                                                                  0,
+                                                                  nullptr,
+                                                                  static_cast<uint32_t>( deviceExtensions.size() ),
+                                                                  deviceExtensions.data(),
+                                                                  nullptr );
 
     // Create the device
     return physicalDevice.createDeviceUnique( deviceCreateInfo );
+}
+
+std::vector<vk::UniqueSemaphore> createSemaphores( const vk::Device &device, const uint32_t count )
+{
+    L_TAG( "createSemaphores" );
+    std::vector<vk::UniqueSemaphore> semaphores;
+    vk::SemaphoreCreateInfo          semaphoreCreateInfo;
+
+    for ( int i = 0; i < count; i++ )
+    {
+        semaphores.push_back( device.createSemaphoreUnique( semaphoreCreateInfo ) );
+    }
+
+    L_TRACE( "Created {} semaphores", count );
+    return semaphores;
 }
 
 struct VulkanDevice::Internal
@@ -115,63 +118,46 @@ struct VulkanDevice::Internal
     const vk::Queue        graphicsQueue;
     const vk::Queue        presentQueue;
 
-    Internal( SDL_Window               *window,
-              const vk::PhysicalDevice &physicalDevice,
-              const vk::SurfaceKHR     &surface )
+    Internal( SDL_Window *window, const vk::PhysicalDevice &physicalDevice, const vk::SurfaceKHR &surface )
         : queueConfig( ::getQueueConfig( physicalDevice, surface ) ),
           device( ::createDevice( physicalDevice, queueConfig ) ),
           graphicsQueue( device->getQueue( queueConfig.graphicsQueueIndex, 0 ) ),
           presentQueue( device->getQueue( queueConfig.presentQueueIndex, 0 ) )
     {
         L_TAG( "VulkanDevice::Internal" );
-        L_TRACE( "Internal resources initialized ({})", static_cast<void*>(this) );
+        L_TRACE( "Internal resources initialized ({})", static_cast<void *>( this ) );
     }
 
     ~Internal()
     {
         L_TAG( "VulkanDevice::~Internal" );
-        L_TRACE( "Internal resources freed ({})", static_cast<void*>(this) );
+        L_TRACE( "Internal resources freed ({})", static_cast<void *>( this ) );
     }
 };
 
-VulkanDevice::VulkanDevice( SDL_Window                 *window,
-                            const VulkanPhysicalDevice &physicalDevice,
-                            const VulkanSurface        &surface )
-    : m_internal( std::make_unique<Internal>( window,
-                                              physicalDevice.getPhysicalDevice(),
-                                              surface.getSurface() ) )
+VulkanDevice::VulkanDevice( SDL_Window *window, const VulkanPhysicalDevice &physicalDevice, const VulkanSurface &surface )
+    : m_internal( std::make_unique<Internal>( window, physicalDevice.getPhysicalDevice(), surface.getSurface() ) )
 {
 }
 
 VulkanDevice::~VulkanDevice() {}
 
-const vk::Device &VulkanDevice::getDevice() const
-{
-    return *m_internal->device;
-}
+const vk::Device &VulkanDevice::getDevice() const { return *m_internal->device; }
 
-const vk::Queue &VulkanDevice::getGraphicsQueue() const
-{
-    return m_internal->graphicsQueue;
-}
+const vk::Queue &VulkanDevice::getGraphicsQueue() const { return m_internal->graphicsQueue; }
 
-const vk::Queue &VulkanDevice::getPresentQueue() const
-{
-    return m_internal->presentQueue;
-}
+const vk::Queue &VulkanDevice::getPresentQueue() const { return m_internal->presentQueue; }
 
-const uint32_t VulkanDevice::getGraphicsQueueIndex() const
-{
-    return m_internal->queueConfig.graphicsQueueIndex;
-}
+const uint32_t VulkanDevice::getGraphicsQueueIndex() const { return m_internal->queueConfig.graphicsQueueIndex; }
 
-const uint32_t VulkanDevice::getPresentQueueIndex() const
-{
-    return m_internal->queueConfig.presentQueueIndex;
-}
+const uint32_t VulkanDevice::getPresentQueueIndex() const { return m_internal->queueConfig.presentQueueIndex; }
 
 const bool VulkanDevice::hasDiscreteQueue() const
 {
-    return m_internal->queueConfig.graphicsQueueIndex
-        != m_internal->queueConfig.presentQueueIndex;
+    return m_internal->queueConfig.graphicsQueueIndex != m_internal->queueConfig.presentQueueIndex;
+}
+
+std::vector<vk::UniqueSemaphore> VulkanDevice::createSemaphores( const uint32_t count ) const
+{
+    return ::createSemaphores( *m_internal->device, count );
 }

@@ -25,8 +25,7 @@ VulkanImage createMultisampleImage( const VulkanPhysicalDevice &physicalDevice,
                         physicalDevice.getMultisampling(),
                         format.format,
                         vk::ImageTiling::eOptimal,
-                        vk::ImageUsageFlagBits::eTransientAttachment
-                            | vk::ImageUsageFlagBits::eColorAttachment,
+                        vk::ImageUsageFlagBits::eTransientAttachment | vk::ImageUsageFlagBits::eColorAttachment,
                         vk::MemoryPropertyFlagBits::eDeviceLocal,
                         vk::ImageLayout::eUndefined,
                         vk::ImageLayout::eColorAttachmentOptimal );
@@ -38,11 +37,7 @@ VulkanImageView createImageView( const VulkanDevice         &device,
 {
     L_TAG( "createImageView" );
     L_TRACE( "Creating imageView" );
-    return VulkanImageView( device,
-                            image.getImage(),
-                            image.getFormat(),
-                            aspectFlags,
-                            image.getMipLevels() );
+    return VulkanImageView( device, image.getImage(), image.getFormat(), aspectFlags, image.getMipLevels() );
 }
 
 VulkanImage createDepthImage( const VulkanPhysicalDevice &physicalDevice,
@@ -111,6 +106,9 @@ struct VulkanRenderContext::Internal
     const VulkanImageView                      depthImageView;
     const std::vector<vk::UniqueFramebuffer>   framebuffers;
     const std::vector<vk::UniqueCommandBuffer> commandBuffers;
+    const uint32_t                             maxRenderFrames = 2;
+    const std::vector<vk::UniqueSemaphore>     graphicsSemaphores;
+    const std::vector<vk::UniqueSemaphore>     presentSemaphores;
 
     Internal( SDL_Window                 *window,
               const VulkanInstance       &instance,
@@ -120,27 +118,23 @@ struct VulkanRenderContext::Internal
               const VulkanCommandPool    &commandPool )
         : swapchain( window, instance, physicalDevice, surface, device ),
           renderpass( physicalDevice, device, swapchain ),
-          multisampleImage(
-              ::createMultisampleImage( physicalDevice, device, swapchain, commandPool ) ),
-          multisampleImageView(
-              ::createImageView( device, multisampleImage, vk::ImageAspectFlagBits::eColor ) ),
+          multisampleImage( ::createMultisampleImage( physicalDevice, device, swapchain, commandPool ) ),
+          multisampleImageView( ::createImageView( device, multisampleImage, vk::ImageAspectFlagBits::eColor ) ),
           depthImage( ::createDepthImage( physicalDevice, device, swapchain, commandPool ) ),
           depthImageView( ::createImageView( device, depthImage, vk::ImageAspectFlagBits::eDepth ) ),
-          framebuffers( ::createFramebuffers( device,
-                                              swapchain,
-                                              renderpass,
-                                              multisampleImageView,
-                                              depthImageView ) ),
-          commandBuffers( commandPool.createCommandBuffers( device, swapchain.getImageCount() ) )
+          framebuffers( ::createFramebuffers( device, swapchain, renderpass, multisampleImageView, depthImageView ) ),
+          commandBuffers( commandPool.createCommandBuffers( device, swapchain.getImageCount() ) ),
+          graphicsSemaphores( device.createSemaphores( maxRenderFrames ) ),
+          presentSemaphores( device.createSemaphores( maxRenderFrames ) )
     {
         L_TAG( "VulkanRenderContext::Internal" );
-        L_TRACE( "Internal resources initialized ({})", static_cast<void*>(this) );
+        L_TRACE( "Internal resources initialized ({})", static_cast<void *>( this ) );
     }
 
     ~Internal()
     {
         L_TAG( "VulkanRenderContext::~Internal" );
-        L_TRACE( "Internal resources freed ({})", static_cast<void*>(this) );
+        L_TRACE( "Internal resources freed ({})", static_cast<void *>( this ) );
     }
 };
 
@@ -150,8 +144,7 @@ VulkanRenderContext::VulkanRenderContext( SDL_Window                 *window,
                                           const VulkanDevice         &device,
                                           const VulkanSurface        &surface,
                                           const VulkanCommandPool    &commandPool )
-    : m_internal(
-        std::make_unique<Internal>( window, instance, physicalDevice, device, surface, commandPool ) )
+    : m_internal( std::make_unique<Internal>( window, instance, physicalDevice, device, surface, commandPool ) )
 {
     L_TAG( "VulkanRenderContext::VulkanRenderContext" );
 }
