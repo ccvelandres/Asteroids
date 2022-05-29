@@ -21,9 +21,7 @@ vk::UniqueImageView createImageViews( const VulkanDevice         &device,
                                            vk::ComponentSwizzle::eIdentity,
                                            vk::ComponentSwizzle::eIdentity );
 
-    /** Create an image view for each image */
-    L_TRACE( "Creating image views for each swapchain image" );
-
+    /** Create an image view for image */
     vk::ImageViewCreateInfo imageViewCreateInfo( vk::ImageViewCreateFlags(),
                                                  image,
                                                  vk::ImageViewType::e2D,

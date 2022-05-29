@@ -12,7 +12,7 @@ void transitionImageLayout( const VulkanDevice      &device,
                             const vk::ImageLayout    oldLayout,
                             const vk::ImageLayout    newLayout )
 {
-    L_TAG( "createImage" );
+    L_TAG( "transitionImageLayout" );
     vk::UniqueCommandBuffer commandBuffer =
         commandPool.createCommandBuffer( device );
 
