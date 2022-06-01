@@ -70,11 +70,11 @@
         },
         {
             "label": "Launch Profiler",
-            "command": "${workspaceFolder}/build/lib/easy_profiler/bin/profiler_gui",
+            "command": "${workspaceFolder}/build/out/profiler_gui",
             "dependsOn": [
                 "CMake Build : Debug"
             ],
-            "dependsOrder": "sequence",
+            "type": "process",
             "problemMatcher": []
         }
     ]
