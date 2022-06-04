@@ -4,7 +4,7 @@
 #include <renderer/common/renderer.hpp>
 #include <vulkan/vulkan.hpp>
 
-class VulkanRenderer : public BaseRenderer
+class VulkanRenderer : public Renderer
 {
 private:
     struct Internal;
@@ -14,4 +14,13 @@ protected:
 public:
     VulkanRenderer( SDL_Window *window );
     ~VulkanRenderer();
+
+    void init() override;
+    void update(const time_ms delta) override;
+    void clean() override;
+    void refresh() override;
+
+    void renderBegin() override;
+    void render() override;
+    void renderEnd() override;
 };
