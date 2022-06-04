@@ -1,4 +1,4 @@
-#include <logic/enemy.hpp>
+#include <enemy.hpp>
 
 Enemy::Enemy()
 {

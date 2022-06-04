@@ -1,4 +1,4 @@
-#include <logic/player.hpp>
+#include <player.hpp>
 #include <game.hpp>
 
 Player::Player()

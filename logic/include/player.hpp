@@ -5,7 +5,7 @@
 #include <input/inputManager.hpp>
 #include <ecs/components.hpp>
 
-#include <logic/bullet.hpp>
+#include <bullet.hpp>
 
 class Player : public Entity
 {

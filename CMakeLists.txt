@@ -61,21 +61,35 @@ add_custom_command(TARGET proj_easy_profiler POST_BUILD
 )
 #################################################################
 ## Core
+set(CORE_TARGET "core")
 
 file(GLOB_RECURSE SRC_C_CORE ${CMAKE_SOURCE_DIR}/core/src/*.c)
 file(GLOB_RECURSE SRC_CPP_CORE ${CMAKE_SOURCE_DIR}/core/src/*.cpp)
 
-add_executable(${PROJECT_NAME} ${SRC_C_CORE} ${SRC_CPP_CORE})
-target_include_directories(${PROJECT_NAME} PRIVATE ${CMAKE_SOURCE_DIR}/core/src)
-target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_SOURCE_DIR}/core/include)
+add_library(${CORE_TARGET} ${SRC_C_CORE} ${SRC_CPP_CORE})
+target_include_directories(${CORE_TARGET} PRIVATE ${CMAKE_SOURCE_DIR}/core/src)
+target_include_directories(${CORE_TARGET} PUBLIC ${CMAKE_SOURCE_DIR}/core/include)
 
 ## Link Libraries
-target_link_libraries(${PROJECT_NAME} PUBLIC ${SDL2_LIBRARY})
-target_include_directories(${PROJECT_NAME} PUBLIC ${SDL2_INCLUDE_DIR})
-target_link_libraries(${PROJECT_NAME} PUBLIC ${SDL2_IMAGE_LIBRARY})
-target_include_directories(${PROJECT_NAME} PUBLIC ${SDL2_IMAGE_INCLUDE_DIR})
-target_link_libraries(${PROJECT_NAME} PUBLIC Vulkan::Vulkan)
-target_link_libraries(${PROJECT_NAME} PUBLIC spdlog)
+target_link_libraries(${CORE_TARGET} PUBLIC ${SDL2_LIBRARY})
+target_include_directories(${CORE_TARGET} PUBLIC ${SDL2_INCLUDE_DIR})
+target_link_libraries(${CORE_TARGET} PUBLIC ${SDL2_IMAGE_LIBRARY})
+target_include_directories(${CORE_TARGET} PUBLIC ${SDL2_IMAGE_INCLUDE_DIR})
+target_link_libraries(${CORE_TARGET} PUBLIC Vulkan::Vulkan)
+target_link_libraries(${CORE_TARGET} PUBLIC spdlog)
+
+
+#################################################################
+## Logic
+
+file(GLOB_RECURSE SRC_C_LOGIC ${CMAKE_SOURCE_DIR}/logic/src/*.c)
+file(GLOB_RECURSE SRC_CPP_LOGIC ${CMAKE_SOURCE_DIR}/logic/src/*.cpp)
+
+add_executable(${PROJECT_NAME} ${SRC_C_LOGIC} ${SRC_CPP_LOGIC})
+target_include_directories(${PROJECT_NAME} PRIVATE ${CMAKE_SOURCE_DIR}/logic/src)
+target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_SOURCE_DIR}/logic/include)
+
+target_link_libraries(${PROJECT_NAME} PUBLIC ${CORE_TARGET})
 
 # Package assets with binary
 file(COPY assets DESTINATION ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})

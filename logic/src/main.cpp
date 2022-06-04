@@ -11,8 +11,8 @@
 #include <game.hpp>
 #include <utils/logging.hpp>
 
-#include <logic/enemy.hpp>
-#include <logic/player.hpp>
+#include <enemy.hpp>
+#include <player.hpp>
 
 #include <renderer/vulkan/vk-renderer.hpp>
 

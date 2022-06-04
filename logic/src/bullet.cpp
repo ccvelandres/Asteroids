@@ -1,4 +1,4 @@
-#include <logic/bullet.hpp>
+#include <bullet.hpp>
 
 #include <utils/logging.hpp>
 
