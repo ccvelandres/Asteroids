@@ -39,7 +39,7 @@ struct VulkanContext::Internal
 
         /** Wait till the device is idle before recreating render context */
         device.getDevice().waitIdle();
-        renderContext.recreate( window, instance, physicalDevice, device, surface, commandPool );
+        renderContext = VulkanRenderContext( window, instance, physicalDevice, device, surface, commandPool );
     }
 
     bool renderBegin()

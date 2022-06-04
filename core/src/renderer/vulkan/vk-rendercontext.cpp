@@ -328,16 +328,6 @@ VulkanRenderContext::VulkanRenderContext( VulkanRenderContext &&o ) = default;
 VulkanRenderContext &VulkanRenderContext::operator=( VulkanRenderContext &&o ) = default;
 VulkanRenderContext::~VulkanRenderContext() = default;
 
-void VulkanRenderContext::recreate( SDL_Window *const           window,
-                                    const VulkanInstance       &instance,
-                                    const VulkanPhysicalDevice &physicalDevice,
-                                    const VulkanDevice         &device,
-                                    const VulkanSurface        &surface,
-                                    const VulkanCommandPool    &commandPool )
-{
-    m_internal = std::make_unique<Internal>( window, instance, physicalDevice, device, surface, commandPool );
-}
-
 bool VulkanRenderContext::renderBegin( const VulkanDevice &device ) const { return m_internal->renderBegin( device ); }
 
 bool VulkanRenderContext::renderEnd( const VulkanDevice &device ) const { return m_internal->renderEnd( device ); }
