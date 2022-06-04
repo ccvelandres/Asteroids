@@ -18,11 +18,11 @@ public:
     ~VulkanRenderer();
 
     void init() override;
-    void update(const time_ms delta) override;
+    void update( const time_ms delta ) override;
     void clean() override;
     void refresh() override;
 
-    void renderBegin() override;
-    void render() override;
+    bool renderBegin() override;
+    void render( const std::vector<Mesh> &meshes ) override;
     void renderEnd() override;
 };

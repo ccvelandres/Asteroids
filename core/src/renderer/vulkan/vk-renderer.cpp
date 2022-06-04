@@ -37,8 +37,8 @@ void VulkanRenderer::clean() {}
 
 void VulkanRenderer::refresh() {}
 
-void VulkanRenderer::renderBegin() {}
+bool VulkanRenderer::renderBegin() { return m_internal->context.renderBegin(); }
 
-void VulkanRenderer::render() {}
+void VulkanRenderer::render(const std::vector<Mesh> &meshes) {}
 
-void VulkanRenderer::renderEnd() {}
+void VulkanRenderer::renderEnd() { m_internal->context.renderEnd(); }

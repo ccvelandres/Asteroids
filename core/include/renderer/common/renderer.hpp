@@ -14,7 +14,7 @@ public:
     virtual void clean() = 0;
     virtual void refresh() = 0;
 
-    virtual void renderBegin() = 0;
-    virtual void render() = 0;
+    virtual bool renderBegin() = 0;
+    virtual void render(const std::vector<Mesh> &meshes) = 0;
     virtual void renderEnd() = 0;
 };
