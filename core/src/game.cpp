@@ -33,6 +33,7 @@ Game::Game(const std::string &windowTitle,
     if (g_game)
         assert("Only one Game class object may exist");
     g_game = this;
+    g_time = new Time();
 
     if (SDL_Init(SDL_INIT_EVERYTHING) != 0)
     {
@@ -49,16 +50,13 @@ Game::Game(const std::string &windowTitle,
     {
         L_ERROR("Failed to initialize window");
     }
-        
-    g_time = new Time();
     g_renderer = new VulkanRenderer(m_window);
-    while(1);
-    // g_renderer = new Renderer();
+
     g_inputManager = new InputManager();
     g_eventManager = new EventManager();
     g_componentManager = new ComponentManager();
     g_entityManager = new EntityManager();
-
+    
     /** FPS Defaults */
     m_targetDelta = time_ds(time_step::den / 60);
 }
