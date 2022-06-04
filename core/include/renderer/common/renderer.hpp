@@ -2,6 +2,7 @@
 
 #include <SDL.h>
 #include <utils/vector.hpp>
+#include <time.hpp>
 
 #include <map>
 #include <vector>
@@ -103,6 +104,16 @@ public:
 
 #include <SDL2/SDL_vulkan.h>
 #include <vulkan/vulkan.hpp>
+#include <renderer/common/vertex.hpp>
+#include <renderer/common/mesh.hpp>
+
+// class Texture {
+
+// };
+
+// class Texture2D : public Texture {
+
+// };
 
 class BaseRenderer {
 private:
@@ -110,6 +121,11 @@ protected:
 public:
     virtual ~BaseRenderer() {}
     virtual void init() {}
+    virtual void update(const time_ms delta);
     virtual void clean() {}
     virtual void refresh() {}
+
+    virtual void renderBegin();
+    virtual void render();
+    virtual void renderEnd();
 };

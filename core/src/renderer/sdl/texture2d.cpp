@@ -2,7 +2,7 @@
 
 #include <SDL2/SDL_image.h>
 
-#include <renderer/renderer.hpp>
+#include <renderer/common/renderer.hpp>
 #include <utils/logging.hpp>
 
 Texture2D::Texture2D(std::shared_ptr<SDL_Texture> texture) : m_texture(texture)
