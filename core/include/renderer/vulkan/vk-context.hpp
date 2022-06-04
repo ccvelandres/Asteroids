@@ -21,4 +21,7 @@ public:
     VulkanContext &operator=( VulkanContext &&other );
     VulkanContext( SDL_Window *window );
     ~VulkanContext();
+
+    bool renderBegin() const;
+    void renderEnd() const;
 };

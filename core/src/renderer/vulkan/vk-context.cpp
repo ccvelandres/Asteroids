@@ -6,41 +6,74 @@
 
 struct VulkanContext::Internal
 {
-    const VulkanInstance       m_instance;
-    const VulkanPhysicalDevice m_physicalDevice;
-    const VulkanSurface        m_surface;
-    const VulkanDevice         m_device;
-    const VulkanCommandPool    m_commandPool;
-    const VulkanRenderContext  m_renderContext;
+    SDL_Window *const          window;
+    const VulkanInstance       instance;
+    const VulkanPhysicalDevice physicalDevice;
+    const VulkanSurface        surface;
+    const VulkanDevice         device;
+    const VulkanCommandPool    commandPool;
+    VulkanRenderContext        renderContext;
 
+    Internal &operator=(Internal&&) = default;
     Internal( SDL_Window *window )
-        : m_instance( window ),
-          m_physicalDevice( m_instance ),
-          m_surface( window, m_instance ),
-          m_device( window, m_physicalDevice, m_surface ),
-          m_commandPool( m_device ),
-          m_renderContext( window,
-                           m_instance,
-                           m_physicalDevice,
-                           m_device,
-                           m_surface,
-                           m_commandPool )
+        : window( window ),
+          instance( window ),
+          physicalDevice( instance ),
+          surface( window, instance ),
+          device( window, physicalDevice, surface ),
+          commandPool( device ),
+          renderContext( window, instance, physicalDevice, device, surface, commandPool )
     {
         L_TAG( "VulkanContext::Internal" );
-        L_TRACE( "Internal resources initialized ({})", static_cast<void*>(this) );
+        L_TRACE( "Internal resources initialized ({})", static_cast<void *>( this ) );
     }
 
     ~Internal()
     {
         L_TAG( "VulkanContext::~Internal" );
-        L_TRACE( "Internal resources freed ({})", static_cast<void*>(this) );
+        L_TRACE( "Internal resources freed ({})", static_cast<void *>( this ) );
+    }
+
+    void recreateRenderContext()
+    {
+        L_TAG( "VulkanContext::Internal::recreateRenderContext" );
+
+        /** Wait till the device is idle before recreating render context */
+        device.getDevice().waitIdle();
+        renderContext.recreate( window, instance, physicalDevice, device, surface, commandPool );
+    }
+
+    bool renderBegin()
+    {
+        L_TAG( "VulkanContext::Internal::renderBegin" );
+
+        /** Check if render context can begin rendering */
+        if ( renderContext.renderBegin( device ) ) return true;
+
+        /** Recreate render context if it isn't valid */
+        L_TRACE( "Could not begin renderContext, recreating..." );
+        recreateRenderContext();
+        return false;
+    }
+
+    void renderEnd()
+    {
+        L_TAG( "VulkanContext::Internal::renderEnd" );
+
+        /** Check if render context can begin rendering */
+        if ( !renderContext.renderEnd( device ) )
+        {
+            /** Recreate render context if it isn't valid */
+            L_TRACE( "Could not end rendering, recreating..." );
+            recreateRenderContext();
+        }
     }
 };
 
-VulkanContext::VulkanContext( SDL_Window *window )
-    : m_internal( std::make_unique<Internal>( window ) )
-{
-}
+VulkanContext::VulkanContext( SDL_Window *window ) : m_internal( std::make_unique<Internal>( window ) ) {}
+
 VulkanContext::~VulkanContext() = default;
 
-VulkanContext::~VulkanContext() {}
+bool VulkanContext::renderBegin() const { return m_internal->renderBegin(); }
+
+void VulkanContext::renderEnd() const { m_internal->renderEnd(); }
