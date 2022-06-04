@@ -15,7 +15,6 @@ EntityManager *g_entityManager = nullptr;
 ComponentManager *g_componentManager = nullptr;
 EventManager *g_eventManager = nullptr;
 Renderer *g_renderer = nullptr;
-BaseRenderer *g_baseRenderer = nullptr;
 InputManager *g_inputManager = nullptr;
 Time *g_time = nullptr;
 
@@ -52,7 +51,7 @@ Game::Game(const std::string &windowTitle,
     }
         
     g_time = new Time();
-    g_baseRenderer = new VulkanRenderer(m_window);
+    g_renderer = new VulkanRenderer(m_window);
     while(1);
     // g_renderer = new Renderer();
     g_inputManager = new InputManager();
