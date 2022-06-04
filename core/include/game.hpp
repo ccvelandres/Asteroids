@@ -1,8 +1,8 @@
 #pragma once
 
-#include <string>
-#include <memory>
 #include <cassert>
+#include <memory>
+#include <string>
 
 #include <SDL.h>
 #include <time.hpp>
@@ -13,60 +13,36 @@ class EventManager;
 class InputManager;
 
 class Renderer;
-class SDLRenderer;
-class BaseRenderer;
-class VulkanRenderer;
 
 class Game
 {
 private:
     SDL_Window *m_window;
     std::string m_windowTitle;
-    int m_windowWidth, m_windowHeight;
+    int         m_windowWidth, m_windowHeight;
 
     time_ds m_targetDelta;
-    float m_minfps = MAXFLOAT, m_maxfps;
-    float m_fps;
-
-    static Game *m_game;
-    static EntityManager *m_entityManager;
-    static ComponentManager *m_componentManager;
-    static Renderer *m_renderer;
-    static EventManager *m_eventManager;
-    static InputManager *m_inputManager;
-    static Time* m_time;
-
-    static BaseRenderer *m_baseRenderer;
+    float   m_minfps = MAXFLOAT, m_maxfps;
+    float   m_fps;
 
     friend Renderer;
-    friend SDLRenderer;
-    friend VulkanRenderer;
 protected:
 public:
-    Game(const std::string &windowTitle,
-         const int &windowWidth,
-         const int &windowHeight);
+    Game( const std::string &windowTitle, const int &windowWidth, const int &windowHeight );
 
     ~Game();
-
-    /** @note Globals for manager objects (probably bad but this saves storing pointers on each object) */
-    /** Get the current game object */
-    static Game *this_game() { return m_game; }
-    /** Get the EntityManager Object */
-    static EntityManager *entityManager() { return m_entityManager; }
-    /** Get the ComponentManager Object */
-    static ComponentManager *componentManager() { return m_componentManager; }
-    /** Get the EventManager Object */
-    static EventManager *eventManager() { return m_eventManager; }
-    /** Get the InputManager Object */
-    static InputManager *inputManager() { return m_inputManager; }
-    /** Get the Time Manager Object */
-    static Time *time() { return m_time; }
-    /** Get the Renderer Object */
-    static Renderer *renderer() { return m_renderer; }
 
     void init();
     void startGameLoop();
 
-    void setTargetFPS(const float fps);
+    void setTargetFPS( const float fps );
+
+    /** @note Globals for manager objects (probably bad but this saves storing pointers on each object) */
+    static Game             *this_game();        /** Get the current game object */
+    static EntityManager    *entityManager();    /** Get the EntityManager Object */
+    static ComponentManager *componentManager(); /** Get the ComponentManager Object */
+    static EventManager     *eventManager();     /** Get the EventManager Object */
+    static InputManager     *inputManager();     /** Get the InputManager Object */
+    static Time             *time();             /** Get the Time Manager Object */
+    static Renderer         *renderer();         /** Get the Renderer Object */
 };
