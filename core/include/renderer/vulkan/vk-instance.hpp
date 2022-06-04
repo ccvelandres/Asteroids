@@ -13,6 +13,8 @@ private:
 
 protected:
 public:
+    VulkanInstance( VulkanInstance && );
+    VulkanInstance &operator=( VulkanInstance &&other );
     VulkanInstance( SDL_Window *window );
     ~VulkanInstance();
 

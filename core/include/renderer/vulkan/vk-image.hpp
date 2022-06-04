@@ -16,6 +16,8 @@ private:
 
 protected:
 public:
+    VulkanImage( VulkanImage && );
+    VulkanImage &operator=( VulkanImage &&other );
     VulkanImage( const VulkanPhysicalDevice    &physicalDevice,
                  const VulkanDevice            &device,
                  const VulkanCommandPool       &commandPool,
@@ -27,8 +29,8 @@ public:
                  const vk::ImageTiling         &imageTiling,
                  const vk::ImageUsageFlags     &usageFlags,
                  const vk::MemoryPropertyFlags &memoryFlags,
-                 const vk::ImageLayout         oldLayout,
-                 const vk::ImageLayout         newLayout );
+                 const vk::ImageLayout          oldLayout,
+                 const vk::ImageLayout          newLayout );
 
     uint32_t                getWidth() const;
     uint32_t                getHeight() const;

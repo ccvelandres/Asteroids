@@ -14,6 +14,8 @@ private:
 
 protected:
 public:
+    VulkanSurface( VulkanSurface && );
+    VulkanSurface &operator=( VulkanSurface &&other );
     VulkanSurface( SDL_Window *window, const VulkanInstance &instance );
     ~VulkanSurface();
 

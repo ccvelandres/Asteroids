@@ -14,9 +14,11 @@ class VulkanContext
 private:
     struct Internal;
     std::unique_ptr<Internal> m_internal;
-    
+
 protected:
 public:
+    VulkanContext( VulkanContext && );
+    VulkanContext &operator=( VulkanContext &&other );
     VulkanContext( SDL_Window *window );
     ~VulkanContext();
 };

@@ -16,6 +16,8 @@ private:
 
 protected:
 public:
+    VulkanDevice( VulkanDevice && );
+    VulkanDevice &operator=( VulkanDevice &&other );
     VulkanDevice( SDL_Window *window, const VulkanPhysicalDevice &physicalDevice, const VulkanSurface &surface );
     ~VulkanDevice();
 

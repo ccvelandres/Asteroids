@@ -15,11 +15,12 @@ private:
 
 protected:
 public:
+    VulkanCommandPool( VulkanCommandPool && );
+    VulkanCommandPool &operator=( VulkanCommandPool &&other );
     VulkanCommandPool( const VulkanDevice &device );
     ~VulkanCommandPool();
 
-    std::vector<vk::UniqueCommandBuffer> createCommandBuffers( const VulkanDevice &device,
-                                                               const uint32_t      count ) const;
+    std::vector<vk::UniqueCommandBuffer> createCommandBuffers( const VulkanDevice &device, const uint32_t count ) const;
     vk::UniqueCommandBuffer              createCommandBuffer( const VulkanDevice &device ) const;
     void endCommandBuffer( vk::CommandBuffer &buffer, const VulkanDevice &device ) const;
 };

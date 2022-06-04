@@ -15,6 +15,8 @@ private:
 
 protected:
 public:
+    VulkanRenderPass( VulkanRenderPass && );
+    VulkanRenderPass &operator=( VulkanRenderPass &&other );
     VulkanRenderPass( const VulkanPhysicalDevice &physicalDevice,
                       const VulkanDevice         &device,
                       const VulkanSwapchain      &swapchain );

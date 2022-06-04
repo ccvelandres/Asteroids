@@ -14,6 +14,8 @@ private:
 
 protected:
 public:
+    VulkanShaderModule( VulkanShaderModule && );
+    VulkanShaderModule &operator=( VulkanShaderModule &&other );
     VulkanShaderModule( VulkanDevice &device, const std::string &filename );
     ~VulkanShaderModule();
 
