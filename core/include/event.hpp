@@ -52,9 +52,9 @@ public:
         SDL_PumpEvents();
 
         const uint8_t *state = SDL_GetKeyboardState(NULL);
-        if (state[SDL_SCANCODE_0])
-            std::cout << "Keypress 0" << std::endl;
-        if (state[SDL_SCANCODE_1])
-            std::cout << "Keypress 0" << std::endl;
+        // if (state[SDL_SCANCODE_0])
+        //     std::cout << "Keypress 0" << std::endl;
+        // if (state[SDL_SCANCODE_1])
+        //     std::cout << "Keypress 0" << std::endl;
     }
 };
