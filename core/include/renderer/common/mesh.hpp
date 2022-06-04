@@ -2,6 +2,7 @@
 
 #include "vertex.hpp"
 #include <cstdint>
+#include <vector>
 
 class Mesh
 {

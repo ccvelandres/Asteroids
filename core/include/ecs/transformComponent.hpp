@@ -1,7 +1,7 @@
 #pragma once
 
 #include "ecs.hpp"
-#include <utils/vector.hpp>
+#include <glm/glm.hpp>
 
 class TransformComponent : public Component
 {
@@ -21,7 +21,7 @@ public:
     // void update(time_ms delta) override;
     // void clean() override;
 
-    Vector3F position;
-    Vector3F scale;
+    glm::vec3 position;
+    glm::vec3 scale;
     float rotation;
 };

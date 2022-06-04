@@ -1,11 +1,11 @@
 #pragma once
 
-#include <utils/vector.hpp>
+#include <glm/glm.hpp>
 
 class Vertex
 {
 public:
     /** @todo: replace vector with maybe glm vectors */
-    Vector3F position;
-    Vector3F texCoordinates;
+    glm::vec3 position;
+    glm::vec3 texCoordinates;
 };

@@ -13,15 +13,15 @@ protected:
     Entity *m_parent;
     int m_bulletID;
 
-    Vector3F m_velocity;
+    glm::vec3 m_velocity;
     bool m_isShot;
     time_ms m_shootTime;
 public:
     Bullet(Entity &parent);
     ~Bullet();
 
-    void shoot(const Vector3F &position,
-               const Vector3F &velocity);
+    void shoot(const glm::vec3 &position,
+               const glm::vec3 &velocity);
     void onHit();
 
     bool isShot() { return m_isShot; }

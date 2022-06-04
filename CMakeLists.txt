@@ -41,6 +41,9 @@ message("SDL_image IncludeDir: ${SDL2_IMAGE_INCLUDE_DIR}")
 # Vulkan
 find_package(Vulkan REQUIRED)
 
+# libglm (OpenGL Mathematics)
+find_package(glm REQUIRED)
+
 # fmt
 # add_subdirectory(${PROJECT_LIBRARY_DIR}/fmt)
 # target_link_libraries(${PROJECT_NAME} PUBLIC fmt)
@@ -77,7 +80,7 @@ target_link_libraries(${CORE_TARGET} PUBLIC ${SDL2_IMAGE_LIBRARY})
 target_include_directories(${CORE_TARGET} PUBLIC ${SDL2_IMAGE_INCLUDE_DIR})
 target_link_libraries(${CORE_TARGET} PUBLIC Vulkan::Vulkan)
 target_link_libraries(${CORE_TARGET} PUBLIC spdlog)
-
+target_link_libraries(${CORE_TARGET} PUBLIC glm::glm)
 
 #################################################################
 ## Logic

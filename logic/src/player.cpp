@@ -15,7 +15,7 @@ void Player::init()
     
     m_transform = &this->addComponent<TransformComponent>();
 
-    m_transform->scale = 2;
+    m_transform->scale = glm::vec3(2);
 
     /** Preallocate bullet objects */
     m_bullets = Game::entityManager()->addEntities<Bullet>(32, *this);
@@ -36,7 +36,7 @@ void Player::update(time_ms delta)
 
     float d = Game::time()->scaledDeltaTime<time_fs>().count();
     /** Movement */
-    Vector3F l_inputForce(0);
+    glm::vec3 l_inputForce(0);
     if (Game::inputManager()->isPressed(SDL_SCANCODE_UP))
         l_inputForce.y = -1;
     else if (Game::inputManager()->isPressed(SDL_SCANCODE_DOWN))
@@ -46,13 +46,13 @@ void Player::update(time_ms delta)
     else if (Game::inputManager()->isPressed(SDL_SCANCODE_RIGHT))
         l_inputForce.x = 1;
 
-    Vector3F::normalize(l_inputForce);
-    if (l_inputForce)
+    l_inputForce = glm::normalize(l_inputForce);
+    if (l_inputForce.length())
     {
-        Vector3F offset = l_inputForce * delta.count() * (speed / 1000.f);
-        logging::trace("{},{}: InputForce {}", 
-            __LINE__, __func__, offset);
-        m_transform->position += offset;
+        glm::vec3 offset = l_inputForce * (delta.count() * (speed / 1000.f));
+        // logging::trace("{},{}: InputForce {}", 
+        //     __LINE__, __func__, offset);
+        // m_transform->position += offset;
     }
 
     /** Shooting */
@@ -69,8 +69,8 @@ void Player::update(time_ms delta)
         if (it != m_bullets.end())
         {
             Bullet &bullet = (*it->get());
-            bullet.shoot(m_transform->position + Vector3F(0, 0, 0),
-                         Vector3F(0, -500, 0));
+            bullet.shoot(m_transform->position + glm::vec3(0, 0, 0),
+                         glm::vec3(0, -500, 0));
             m_lastShoot = Game::time()->unscaledTime();
             logging::trace("{},{}: Shooting bullet object", 
                 __LINE__, __func__);

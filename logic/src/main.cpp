@@ -42,7 +42,7 @@ int main( int arc, char **argv )
     //     Enemy &e    = *enemies [i].get();
     //     if ( i >= enemies.size() / 2 )
     //         type = 1;
-    //     e.spawn( type, Vector3F( ( windowWidth / enemies.size() ) * i, 50, 0 ) );
+    //     e.spawn( type, glm::vec3( ( windowWidth / enemies.size() ) * i, 50, 0 ) );
     // }
 
     game->startGameLoop();

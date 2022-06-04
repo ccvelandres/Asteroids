@@ -14,7 +14,7 @@ public:
     Enemy();
     ~Enemy();
 
-    void spawn(int type, const Vector3F &position);
+    void spawn(int type, const glm::vec3 &position);
 
     /** Entity overrides */
     void init() override;

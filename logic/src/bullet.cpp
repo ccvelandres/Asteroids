@@ -15,7 +15,7 @@ void Bullet::init()
 {
     m_transform = &this->addComponent<TransformComponent>();
 
-    m_transform->scale = 2;
+    m_transform->scale = glm::vec3(2);
 }
 
 void Bullet::preUpdate()
@@ -36,15 +36,16 @@ void Bullet::update(time_ms delta)
         L_DEBUG("Freeing bullet object");
     }
 
-    m_transform->position += (m_velocity / 1000.f) * delta.count();
+    m_transform->position += (m_velocity / 1000.f);
+    m_transform->position *= delta.count();
 }
 
 void Bullet::postUpdate()
 {
 }
 
-void Bullet::shoot(const Vector3F &position,
-                   const Vector3F &velocity)
+void Bullet::shoot(const glm::vec3 &position,
+                   const glm::vec3 &velocity)
 {
     L_TAG("Bullet::shoot");
     
