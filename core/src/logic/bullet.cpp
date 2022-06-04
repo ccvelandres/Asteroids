@@ -14,18 +14,8 @@ Bullet::~Bullet()
 void Bullet::init()
 {
     m_transform = &this->addComponent<TransformComponent>();
-    m_sprite = &this->addComponent<SpriteComponent>();
-    m_render = &this->addComponent<RenderComponent>();
 
     m_transform->scale = 2;
-
-    m_sprite->appendSpriteSet(0, "assets/laser-bolts-sheet.png", 16, 16, 0, 0, time_ms(60));
-    m_sprite->appendSpriteSet(0, "assets/laser-bolts-sheet.png", 16, 16, 16, 0, time_ms(60));
-    m_sprite->appendSpriteSet(1, "assets/laser-bolts-sheet.png", 16, 16, 0, 16, time_ms(60));
-    m_sprite->appendSpriteSet(1, "assets/laser-bolts-sheet.png", 16, 16, 16, 16, time_ms(60));
-
-    /** disable rendering until we shoot */
-    m_render->enabled(false);
 }
 
 void Bullet::preUpdate()
@@ -66,6 +56,5 @@ void Bullet::shoot(const Vector3F &position,
     m_velocity = velocity;
 
     m_isShot = true;
-    m_render->enabled(true);
     m_shootTime = Game::time()->getTime<time_ms>();
 }

@@ -33,17 +33,17 @@ int main( int arc, char **argv )
     game->init();
     game->setTargetFPS( 90 );
 
-    Player            player  = Game::entityManager()->addEntity<Player>();
-    EntityList<Enemy> enemies = Game::entityManager()->addEntities<Enemy>( 8 );
+    // Player            player  = Game::entityManager()->addEntity<Player>();
+    // EntityList<Enemy> enemies = Game::entityManager()->addEntities<Enemy>( 8 );
 
-    for ( int i = 0; i < enemies.size(); i++ )
-    {
-        int    type = 0;
-        Enemy &e    = *enemies [i].get();
-        if ( i >= enemies.size() / 2 )
-            type = 1;
-        e.spawn( type, Vector3F( ( windowWidth / enemies.size() ) * i, 50, 0 ) );
-    }
+    // for ( int i = 0; i < enemies.size(); i++ )
+    // {
+    //     int    type = 0;
+    //     Enemy &e    = *enemies [i].get();
+    //     if ( i >= enemies.size() / 2 )
+    //         type = 1;
+    //     e.spawn( type, Vector3F( ( windowWidth / enemies.size() ) * i, 50, 0 ) );
+    // }
 
     game->startGameLoop();
 

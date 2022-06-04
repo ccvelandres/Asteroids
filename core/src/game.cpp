@@ -138,7 +138,6 @@ void Game::startGameLoop()
             time_ms delta = m_time->scaledDeltaTime<time_ms>();
             m_entityManager->update(delta);
             m_componentManager->update<TransformComponent>(delta);
-            m_componentManager->update<SpriteComponent>(delta);
         }
 
         {
@@ -150,11 +149,6 @@ void Game::startGameLoop()
         /** Render */
         {
             EASY_BLOCK("FrameRender");
-            m_renderer->startRender();
-            m_componentManager->foreach<RenderComponent>([](RenderComponent &c)
-                                                         {
-                if (c.enabled()) c.render(); });
-            m_renderer->endRender();
         }
 
         /** Refresh manager objects */

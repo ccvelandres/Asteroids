@@ -11,8 +11,6 @@ class Player : public Entity
 {
 private:
     TransformComponent *m_transform;
-    SpriteComponent *m_sprite;
-    RenderComponent *m_render;
 
     EntityList<Bullet> m_bullets;
     int speed;

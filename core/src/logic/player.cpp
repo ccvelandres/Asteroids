@@ -14,21 +14,8 @@ void Player::init()
     L_TAG("Player::init");
     
     m_transform = &this->addComponent<TransformComponent>();
-    m_sprite = &this->addComponent<SpriteComponent>();
-    m_render = &this->addComponent<RenderComponent>();
 
     m_transform->scale = 2;
-
-    m_sprite->appendSpriteSet(0, "assets/ship.png", 16, 24, 0, 0, time_ms(60));
-    m_sprite->appendSpriteSet(0, "assets/ship.png", 16, 24, 0, 24, time_ms(60));
-    m_sprite->appendSpriteSet(1, "assets/ship.png", 16, 24, 16, 0, time_ms(60));
-    m_sprite->appendSpriteSet(1, "assets/ship.png", 16, 24, 16, 24, time_ms(60));
-    m_sprite->appendSpriteSet(2, "assets/ship.png", 16, 24, 32, 0, time_ms(60));
-    m_sprite->appendSpriteSet(2, "assets/ship.png", 16, 24, 32, 24, time_ms(60));
-    m_sprite->appendSpriteSet(3, "assets/ship.png", 16, 24, 48, 0, time_ms(60));
-    m_sprite->appendSpriteSet(3, "assets/ship.png", 16, 24, 48, 24, time_ms(60));
-    m_sprite->appendSpriteSet(4, "assets/ship.png", 16, 24, 64, 0, time_ms(60));
-    m_sprite->appendSpriteSet(4, "assets/ship.png", 16, 24, 64, 24, time_ms(60));
 
     /** Preallocate bullet objects */
     m_bullets = Game::entityManager()->addEntities<Bullet>(32, *this);

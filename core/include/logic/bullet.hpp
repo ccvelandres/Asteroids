@@ -9,8 +9,6 @@ class Bullet : public Entity
 private:
 protected:
     TransformComponent *m_transform;
-    SpriteComponent *m_sprite;
-    RenderComponent *m_render;
 
     Entity *m_parent;
     int m_bulletID;

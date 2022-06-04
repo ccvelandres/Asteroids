@@ -7,8 +7,6 @@
 class Enemy : public Entity {
 private:
     TransformComponent *m_transform;
-    SpriteComponent *m_sprite;
-    RenderComponent *m_render;
 
     bool m_isActive;
 protected:
