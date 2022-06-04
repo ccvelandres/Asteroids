@@ -21,15 +21,23 @@ private:
 
 protected:
 public:
-    VulkanRenderContext ( VulkanRenderContext &&o );
-    VulkanRenderContext &operator=  ( VulkanRenderContext &&o );
+    VulkanRenderContext( VulkanRenderContext &&o );
+    VulkanRenderContext &operator=( VulkanRenderContext &&o );
     VulkanRenderContext( SDL_Window *const           window,
                          const VulkanInstance       &instance,
                          const VulkanPhysicalDevice &physicalDevice,
                          const VulkanDevice         &device,
                          const VulkanSurface        &surface,
-                         const VulkanCommandPool    &commandPool );
+                         const VulkanCommandPool    &commandPool,
+                         const vk::SwapchainKHR     &oldSwapchain = vk::SwapchainKHR() );
     ~VulkanRenderContext();
+
+    VulkanRenderContext recreate( SDL_Window *const           window,
+                                  const VulkanInstance       &instance,
+                                  const VulkanPhysicalDevice &physicalDevice,
+                                  const VulkanDevice         &device,
+                                  const VulkanSurface        &surface,
+                                  const VulkanCommandPool    &commandPool );
 
     bool renderBegin( const VulkanDevice &device ) const;
     bool renderEnd( const VulkanDevice &device ) const;

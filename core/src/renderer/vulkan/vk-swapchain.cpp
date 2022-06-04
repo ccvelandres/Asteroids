@@ -7,8 +7,7 @@
 #include <algorithm>
 #include <limits>
 
-vk::SurfaceFormatKHR chooseSurfaceFormat( const VulkanPhysicalDevice &physicalDevice,
-                                          const VulkanSurface        &surface )
+vk::SurfaceFormatKHR chooseSurfaceFormat( const VulkanPhysicalDevice &physicalDevice, const VulkanSurface &surface )
 {
     L_TAG( "chooseSurfaceFormat" );
 
@@ -47,8 +46,7 @@ vk::SurfaceFormatKHR chooseSurfaceFormat( const VulkanPhysicalDevice &physicalDe
     return defaultFormat;
 }
 
-vk::PresentModeKHR choosePresentMode( const VulkanPhysicalDevice &physicalDevice,
-                                      const VulkanSurface        &surface )
+vk::PresentModeKHR choosePresentMode( const VulkanPhysicalDevice &physicalDevice, const VulkanSurface &surface )
 {
     L_TAG( "choosePresentMode" );
 
@@ -71,9 +69,7 @@ vk::PresentModeKHR choosePresentMode( const VulkanPhysicalDevice &physicalDevice
     return vk::PresentModeKHR::eFifo;
 }
 
-vk::Extent2D getSwapExtent( SDL_Window                 *window,
-                            const VulkanPhysicalDevice &physicalDevice,
-                            const VulkanSurface        &surface )
+vk::Extent2D getSwapExtent( SDL_Window *window, const VulkanPhysicalDevice &physicalDevice, const VulkanSurface &surface )
 {
     L_TAG( "getSwapExtent" );
 
@@ -106,7 +102,8 @@ vk::UniqueSwapchainKHR createSwapchain( const VulkanPhysicalDevice &physicalDevi
                                         const VulkanDevice         &device,
                                         const vk::SurfaceFormatKHR &format,
                                         const vk::PresentModeKHR   &presentMode,
-                                        const vk::Extent2D         &extent )
+                                        const vk::Extent2D         &extent,
+                                        const vk::SwapchainKHR     &oldSwapchain )
 {
     L_TAG( "createSwapchain" );
     L_DEBUG( "Using ImageFormat {}", vk::to_string( format.format ) );
@@ -126,18 +123,22 @@ vk::UniqueSwapchainKHR createSwapchain( const VulkanPhysicalDevice &physicalDevi
         minImageCount = surfaceCapabilities.maxImageCount + 1;
     L_DEBUG( "Requesting {} images for the swapchain", minImageCount );
 
-    vk::SwapchainCreateInfoKHR swapchainCreateInfo;
-    swapchainCreateInfo.setSurface( surface.getSurface() )
-        .setMinImageCount( minImageCount )
-        .setImageFormat( format.format )
-        .setImageColorSpace( format.colorSpace )
-        .setImageExtent( extent )
-        .setImageArrayLayers( 1 )
-        .setImageUsage( vk::ImageUsageFlagBits::eColorAttachment )
-        .setPreTransform( surfaceCapabilities.currentTransform )
-        .setCompositeAlpha( vk::CompositeAlphaFlagBitsKHR::eOpaque )
-        .setPresentMode( presentMode )
-        .setClipped( VK_TRUE );
+    vk::SwapchainCreateInfoKHR swapchainCreateInfo( vk::SwapchainCreateFlagsKHR(),
+                                                    surface.getSurface(),
+                                                    minImageCount,
+                                                    format.format,
+                                                    format.colorSpace,
+                                                    extent,
+                                                    1,
+                                                    vk::ImageUsageFlagBits::eColorAttachment,
+                                                    vk::SharingMode::eExclusive,
+                                                    0,
+                                                    nullptr,
+                                                    surfaceCapabilities.currentTransform,
+                                                    vk::CompositeAlphaFlagBitsKHR::eOpaque,
+                                                    presentMode,
+                                                    VK_TRUE,
+                                                    oldSwapchain );
 
     uint32_t queueFamilyIndices [] = { device.getGraphicsQueueIndex(), device.getPresentQueueIndex() };
 
@@ -185,23 +186,23 @@ struct VulkanSwapchain::Internal
               const VulkanInstance       &instance,
               const VulkanPhysicalDevice &physicalDevice,
               const VulkanSurface        &surface,
-              const VulkanDevice         &device )
+              const VulkanDevice         &device,
+              const vk::SwapchainKHR     &oldSwapchain )
         : format( ::chooseSurfaceFormat( physicalDevice, surface ) ),
           presentMode( ::choosePresentMode( physicalDevice, surface ) ),
           extent( ::getSwapExtent( window, physicalDevice, surface ) ),
-          swapchain(
-              ::createSwapchain( physicalDevice, surface, device, format, presentMode, extent ) ),
+          swapchain( ::createSwapchain( physicalDevice, surface, device, format, presentMode, extent, oldSwapchain ) ),
           images( device.getDevice().getSwapchainImagesKHR( *swapchain ) ),
           imageViews( ::createImageViews( device, images, *swapchain, format ) )
     {
         L_TAG( "VulkanSwapchain::Internal" );
-        L_TRACE( "Internal resources initialized ({})", static_cast<void*>(this) );
+        L_TRACE( "Internal resources initialized ({})", static_cast<void *>( this ) );
     }
 
     ~Internal()
     {
         L_TAG( "VulkanSwapchain::~Internal" );
-        L_TRACE( "Internal resources freed ({})", static_cast<void*>(this) );
+        L_TRACE( "Internal resources freed ({})", static_cast<void *>( this ) );
     }
 };
 
@@ -209,25 +210,23 @@ VulkanSwapchain::VulkanSwapchain( SDL_Window                 *window,
                                   const VulkanInstance       &instance,
                                   const VulkanPhysicalDevice &physicalDevice,
                                   const VulkanSurface        &surface,
-                                  const VulkanDevice         &device )
-    : m_internal( std::make_unique<Internal>( window, instance, physicalDevice, surface, device ) )
+                                  const VulkanDevice         &device,
+                                  const vk::SwapchainKHR     &oldSwapchain )
+    : m_internal( std::make_unique<Internal>( window, instance, physicalDevice, surface, device, oldSwapchain ) )
 {
     L_TAG( "VulkanSwapchain::VulkanSwapchain" );
 }
 
 VulkanSwapchain::VulkanSwapchain( VulkanSwapchain &&o ) = default;
 VulkanSwapchain &VulkanSwapchain::operator=( VulkanSwapchain &&o ) = default;
-VulkanSwapchain::~VulkanSwapchain() = default;
+VulkanSwapchain::~VulkanSwapchain()                                = default;
 
 const vk::SwapchainKHR &VulkanSwapchain::getSwapchain() const { return *m_internal->swapchain; }
 
 const std::vector<vk::Image> &VulkanSwapchain::getImages() const { return m_internal->images; }
 
-const std::vector<VulkanImageView> &VulkanSwapchain::getImageViews() const
-{
-    return m_internal->imageViews;
-}
-const uint32_t VulkanSwapchain::getImageCount() const { return m_internal->images.size(); }
+const std::vector<VulkanImageView> &VulkanSwapchain::getImageViews() const { return m_internal->imageViews; }
+const uint32_t                      VulkanSwapchain::getImageCount() const { return m_internal->images.size(); }
 
 const vk::SurfaceFormatKHR VulkanSwapchain::getFormat() const { return m_internal->format; }
 

@@ -176,8 +176,9 @@ struct VulkanRenderContext::Internal
               const VulkanPhysicalDevice &physicalDevice,
               const VulkanDevice         &device,
               const VulkanSurface        &surface,
-              const VulkanCommandPool    &commandPool )
-        : swapchain( window, instance, physicalDevice, surface, device ),
+              const VulkanCommandPool    &commandPool,
+              const vk::SwapchainKHR     &oldSwapchain )
+        : swapchain( window, instance, physicalDevice, surface, device, oldSwapchain ),
           renderPass( physicalDevice, device, swapchain ),
           multisampleImage( ::createMultisampleImage( physicalDevice, device, swapchain, commandPool ) ),
           multisampleImageView( ::createImageView( device, multisampleImage, vk::ImageAspectFlagBits::eColor ) ),
@@ -318,15 +319,32 @@ VulkanRenderContext::VulkanRenderContext( SDL_Window *const           window,
                                           const VulkanPhysicalDevice &physicalDevice,
                                           const VulkanDevice         &device,
                                           const VulkanSurface        &surface,
-                                          const VulkanCommandPool    &commandPool )
-    : m_internal( std::make_unique<Internal>( window, instance, physicalDevice, device, surface, commandPool ) )
+                                          const VulkanCommandPool    &commandPool,
+                                          const vk::SwapchainKHR     &oldSwapchain )
+    : m_internal( std::make_unique<Internal>( window, instance, physicalDevice, device, surface, commandPool, oldSwapchain ) )
 {
     L_TAG( "VulkanRenderContext::VulkanRenderContext" );
 }
 
 VulkanRenderContext::VulkanRenderContext( VulkanRenderContext &&o ) = default;
 VulkanRenderContext &VulkanRenderContext::operator=( VulkanRenderContext &&o ) = default;
-VulkanRenderContext::~VulkanRenderContext() = default;
+VulkanRenderContext::~VulkanRenderContext()                                    = default;
+
+VulkanRenderContext VulkanRenderContext::recreate( SDL_Window *const           window,
+                                                   const VulkanInstance       &instance,
+                                                   const VulkanPhysicalDevice &physicalDevice,
+                                                   const VulkanDevice         &device,
+                                                   const VulkanSurface        &surface,
+                                                   const VulkanCommandPool    &commandPool )
+{
+    return VulkanRenderContext( window,
+                                instance,
+                                physicalDevice,
+                                device,
+                                surface,
+                                commandPool,
+                                m_internal->swapchain.getSwapchain() );
+}
 
 bool VulkanRenderContext::renderBegin( const VulkanDevice &device ) const { return m_internal->renderBegin( device ); }
 

@@ -25,7 +25,8 @@ public:
                      const VulkanInstance       &instance,
                      const VulkanPhysicalDevice &physicalDevice,
                      const VulkanSurface        &surface,
-                     const VulkanDevice         &device );
+                     const VulkanDevice         &device,
+                     const vk::SwapchainKHR& oldSwapchain );
     ~VulkanSwapchain();
 
     const vk::SwapchainKHR             &getSwapchain() const;
