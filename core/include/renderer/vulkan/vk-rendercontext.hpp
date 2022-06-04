@@ -21,13 +21,23 @@ private:
 
 protected:
 public:
-    VulkanRenderContext( VulkanRenderContext && );
-    VulkanRenderContext &operator=( const VulkanRenderContext &&other );
-    VulkanRenderContext( SDL_Window                 *window,
+    VulkanRenderContext( VulkanRenderContext && ) = default;
+    VulkanRenderContext &operator=( VulkanRenderContext && ) = default;
+    VulkanRenderContext( SDL_Window *const           window,
                          const VulkanInstance       &instance,
                          const VulkanPhysicalDevice &physicalDevice,
                          const VulkanDevice         &device,
                          const VulkanSurface        &surface,
                          const VulkanCommandPool    &commandPool );
     ~VulkanRenderContext();
+
+    void recreate( SDL_Window *const           window,
+                   const VulkanInstance       &instance,
+                   const VulkanPhysicalDevice &physicalDevice,
+                   const VulkanDevice         &device,
+                   const VulkanSurface        &surface,
+                   const VulkanCommandPool    &commandPool );
+
+    bool renderBegin( const VulkanDevice &device ) const;
+    bool renderEnd( const VulkanDevice &device ) const;
 };
