@@ -12,8 +12,8 @@ private:
 
 protected:
 public:
-    VulkanRenderer( VulkanRenderer && );
-    VulkanRenderer &operator=( VulkanRenderer &&other );
+    VulkanRenderer( VulkanRenderer &&o );
+    VulkanRenderer &operator=( VulkanRenderer &&o );
     VulkanRenderer( SDL_Window *window );
     ~VulkanRenderer();
 

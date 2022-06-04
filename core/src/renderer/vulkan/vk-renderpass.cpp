@@ -117,6 +117,8 @@ VulkanRenderPass::VulkanRenderPass( const VulkanPhysicalDevice &physicalDevice,
 {
 }
 
+VulkanRenderPass::VulkanRenderPass( VulkanRenderPass &&o ) = default;
+VulkanRenderPass &VulkanRenderPass::operator=( VulkanRenderPass &&o ) = default;
 VulkanRenderPass::~VulkanRenderPass() = default;
 
 const vk::RenderPass &VulkanRenderPass::getRenderPass() const { return *m_internal->renderpass; }

@@ -54,9 +54,6 @@ struct VulkanImageView::Internal
     }
 };
 
-VulkanImageView::VulkanImageView( VulkanImageView && ) = default;
-VulkanImageView &VulkanImageView::operator=( VulkanImageView && ) = default;
-
 VulkanImageView::VulkanImageView( const VulkanDevice         &device,
                                   const vk::Image            &image,
                                   const vk::Format           &format,
@@ -66,6 +63,8 @@ VulkanImageView::VulkanImageView( const VulkanDevice         &device,
 {
 }
 
+VulkanImageView::VulkanImageView( VulkanImageView &&o ) = default;
+VulkanImageView &VulkanImageView::operator=( VulkanImageView &&o ) = default;
 VulkanImageView::~VulkanImageView() = default;
 
 const vk::ImageView &VulkanImageView::getImageView() const

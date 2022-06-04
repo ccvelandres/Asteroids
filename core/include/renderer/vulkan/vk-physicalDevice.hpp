@@ -13,8 +13,8 @@ private:
 
 protected:
 public:
-    VulkanPhysicalDevice( VulkanPhysicalDevice && );
-    VulkanPhysicalDevice &operator=( VulkanPhysicalDevice &&other );
+    VulkanPhysicalDevice( VulkanPhysicalDevice &&o );
+    VulkanPhysicalDevice &operator=( VulkanPhysicalDevice &&o );
     VulkanPhysicalDevice( const VulkanInstance &instance );
     ~VulkanPhysicalDevice();
 

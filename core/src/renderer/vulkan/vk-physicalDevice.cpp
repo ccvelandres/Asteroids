@@ -114,6 +114,8 @@ VulkanPhysicalDevice::VulkanPhysicalDevice( const VulkanInstance &instance )
 {
 }
 
+VulkanPhysicalDevice::VulkanPhysicalDevice( VulkanPhysicalDevice &&o ) = default;
+VulkanPhysicalDevice &VulkanPhysicalDevice::operator=( VulkanPhysicalDevice &&o ) = default;
 VulkanPhysicalDevice::~VulkanPhysicalDevice() = default;
 
 const vk::PhysicalDevice &VulkanPhysicalDevice::getPhysicalDevice() const

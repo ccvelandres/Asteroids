@@ -89,4 +89,6 @@ VulkanDebugUtils::VulkanDebugUtils( const vk::Instance &instance )
 {
 }
 
+VulkanDebugUtils::VulkanDebugUtils( VulkanDebugUtils &&o ) = default;
+VulkanDebugUtils &VulkanDebugUtils::operator=( VulkanDebugUtils &&o ) = default;
 VulkanDebugUtils::~VulkanDebugUtils() = default;

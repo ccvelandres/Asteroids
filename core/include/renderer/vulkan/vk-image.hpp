@@ -16,8 +16,8 @@ private:
 
 protected:
 public:
-    VulkanImage( VulkanImage && );
-    VulkanImage &operator=( VulkanImage &&other );
+    VulkanImage( VulkanImage &&o );
+    VulkanImage &operator=( VulkanImage &&o );
     VulkanImage( const VulkanPhysicalDevice    &physicalDevice,
                  const VulkanDevice            &device,
                  const VulkanCommandPool       &commandPool,

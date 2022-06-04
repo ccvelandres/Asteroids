@@ -21,8 +21,8 @@ private:
 
 protected:
 public:
-    VulkanRenderContext( VulkanRenderContext && ) = default;
-    VulkanRenderContext &operator=( VulkanRenderContext && ) = default;
+    VulkanRenderContext ( VulkanRenderContext &&o );
+    VulkanRenderContext &operator=  ( VulkanRenderContext &&o );
     VulkanRenderContext( SDL_Window *const           window,
                          const VulkanInstance       &instance,
                          const VulkanPhysicalDevice &physicalDevice,

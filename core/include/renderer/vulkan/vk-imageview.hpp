@@ -15,8 +15,8 @@ private:
 
 protected:
 public:
-    VulkanImageView( VulkanImageView && );
-    VulkanImageView &operator=( VulkanImageView &&other );
+    VulkanImageView( VulkanImageView &&o );
+    VulkanImageView &operator=( VulkanImageView &&o );
     VulkanImageView( const VulkanDevice         &device,
                      const vk::Image            &image,
                      const vk::Format           &format,

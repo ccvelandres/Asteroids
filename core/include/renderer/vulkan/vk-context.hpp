@@ -17,8 +17,8 @@ private:
 
 protected:
 public:
-    VulkanContext( VulkanContext && );
-    VulkanContext &operator=( VulkanContext &&other );
+    VulkanContext( VulkanContext &&o );
+    VulkanContext &operator=( VulkanContext &&o );
     VulkanContext( SDL_Window *window );
     ~VulkanContext();
 

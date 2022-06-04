@@ -19,8 +19,8 @@ private:
 
 protected:
 public:
-    VulkanSwapchain( VulkanSwapchain && );
-    VulkanSwapchain &operator=( VulkanSwapchain &&other );
+    VulkanSwapchain( VulkanSwapchain &&o );
+    VulkanSwapchain &operator=( VulkanSwapchain &&o );
     VulkanSwapchain( SDL_Window                 *window,
                      const VulkanInstance       &instance,
                      const VulkanPhysicalDevice &physicalDevice,

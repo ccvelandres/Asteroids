@@ -15,8 +15,8 @@ private:
 
 protected:
 public:
-    VulkanCommandPool( VulkanCommandPool && );
-    VulkanCommandPool &operator=( VulkanCommandPool &&other );
+    VulkanCommandPool( VulkanCommandPool &&o );
+    VulkanCommandPool &operator=( VulkanCommandPool &&o );
     VulkanCommandPool( const VulkanDevice &device );
     ~VulkanCommandPool();
 

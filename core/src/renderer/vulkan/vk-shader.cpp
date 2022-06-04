@@ -48,6 +48,8 @@ VulkanShaderModule::VulkanShaderModule( VulkanDevice &device, const std::string 
 {
 }
 
+VulkanShaderModule::VulkanShaderModule( VulkanShaderModule &&o ) = default;
+VulkanShaderModule &VulkanShaderModule::operator=( VulkanShaderModule &&o ) = default;
 VulkanShaderModule::~VulkanShaderModule() = default;
 
 const vk::ShaderModule &VulkanShaderModule::getShaderModule() const { return *m_internal->shader; }

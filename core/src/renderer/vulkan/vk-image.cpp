@@ -220,6 +220,8 @@ VulkanImage::VulkanImage( const VulkanPhysicalDevice    &physicalDevice,
 {
 }
 
+VulkanImage::VulkanImage( VulkanImage &&o ) = default;
+VulkanImage &VulkanImage::operator=( VulkanImage &&o ) = default;
 VulkanImage::~VulkanImage() = default;
 
 uint32_t         VulkanImage::getWidth() const { return m_internal->width; }

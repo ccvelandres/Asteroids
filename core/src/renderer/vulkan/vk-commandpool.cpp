@@ -38,6 +38,8 @@ VulkanCommandPool::VulkanCommandPool( const VulkanDevice &device )
 {
 }
 
+VulkanCommandPool::VulkanCommandPool( VulkanCommandPool &&o ) = default;
+VulkanCommandPool &VulkanCommandPool::operator=( VulkanCommandPool &&o ) = default;
 VulkanCommandPool::~VulkanCommandPool() = default;
 
 std::vector<vk::UniqueCommandBuffer> VulkanCommandPool::createCommandBuffers( const VulkanDevice &device,

@@ -14,7 +14,6 @@ struct VulkanContext::Internal
     const VulkanCommandPool    commandPool;
     VulkanRenderContext        renderContext;
 
-    Internal &operator=(Internal&&) = default;
     Internal( SDL_Window *window )
         : window( window ),
           instance( window ),
@@ -72,6 +71,8 @@ struct VulkanContext::Internal
 
 VulkanContext::VulkanContext( SDL_Window *window ) : m_internal( std::make_unique<Internal>( window ) ) {}
 
+VulkanContext::VulkanContext( VulkanContext &&o ) = default;
+VulkanContext &VulkanContext::operator=( VulkanContext &&o ) = default;
 VulkanContext::~VulkanContext() = default;
 
 bool VulkanContext::renderBegin() const { return m_internal->renderBegin(); }

@@ -12,8 +12,8 @@ private:
 
 protected:
 public:
-    VulkanDebugUtils( VulkanDebugUtils && );
-    VulkanDebugUtils &operator=( VulkanDebugUtils &&other );
+    VulkanDebugUtils( VulkanDebugUtils &&o );
+    VulkanDebugUtils &operator=( VulkanDebugUtils &&o );
     VulkanDebugUtils( const vk::Instance &instance );
     ~VulkanDebugUtils();
 };
