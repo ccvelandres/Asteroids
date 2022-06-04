@@ -155,7 +155,7 @@ VulkanDevice::VulkanDevice( SDL_Window *window, const VulkanPhysicalDevice &phys
 {
 }
 
-VulkanDevice::~VulkanDevice() {}
+VulkanDevice::~VulkanDevice() = default;
 
 const vk::Device &VulkanDevice::getDevice() const { return *m_internal->device; }
 

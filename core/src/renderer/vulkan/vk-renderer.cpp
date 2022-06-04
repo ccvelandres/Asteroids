@@ -27,7 +27,7 @@ struct VulkanRenderer::Internal
 
 VulkanRenderer::VulkanRenderer( SDL_Window *window ) : m_internal( std::make_unique<Internal>( window ) ) {}
 
-VulkanRenderer::~VulkanRenderer() {}
+VulkanRenderer::~VulkanRenderer() = default;
 
 void VulkanRenderer::init() {}
 

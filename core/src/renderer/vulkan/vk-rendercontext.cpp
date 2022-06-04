@@ -184,4 +184,4 @@ VulkanRenderContext::VulkanRenderContext( SDL_Window                 *window,
     L_TAG( "VulkanRenderContext::VulkanRenderContext" );
 }
 
-VulkanRenderContext::~VulkanRenderContext() {}
+VulkanRenderContext::~VulkanRenderContext() = default;

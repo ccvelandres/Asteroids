@@ -66,7 +66,7 @@ VulkanImageView::VulkanImageView( const VulkanDevice         &device,
 {
 }
 
-VulkanImageView::~VulkanImageView() {}
+VulkanImageView::~VulkanImageView() = default;
 
 const vk::ImageView &VulkanImageView::getImageView() const
 {

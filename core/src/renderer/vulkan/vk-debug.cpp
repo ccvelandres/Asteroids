@@ -89,4 +89,4 @@ VulkanDebugUtils::VulkanDebugUtils( const vk::Instance &instance )
 {
 }
 
-VulkanDebugUtils::~VulkanDebugUtils() {}
+VulkanDebugUtils::~VulkanDebugUtils() = default;

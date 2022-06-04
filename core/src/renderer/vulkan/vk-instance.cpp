@@ -102,6 +102,6 @@ VulkanInstance::VulkanInstance( SDL_Window *window )
 {
 }
 
-VulkanInstance::~VulkanInstance() {}
+VulkanInstance::~VulkanInstance() = default;
 
 const vk::Instance &VulkanInstance::getInstance() const { return *m_internal->instance; }

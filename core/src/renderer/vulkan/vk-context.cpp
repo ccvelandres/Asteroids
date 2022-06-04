@@ -41,5 +41,6 @@ VulkanContext::VulkanContext( SDL_Window *window )
     : m_internal( std::make_unique<Internal>( window ) )
 {
 }
+VulkanContext::~VulkanContext() = default;
 
 VulkanContext::~VulkanContext() {}

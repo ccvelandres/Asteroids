@@ -38,7 +38,7 @@ VulkanCommandPool::VulkanCommandPool( const VulkanDevice &device )
 {
 }
 
-VulkanCommandPool::~VulkanCommandPool() {}
+VulkanCommandPool::~VulkanCommandPool() = default;
 
 std::vector<vk::UniqueCommandBuffer> VulkanCommandPool::createCommandBuffers( const VulkanDevice &device,
                                                                               const uint32_t count ) const

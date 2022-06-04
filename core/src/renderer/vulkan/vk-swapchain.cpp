@@ -215,7 +215,7 @@ VulkanSwapchain::VulkanSwapchain( SDL_Window                 *window,
     L_TAG( "VulkanSwapchain::VulkanSwapchain" );
 }
 
-VulkanSwapchain::~VulkanSwapchain() {}
+VulkanSwapchain::~VulkanSwapchain() = default;
 
 const vk::SwapchainKHR &VulkanSwapchain::getSwapchain() const { return *m_internal->swapchain; }
 

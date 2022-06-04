@@ -41,7 +41,7 @@ VulkanSurface::VulkanSurface( SDL_Window *window, const VulkanInstance &instance
 {
 }
 
-VulkanSurface::~VulkanSurface() {}
+VulkanSurface::~VulkanSurface() = default;
 
 const vk::SurfaceKHR &VulkanSurface::getSurface() const
 {
