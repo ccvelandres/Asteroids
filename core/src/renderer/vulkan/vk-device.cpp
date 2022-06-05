@@ -64,7 +64,7 @@ QueueConfig getQueueConfig( const vk::PhysicalDevice &physicalDevice, const vk::
     return QueueConfig{ graphicsQueueIndex, presentQueueIndex };
 }
 
-vk::UniqueDevice createDevice( const vk::PhysicalDevice &physicalDevice, const QueueConfig &queueConfig )
+vk::UniqueDevice createDevice( const VulkanPhysicalDevice &physicalDevice, const QueueConfig &queueConfig )
 {
     L_TAG( "createDevice" );
 
@@ -81,19 +81,25 @@ vk::UniqueDevice createDevice( const vk::PhysicalDevice &physicalDevice, const Q
             vk::DeviceQueueCreateInfo( vk::DeviceQueueCreateFlags(), queueConfig.presentQueueIndex, 1, &queuePriority ) );
     }
 
+    /** Physical Device features */
+    vk::PhysicalDeviceFeatures physicalDeviceFeatures;
+
+    if (physicalDevice.getShaderMultisamplingSupport())
+        physicalDeviceFeatures.sampleRateShading = true;
+
     std::vector<const char *> deviceExtensions = { VK_KHR_SWAPCHAIN_EXTENSION_NAME };
 
-    vk::DeviceCreateInfo deviceCreateInfo = vk::DeviceCreateInfo( vk::DeviceCreateFlags(),
-                                                                  static_cast<uint32_t>( queueCreateInfos.size() ),
-                                                                  queueCreateInfos.data(),
-                                                                  0,
-                                                                  nullptr,
-                                                                  static_cast<uint32_t>( deviceExtensions.size() ),
-                                                                  deviceExtensions.data(),
-                                                                  nullptr );
+    vk::DeviceCreateInfo deviceCreateInfo( vk::DeviceCreateFlags(),
+                                           static_cast<uint32_t>( queueCreateInfos.size() ),
+                                           queueCreateInfos.data(),
+                                           0,
+                                           nullptr,
+                                           static_cast<uint32_t>( deviceExtensions.size() ),
+                                           deviceExtensions.data(),
+                                           &physicalDeviceFeatures );
 
     // Create the device
-    return physicalDevice.createDeviceUnique( deviceCreateInfo );
+    return physicalDevice.getPhysicalDevice().createDeviceUnique( deviceCreateInfo );
 }
 
 std::vector<vk::UniqueSemaphore> createSemaphores( const vk::Device &device, const uint32_t count )
@@ -133,8 +139,8 @@ struct VulkanDevice::Internal
     const vk::Queue        graphicsQueue;
     const vk::Queue        presentQueue;
 
-    Internal( SDL_Window *window, const vk::PhysicalDevice &physicalDevice, const vk::SurfaceKHR &surface )
-        : queueConfig( ::getQueueConfig( physicalDevice, surface ) ),
+    Internal( SDL_Window *window, const VulkanPhysicalDevice &physicalDevice, const vk::SurfaceKHR &surface )
+        : queueConfig( ::getQueueConfig( physicalDevice.getPhysicalDevice(), surface ) ),
           device( ::createDevice( physicalDevice, queueConfig ) ),
           graphicsQueue( device->getQueue( queueConfig.graphicsQueueIndex, 0 ) ),
           presentQueue( device->getQueue( queueConfig.presentQueueIndex, 0 ) )
@@ -151,13 +157,13 @@ struct VulkanDevice::Internal
 };
 
 VulkanDevice::VulkanDevice( SDL_Window *window, const VulkanPhysicalDevice &physicalDevice, const VulkanSurface &surface )
-    : m_internal( std::make_unique<Internal>( window, physicalDevice.getPhysicalDevice(), surface.getSurface() ) )
+    : m_internal( std::make_unique<Internal>( window, physicalDevice, surface.getSurface() ) )
 {
 }
 
 VulkanDevice::VulkanDevice( VulkanDevice &&o ) = default;
 VulkanDevice &VulkanDevice::operator=( VulkanDevice &&o ) = default;
-VulkanDevice::~VulkanDevice() = default;
+VulkanDevice::~VulkanDevice()                             = default;
 
 const vk::Device &VulkanDevice::getDevice() const { return *m_internal->device; }
 
