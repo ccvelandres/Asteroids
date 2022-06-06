@@ -3,7 +3,7 @@
 #include <thread>
 #include <typeindex>
 
-#include <SDL.h>
+#include <SDL2/SDL.h>
 #include <SDL2_gfxPrimitives.h>
 
 #include <ecs/ecs.hpp>
