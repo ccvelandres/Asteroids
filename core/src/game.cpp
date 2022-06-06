@@ -145,6 +145,11 @@ void Game::startGameLoop()
         /** Render */
         {
             EASY_BLOCK("FrameRender");
+            g_renderer->renderBegin();
+            /** @todo: Maybe rework this part to let the scene or renderer handle 
+             * the draw calls
+             */
+            g_renderer->renderEnd();
         }
 
         /** Refresh manager objects */
