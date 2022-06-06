@@ -8,9 +8,9 @@
 
 namespace utils
 {
-    static std::vector<char> readBinaryFile(const std::string &filename)
+    static std::vector<char> loadBinaryFile(const std::string &filename)
     {
-        L_TAG( "readBinaryFile");
+        L_TAG( "loadBinaryFile");
 
         if (!std::filesystem::exists(filename)) {
             L_THROW_RUNTIME("Could not find file to load: {}", filename);

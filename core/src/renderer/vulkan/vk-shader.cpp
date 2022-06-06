@@ -12,7 +12,7 @@ vk::UniqueShaderModule createShaderModule( const vk::Device &device, const std::
     L_TAG( "createShaderModule" );
 
     /** @todo exception handling, maybe define a proper exception and throw again */
-    auto bytecode = utils::readBinaryFile( filename );
+    auto bytecode = utils::loadBinaryFile( filename );
 
     vk::ShaderModuleCreateInfo shaderCreateInfo = {};
     shaderCreateInfo.setCodeSize( bytecode.size() )
