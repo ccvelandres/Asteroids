@@ -1,4 +1,4 @@
-#include <renderer/common/texture.hpp>
+#include <assets/texture.hpp>
 
 #include <utils/logging.hpp>
 

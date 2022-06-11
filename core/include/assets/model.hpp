@@ -4,11 +4,11 @@
 #include <fstream>
 #include <filesystem>
 
-#include "logging.hpp"
+#include <utils/logging.hpp>
 
-namespace utils
+namespace assets::model
 {
-    static std::vector<char> loadBinaryFile(const std::string &filename)
+    static std::vector<char> loadOBJ(const std::string &filename)
     {
         L_TAG( "loadBinaryFile");
 

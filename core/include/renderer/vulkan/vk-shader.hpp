@@ -1,7 +1,7 @@
 #pragma once
 
 #include <memory>
-#include <utils/file.hpp>
+#include <assets/assets.hpp>
 #include <vulkan/vulkan.hpp>
 
 #include "vk-device.hpp"
