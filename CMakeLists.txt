@@ -44,6 +44,13 @@ find_package(Vulkan REQUIRED)
 # libglm (OpenGL Mathematics)
 find_package(glm REQUIRED)
 
+# OpenGL
+find_package(OpenGL REQUIRED)
+
+# GLEW
+find_package(GLEW REQUIRED)
+message("GLEW_VERSION: ${GLEW_VERSION}")
+
 # fmt
 # add_subdirectory(${PROJECT_LIBRARY_DIR}/fmt)
 # target_link_libraries(${PROJECT_NAME} PUBLIC fmt)
@@ -81,6 +88,9 @@ target_include_directories(${CORE_TARGET} PUBLIC ${SDL2_IMAGE_INCLUDE_DIR})
 target_link_libraries(${CORE_TARGET} PUBLIC Vulkan::Vulkan)
 target_link_libraries(${CORE_TARGET} PUBLIC spdlog)
 target_link_libraries(${CORE_TARGET} PUBLIC glm::glm)
+target_link_libraries(${CORE_TARGET} PUBLIC OpenGL::GL)
+# target_link_libraries(${CORE_TARGET} PUBLIC OpenGL::GLU)
+target_link_libraries(${CORE_TARGET} PUBLIC GLEW::glew)
 
 #################################################################
 ## Logic
