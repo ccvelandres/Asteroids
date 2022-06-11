@@ -110,7 +110,7 @@ PenaltyReturnTypeOnItsOwnLine: 100000000
 # # RequiresClausePosition: WithPreceding # Clang 15
 # # SeparateDefinitionBlocks: Always # Clang 14
 # ShortNamespaceLines: 1
-SortIncludes: CaseInsensitive
+# SortIncludes: CaseInsensitive
 # SortUsingDeclarations: true
 # SpaceAfterCStyleCast: true
 # SpaceAfterLogicalNot: false
@@ -123,7 +123,7 @@ SpaceBeforeCtorInitializerColon: true
 SpaceBeforeInheritanceColon: true
 SpaceBeforeParens: ControlStatements
 SpaceBeforeRangeBasedForLoopColon: true
-SpaceBeforeSquareBrackets: true
+SpaceBeforeSquareBrackets: false
 SpaceInEmptyBlock: false
 SpaceInEmptyParentheses: false
 SpacesBeforeTrailingComments: 1
