@@ -1,7 +1,6 @@
 #include <game.hpp>
 #include <ecs/ecs.hpp>
 #include <ecs/components.hpp>
-#include <renderer/common/renderer.hpp>
 #include <renderer/vulkan/vk-renderer.hpp>
 #include <renderer/opengl/gl-renderer.hpp>
 #include <event.hpp>
