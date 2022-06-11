@@ -2,7 +2,7 @@
 #include <renderer/vulkan/vk-shader.hpp>
 #include <renderer/vulkan/vk-utils.hpp>
 
-#include <utils/file.hpp>
+#include <assets/assets.hpp>
 #include <utils/logging.hpp>
 
 #include <exception>
@@ -12,7 +12,7 @@ vk::UniqueShaderModule createShaderModule( const vk::Device &device, const std::
     L_TAG( "createShaderModule" );
 
     /** @todo exception handling, maybe define a proper exception and throw again */
-    auto bytecode = utils::loadBinaryFile( filename );
+    auto bytecode = assets::utils::loadBinaryFile( filename );
 
     vk::ShaderModuleCreateInfo shaderCreateInfo = {};
     shaderCreateInfo.setCodeSize( bytecode.size() )

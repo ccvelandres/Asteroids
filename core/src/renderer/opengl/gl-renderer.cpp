@@ -1,15 +1,36 @@
-#include <renderer/opengl/gl-wrapper.hpp>
 #include <renderer/opengl/gl-pipeline.hpp>
 #include <renderer/opengl/gl-renderer.hpp>
+#include <renderer/opengl/gl-wrapper.hpp>
 
 #include <SDL2/SDL.h>
-#include <SDL2/SDL_opengl.h>
 
 #include <utils/logging.hpp>
+
+void initGLEW()
+{
+    L_TAG( "initGLEW" );
+
+    /** Initialize glew */
+    GLenum gres = glewInit();
+    if ( gres != GLEW_OK )
+    {
+        L_THROW_RUNTIME( "Failed to initialize glew" );
+    }
+
+    // if (! glewIsSupported("GL_VERSION_4_6"))
+    // {
+    //     L_THROW_RUNTIME( "Required OpenGL extensions missing" );
+    // }
+}
 
 SDL_Window *createWindow( const std::string &windowTitle, const int windowWidth, const int windowHeight )
 {
     L_TAG( "createWindow" );
+
+    /** Use OpenGL 3.1 core */
+    SDL_GL_SetAttribute( SDL_GL_CONTEXT_MAJOR_VERSION, 3 );
+    SDL_GL_SetAttribute( SDL_GL_CONTEXT_MINOR_VERSION, 3 );
+    SDL_GL_SetAttribute( SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE );
 
     SDL_Window *window = SDL_CreateWindow( windowTitle.c_str(),
                                            SDL_WINDOWPOS_CENTERED,
@@ -30,12 +51,9 @@ SDL_GLContext createContext( SDL_Window *window )
 {
     L_TAG( "createContext" );
 
-    /** Use OpenGL 3.1 core */
-    SDL_GL_SetAttribute( SDL_GL_CONTEXT_MAJOR_VERSION, 3 );
-    SDL_GL_SetAttribute( SDL_GL_CONTEXT_MINOR_VERSION, 1 );
-    SDL_GL_SetAttribute( SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE );
-
     SDL_GLContext context = SDL_GL_CreateContext( window );
+
+    initGLEW();
 
     int viewportWidth, viewportHeight;
     SDL_GL_GetDrawableSize( window, &viewportWidth, &viewportHeight );
@@ -55,8 +73,8 @@ OpenGLPipeline createDefaultPipeline()
 {
     std::vector<OpenGLPipeline::ShaderStage> stages;
 
-    stages.push_back( OpenGLPipeline::ShaderStage( GL_VERTEX_SHADER, "shaders/default.vert" ) );
-    stages.push_back( OpenGLPipeline::ShaderStage( GL_FRAGMENT_SHADER, "shaders/default.frag" ) );
+    stages.push_back( OpenGLPipeline::ShaderStage( GL_VERTEX_SHADER, "shaders/opengl/default.vert" ) );
+    stages.push_back( OpenGLPipeline::ShaderStage( GL_FRAGMENT_SHADER, "shaders/opengl/default.frag" ) );
 
     return OpenGLPipeline( stages );
 }
@@ -95,6 +113,6 @@ void OpenGLRenderer::refresh() {}
 
 bool OpenGLRenderer::renderBegin() { return true; }
 
-void OpenGLRenderer::render( const std::vector<Mesh> &meshes ) {}
+void OpenGLRenderer::render( const std::vector<assets::Mesh> &meshes ) {}
 
 void OpenGLRenderer::renderEnd() {}

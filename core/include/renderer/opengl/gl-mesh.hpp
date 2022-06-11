@@ -3,7 +3,7 @@
 #include <memory>
 #include "gl-wrapper.hpp"
 
-#include "../common/mesh.hpp"
+#include <assets/mesh.hpp>
 
 class OpenGLMesh
 {
@@ -12,7 +12,7 @@ private:
     std::unique_ptr<Internal> m_internal;
 protected:
 public:
-    OpenGLMesh(const Mesh &mesh);
+    OpenGLMesh(const assets::Mesh &mesh);
     OpenGLMesh(OpenGLMesh&&o);
     OpenGLMesh &operator=(OpenGLMesh&&o);
     ~OpenGLMesh();

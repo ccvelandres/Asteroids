@@ -3,7 +3,7 @@
 #include <memory>
 #include "gl-wrapper.hpp"
 
-#include "../common/texture.hpp"
+#include <assets/texture.hpp>
 
 class OpenGLTexture
 {

@@ -2,7 +2,7 @@
 
 #include <memory>
 
-#include <renderer/common/renderer.hpp>
+#include <renderer/renderer.hpp>
 
 class OpenGLRenderer : public Renderer
 {
@@ -22,6 +22,6 @@ public:
     void refresh() override;
 
     bool renderBegin() override;
-    void render( const std::vector<Mesh> &meshes ) override;
+    void render( const std::vector<assets::Mesh> &meshes ) override;
     void renderEnd() override;
 };

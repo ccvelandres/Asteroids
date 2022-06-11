@@ -1,4 +1,5 @@
 #include <renderer/opengl/gl-pipeline.hpp>
+#include <assets/assets.hpp>
 #include <utils/logging.hpp>
 
 #include <vector>
@@ -9,15 +10,17 @@ GLuint compileShader( const GLenum shaderType, const std::string &shaderSource )
 
     GLuint shaderId = glCreateShader( shaderType );
 
-    const char *shaderData         = shaderSource.c_str();
-    GLint       shaderSourceLength = shaderSource.length();
+    std::vector<char> shaderSourceData = assets::utils::loadBinaryFile( shaderSource );
+
+    const char *shaderData         = shaderSourceData.data();
+    GLint       shaderSourceLength = shaderSourceData.size();
     glShaderSource( shaderId, 1, &shaderData, &shaderSourceLength );
     glCompileShader( shaderId );
 
     GLint res;
     glGetShaderiv( shaderId, GL_COMPILE_STATUS, &res );
 
-    if ( !res )
+    if ( res != GL_TRUE )
     {
         GLint messageLength;
         glGetShaderiv( shaderId, GL_INFO_LOG_LENGTH, &messageLength );
@@ -50,7 +53,7 @@ GLuint createPipelineProgram( const std::vector<OpenGLPipeline::ShaderStage> &sh
     glLinkProgram( shaderProgramId );
     glGetProgramiv( shaderProgramId, GL_LINK_STATUS, &res );
 
-    if ( !res )
+    if ( res != GL_TRUE )
     {
         GLint messageLength;
         glGetProgramiv( shaderProgramId, GL_INFO_LOG_LENGTH, &messageLength );

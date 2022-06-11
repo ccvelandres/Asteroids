@@ -2,7 +2,7 @@
 
 #include <utils/logging.hpp>
 
-GLuint createVertexBuffer( const Mesh &mesh )
+GLuint createVertexBuffer( const assets::Mesh &mesh )
 {
     std::vector<float> bufferData;
 
@@ -27,7 +27,7 @@ GLuint createVertexBuffer( const Mesh &mesh )
     return bufferId;
 }
 
-GLuint createIndiceBuffer( const Mesh &mesh )
+GLuint createIndiceBuffer( const assets::Mesh &mesh )
 {
     GLuint bufferId;
     glGenBuffers( 1, &bufferId );
@@ -43,7 +43,7 @@ struct OpenGLMesh::Internal
     const GLuint vertexBufferId;
     const GLuint indiceBufferId;
 
-    Internal( const Mesh &mesh )
+    Internal( const assets::Mesh &mesh )
         : vertexBufferId( ::createVertexBuffer( mesh ) ),
           indiceBufferId( ::createIndiceBuffer( mesh ) )
     {
@@ -58,7 +58,7 @@ struct OpenGLMesh::Internal
     }
 };
 
-OpenGLMesh::OpenGLMesh( const Mesh &mesh ) 
+OpenGLMesh::OpenGLMesh( const assets::Mesh &mesh ) 
     : m_internal( std::make_unique<Internal>( mesh ) ) {}
 
 OpenGLMesh::OpenGLMesh( OpenGLMesh &&o ) = default;

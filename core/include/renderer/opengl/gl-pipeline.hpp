@@ -6,8 +6,6 @@
 
 #include <glm/glm.hpp>
 
-#include "../common/mesh.hpp"
-#include "../common/texture.hpp"
 #include "gl-mesh.hpp"
 
 class OpenGLPipeline

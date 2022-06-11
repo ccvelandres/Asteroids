@@ -41,6 +41,6 @@ void VulkanRenderer::refresh() {}
 
 bool VulkanRenderer::renderBegin() { return m_internal->context.renderBegin(); }
 
-void VulkanRenderer::render(const std::vector<Mesh> &meshes) {}
+void VulkanRenderer::render(const std::vector<assets::Mesh> &meshes) {}
 
 void VulkanRenderer::renderEnd() { m_internal->context.renderEnd(); }
