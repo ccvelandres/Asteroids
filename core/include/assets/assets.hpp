@@ -8,4 +8,6 @@
 namespace assets::utils
 {
     std::vector<char> loadBinaryFile(const std::string &filename);
+
+    
 }

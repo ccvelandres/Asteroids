@@ -8,7 +8,7 @@
 struct OpenGLTexture::Internal
 {
 
-    Internal( const Texture &texture )
+    Internal( const assets::Texture &texture )
     {
         L_TAG( "OpenGLTexture::Internal" );
         L_TRACE( "Internal resources initialized ({})", static_cast<void *>( this ) );
@@ -21,7 +21,7 @@ struct OpenGLTexture::Internal
     }
 };
 
-OpenGLTexture::OpenGLTexture( const Texture &texture ) 
+OpenGLTexture::OpenGLTexture( const assets::Texture &texture ) 
     : m_internal( std::make_unique<Internal>( texture ) )
     {}
 

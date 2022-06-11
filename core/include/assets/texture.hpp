@@ -5,16 +5,19 @@
 
 #include <string>
 
-class Texture
+namespace assets
 {
-private:
-    SDL_Surface * m_surface;
-protected:
-public:
-    Texture(const std::string &path);
-    Texture(Texture&&o);
-    Texture &operator= (Texture&&o);
-    ~Texture();
+    class Texture
+    {
+    private:
+        SDL_Surface *m_surface;
+    protected:
+    public:
+        Texture( const std::string &path );
+        Texture( Texture &&o );
+        Texture &operator=( Texture &&o );
+        ~Texture();
 
-    SDL_Surface *getSurface() const;
-};
+        SDL_Surface *getSurface() const;
+    };
+}

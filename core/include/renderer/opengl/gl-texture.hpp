@@ -12,7 +12,7 @@ private:
     std::unique_ptr<Internal> m_internal;
 protected:
 public:
-    OpenGLTexture(const Texture &mesh);
+    OpenGLTexture(const assets::Texture &mesh);
     OpenGLTexture(OpenGLTexture&&o);
     OpenGLTexture &operator=(OpenGLTexture&&o);
     ~OpenGLTexture();
