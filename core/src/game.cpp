@@ -3,6 +3,7 @@
 #include <ecs/components.hpp>
 #include <renderer/common/renderer.hpp>
 #include <renderer/vulkan/vk-renderer.hpp>
+#include <renderer/opengl/gl-renderer.hpp>
 #include <event.hpp>
 #include <input/inputManager.hpp>
 #include <utils/profiler.hpp>
@@ -39,18 +40,19 @@ Game::Game(const std::string &windowTitle,
     {
         exit(1);
     }
-    m_window = SDL_CreateWindow(m_windowTitle.c_str(),
-                                SDL_WINDOWPOS_CENTERED,
-                                SDL_WINDOWPOS_CENTERED,
-                                m_windowWidth,
-                                m_windowHeight,
-                                SDL_WINDOW_SHOWN | SDL_WINDOW_VULKAN);
+    // m_window = SDL_CreateWindow(m_windowTitle.c_str(),
+    //                             SDL_WINDOWPOS_CENTERED,
+    //                             SDL_WINDOWPOS_CENTERED,
+    //                             m_windowWidth,
+    //                             m_windowHeight,
+    //                             SDL_WINDOW_SHOWN | SDL_WINDOW_VULKAN | SDL_WINDOW_RESIZABLE);
 
-    if (m_window == NULL)
-    {
-        L_ERROR("Failed to initialize window");
-    }
-    g_renderer = new VulkanRenderer(m_window);
+    // if (m_window == NULL)
+    // {
+    //     L_ERROR("Failed to initialize window");
+    // }
+    // g_renderer = new VulkanRenderer(m_window);
+    g_renderer = new OpenGLRenderer(windowTitle, windowWidth, windowHeight);
 
     g_inputManager = new InputManager();
     g_eventManager = new EventManager();
@@ -175,20 +177,20 @@ void Game::startGameLoop()
 
         {
             EASY_BLOCK("FPS Calculation");
-            logging::trace("{},{}: m_targetDelta:      ({})", __LINE__, __func__, m_targetDelta.count());
-            logging::trace("{},{}: unscaledDeltaTime:  ({})", __LINE__, __func__, g_time->unscaledDeltaTime().count());
-            logging::trace("{},{}: unscaledFrameStart: ({})", __LINE__, __func__, g_time->unscaledFrameStart().count());
-            logging::trace("{},{}: unscaledFrameEnd:   ({})", __LINE__, __func__, g_time->unscaledFrameEnd().count());
-            logging::trace("{},{}: unscaledFrameTime:  ({})", __LINE__, __func__, g_time->unscaledFrameTime().count());
-            logging::trace("{},{}: scaledDeltaTime:    ({})", __LINE__, __func__, g_time->scaledDeltaTime().count());
-            logging::trace("{},{}: scaledFrameTime:    ({})", __LINE__, __func__, g_time->scaledFrameTime().count());
-            logging::trace("{},{}: unscaledTime:       ({})", __LINE__, __func__, g_time->unscaledTime().count());
+            // logging::trace("{},{}: m_targetDelta:      ({})", __LINE__, __func__, m_targetDelta.count());
+            // logging::trace("{},{}: unscaledDeltaTime:  ({})", __LINE__, __func__, g_time->unscaledDeltaTime().count());
+            // logging::trace("{},{}: unscaledFrameStart: ({})", __LINE__, __func__, g_time->unscaledFrameStart().count());
+            // logging::trace("{},{}: unscaledFrameEnd:   ({})", __LINE__, __func__, g_time->unscaledFrameEnd().count());
+            // logging::trace("{},{}: unscaledFrameTime:  ({})", __LINE__, __func__, g_time->unscaledFrameTime().count());
+            // logging::trace("{},{}: scaledDeltaTime:    ({})", __LINE__, __func__, g_time->scaledDeltaTime().count());
+            // logging::trace("{},{}: scaledFrameTime:    ({})", __LINE__, __func__, g_time->scaledFrameTime().count());
+            // logging::trace("{},{}: unscaledTime:       ({})", __LINE__, __func__, g_time->unscaledTime().count());
             float fps = time_fs::period::den / (Time::getTime<time_fs>() - g_time->unscaledFrameStart<time_fs>()).count();
             m_minfps = (fps < m_minfps ? fps : m_minfps);
             m_maxfps = (fps > m_maxfps ? fps : m_maxfps);
             m_fps = fps;
-            logging::trace("{},{}: FPS: ({})", __LINE__, __func__, m_fps);
-            logging::trace("{},{}: MIN: ({})", __LINE__, __func__, m_minfps);
+            // logging::trace("{},{}: FPS: ({})", __LINE__, __func__, m_fps);
+            // logging::trace("{},{}: MIN: ({})", __LINE__, __func__, m_minfps);
             EASY_VALUE("FPS", fps, EASY_VIN("FPS"));
         }
     }
