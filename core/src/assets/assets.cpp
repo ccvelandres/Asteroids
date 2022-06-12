@@ -1,7 +1,8 @@
-#include <assets/assets.hpp>
-
 #include <fstream>
 #include <filesystem>
+
+#include <assets/assets.hpp>
+#include <utils/logging.hpp>
 
 namespace assets::utils
 {
