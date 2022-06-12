@@ -134,7 +134,7 @@ SpacesInContainerLiterals: false
 # SpacesInLineCommentPrefix:
 #   Minimum: 1
 #   Maximum: -1
-SpacesInParentheses: true
+SpacesInParentheses: false
 SpacesInSquareBrackets: false
 # Standard: Auto
 # TabWidth:        4
