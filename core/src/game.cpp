@@ -27,8 +27,7 @@ Game::Game(const std::string &windowTitle,
     L_TAG("Game::Game");
 
     /** Start profiling */
-    EASY_PROFILER_ENABLE;
-    profiler::startListen();
+    PROFILER_START();
     
     if (g_game)
         assert("Only one Game class object may exist");
@@ -72,7 +71,7 @@ Game::~Game()
     delete g_time;
     g_game = nullptr;
 
-    profiler::dumpBlocksToFile("dump.prof");
+    PROFILER_END("dump.prof");
 }
 
 void Game::init()
@@ -104,9 +103,9 @@ void Game::startGameLoop()
 
     while (isRunning)
     {
-        EASY_BLOCK("FRAME", profiler::colors::Red100);
+        PROFILER_BLOCK("FRAME", profiler::colors::Red100);
         {
-            EASY_BLOCK("Time::preupdate");
+            PROFILER_BLOCK("Time::preupdate");
             g_time->preUpdate();
         }
 
@@ -114,38 +113,38 @@ void Game::startGameLoop()
 
         /** Handle SDL Events here */
         {
-            EASY_BLOCK("EventManager::handleEvents");
+            PROFILER_BLOCK("EventManager::handleEvents");
             g_eventManager->handleEvents();
         }
 
         {
-            EASY_BLOCK("ECS::preupdate");
+            PROFILER_BLOCK("ECS::preupdate");
             g_entityManager->preUpdate();
         }
 
         /* Update inputs */
         {
-            EASY_BLOCK("InputManager::update");
+            PROFILER_BLOCK("InputManager::update");
             g_inputManager->update();
         }
 
         /** Manager Update */
         {
-            EASY_BLOCK("ECS::update");
+            PROFILER_BLOCK("ECS::update");
             time_ms delta = g_time->scaledDeltaTime<time_ms>();
             g_entityManager->update(delta);
             g_componentManager->update<TransformComponent>(delta);
         }
 
         {
-            EASY_BLOCK("ECS::postupdate");
+            PROFILER_BLOCK("ECS::postupdate");
             g_entityManager->postUpdate();
             g_inputManager->postUpdate();
         }
 
         /** Render */
         {
-            EASY_BLOCK("FrameRender");
+            PROFILER_BLOCK("FrameRender");
             g_renderer->renderBegin();
             /** @todo: Maybe rework this part to let the scene or renderer handle 
              * the draw calls
@@ -155,27 +154,27 @@ void Game::startGameLoop()
 
         /** Refresh manager objects */
         {
-            EASY_BLOCK("Managers::Refresh");
+            PROFILER_BLOCK("Managers::Refresh");
             g_componentManager->refresh();
             g_entityManager->refresh();
         }
 
         {
-            EASY_BLOCK("Time::postUpdate");
+            PROFILER_BLOCK("Time::postUpdate");
             g_time->postUpdate();
         }
 
         if (m_targetDelta > g_time->unscaledFrameTime())
         {
-            EASY_BLOCK("FrameSleep");
+            PROFILER_BLOCK("FrameSleep");
             auto s = m_targetDelta - g_time->unscaledFrameTime();
-            EASY_VALUE("FRAME_DELAY_US", s.count(), EASY_VIN("FRAME_DELAY_US"));
+            PROFILER_VALUE("FRAME_DELAY_US", s.count(), PROFILER_VIN("FRAME_DELAY_US"));
             std::this_thread::sleep_for(s);
             // SDL_Delay(std::chrono::duration_cast<std::chrono::milliseconds>(s).count());
         }
 
         {
-            EASY_BLOCK("FPS Calculation");
+            PROFILER_BLOCK("FPS Calculation");
             // logging::trace("{},{}: m_targetDelta:      ({})", __LINE__, __func__, m_targetDelta.count());
             // logging::trace("{},{}: unscaledDeltaTime:  ({})", __LINE__, __func__, g_time->unscaledDeltaTime().count());
             // logging::trace("{},{}: unscaledFrameStart: ({})", __LINE__, __func__, g_time->unscaledFrameStart().count());
@@ -190,7 +189,7 @@ void Game::startGameLoop()
             m_fps = fps;
             // logging::trace("{},{}: FPS: ({})", __LINE__, __func__, m_fps);
             // logging::trace("{},{}: MIN: ({})", __LINE__, __func__, m_minfps);
-            EASY_VALUE("FPS", fps, EASY_VIN("FPS"));
+            PROFILER_VALUE("FPS", fps, PROFILER_VIN("FPS"));
         }
     }
 }
