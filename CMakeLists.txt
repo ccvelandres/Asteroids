@@ -59,15 +59,10 @@ message("GLEW_VERSION: ${GLEW_VERSION}")
 add_subdirectory(${PROJECT_LIBRARY_DIR}/spdlog)
 
 # easy_profiler
-ExternalProject_Add(proj_easy_profiler
-    SOURCE_DIR ${PROJECT_LIBRARY_DIR}/easy_profiler
-    INSTALL_COMMAND ""
-    CMAKE_ARGS -DEASY_OPTION_LISTEN=ON
-    )
-ExternalProject_Get_Property(proj_easy_profiler BINARY_DIR)
-# Copy outputs to output dir
-add_custom_command(TARGET proj_easy_profiler POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -E copy_directory  ${BINARY_DIR}/bin/ ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}
+set(EASY_OPTION_LISTEN ON CACHE BOOL "Enable automatic startListen on startup" FORCE)
+add_subdirectory(${PROJECT_LIBRARY_DIR}/easy_profiler)
+add_custom_target(easy_profiler_bin DEPENDS easy_profiler
+    COMMAND ${CMAKE_COMMAND} -E copy_directory  ${CMAKE_BINARY_DIR}/lib/easy_profiler/bin/ ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}
 )
 #################################################################
 ## Core
@@ -80,7 +75,11 @@ add_library(${CORE_TARGET} ${SRC_C_CORE} ${SRC_CPP_CORE})
 target_include_directories(${CORE_TARGET} PRIVATE ${CMAKE_SOURCE_DIR}/core/src)
 target_include_directories(${CORE_TARGET} PUBLIC ${CMAKE_SOURCE_DIR}/core/include)
 
+# Add dependencies
+add_dependencies(${CORE_TARGET} easy_profiler_bin)
+
 ## Link Libraries
+target_link_libraries(${CORE_TARGET} PUBLIC easy_profiler)
 target_link_libraries(${CORE_TARGET} PUBLIC ${SDL2_LIBRARY})
 target_include_directories(${CORE_TARGET} PUBLIC ${SDL2_INCLUDE_DIR})
 target_link_libraries(${CORE_TARGET} PUBLIC ${SDL2_IMAGE_LIBRARY})
