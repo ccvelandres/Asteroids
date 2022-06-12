@@ -3,6 +3,8 @@
 #include <spdlog/spdlog.h>
 #include <exception>
 
+#include "profiler.hpp"
+
 /** We use alias for spdlog in case we change it in the future */
 namespace logging
 {
@@ -21,6 +23,7 @@ constexpr const char *baseFileName( const char *path )
 /** Helper macros for appending the line and function */
 #define L_STRING(STR) #STR
 #define L_TAG(STR) \
+    PROFILER_BLOCK(STR); \
     static const std::string tag__ { std::string(baseFileName(__FILE__)) + std::string(": " STR) }
 
 #define L_LOG(level, STR, ...) logging::level("[{}] " STR, tag__, ##__VA_ARGS__)
