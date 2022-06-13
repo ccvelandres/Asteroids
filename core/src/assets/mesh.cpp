@@ -2,6 +2,8 @@
 
 #include <utils/logging.hpp>
 
+#include <assets/loaders/obj.hpp>
+
 namespace assets
 {
     struct Mesh::Internal
@@ -9,7 +11,7 @@ namespace assets
         const std::vector<Vertex>   vertices;
         const std::vector<uint32_t> indices;
 
-        Internal( const std::vector<Vertex> &vertices, const std::vector<uint32_t> indices )
+        Internal( const std::vector<Vertex> &vertices, const std::vector<uint32_t> &indices )
             : vertices( vertices ),
               indices( indices )
         {
@@ -26,7 +28,7 @@ namespace assets
         }
     };
 
-    Mesh::Mesh( const std::vector<Vertex> &vertices, const std::vector<uint32_t> indices )
+    Mesh::Mesh( const std::vector<Vertex> &vertices, const std::vector<uint32_t> &indices )
         : m_internal( std::make_unique<Internal>( vertices, indices ) )
     {
     }
