@@ -110,8 +110,8 @@ PenaltyReturnTypeOnItsOwnLine: 100000000
 # # RequiresClausePosition: WithPreceding # Clang 15
 # # SeparateDefinitionBlocks: Always # Clang 14
 # ShortNamespaceLines: 1
-# SortIncludes: CaseInsensitive
-# SortUsingDeclarations: true
+SortIncludes: Never
+SortUsingDeclarations: false
 # SpaceAfterCStyleCast: true
 # SpaceAfterLogicalNot: false
 # SpaceAfterTemplateKeyword: false

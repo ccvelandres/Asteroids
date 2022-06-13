@@ -20,17 +20,13 @@ public:
         GLenum      shaderType;
         std::string shaderSource;
 
-        ShaderStage( GLenum shaderType, std::string shaderSource )
-            : shaderType( shaderType ),
-              shaderSource( shaderSource )
-        {
-        }
+        ShaderStage(GLenum shaderType, std::string shaderSource) : shaderType(shaderType), shaderSource(shaderSource) {}
     };
 
-    OpenGLPipeline( const std::vector<ShaderStage> &shaderStages );
-    OpenGLPipeline( OpenGLPipeline &&o );
-    OpenGLPipeline &operator=( OpenGLPipeline &&o );
+    OpenGLPipeline(const std::vector<ShaderStage> &shaderStages);
+    OpenGLPipeline(OpenGLPipeline &&o);
+    OpenGLPipeline &operator=(OpenGLPipeline &&o);
     ~OpenGLPipeline();
 
-    void render( const OpenGLMesh &mesh, const glm::mat4 &mvp ) const;
+    void render(const OpenGLMesh &mesh, const glm::mat4 &mvp) const;
 };

@@ -101,11 +101,11 @@ namespace assets::loaders::obj
         return true;
     }
 
-    static bool pushObject(Object               &obj,
-                           ProcessGroup         &processGroup,
-                           std::vector<float>   &vertices,
-                           std::string          &name,
-                           bool                  triangulate = false) noexcept
+    static bool pushObject(Object             &obj,
+                           ProcessGroup       &processGroup,
+                           std::vector<float> &vertices,
+                           std::string        &name,
+                           bool                triangulate = false) noexcept
     {
         if (processGroup.faces.empty()) return false;
 
@@ -182,7 +182,7 @@ namespace assets::loaders::obj
                     const char *token = &line[2];
                     if (parseFloat(&token, &tmp[0], 3) == 3)
                         v.insert(v.end(), tmp.begin(), tmp.end());
-                    else 
+                    else
                     {
                         L_WARN("Failed to parse: {}", line);
                         return false;
@@ -198,7 +198,7 @@ namespace assets::loaders::obj
                     const char *token = &line[3];
                     if (parseFloat(&token, &tmp[0], 3) == 3)
                         vn.insert(vn.end(), tmp.begin(), tmp.end());
-                    else 
+                    else
                     {
                         L_WARN("Failed to parse: {}", line);
                         return false;
@@ -212,7 +212,7 @@ namespace assets::loaders::obj
                     const char *token = &line[3];
                     if (parseFloat(&token, &tmp[0], 2) == 2)
                         vt.insert(vt.end(), tmp.begin(), tmp.end());
-                    else 
+                    else
                     {
                         L_WARN("Failed to parse: {}", line);
                         return false;

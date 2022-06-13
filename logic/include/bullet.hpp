@@ -11,17 +11,16 @@ protected:
     TransformComponent *m_transform;
 
     Entity *m_parent;
-    int m_bulletID;
+    int     m_bulletID;
 
     glm::vec3 m_velocity;
-    bool m_isShot;
-    time_ms m_shootTime;
+    bool      m_isShot;
+    time_ms   m_shootTime;
 public:
     Bullet(Entity &parent);
     ~Bullet();
 
-    void shoot(const glm::vec3 &position,
-               const glm::vec3 &velocity);
+    void shoot(const glm::vec3 &position, const glm::vec3 &velocity);
     void onHit();
 
     bool isShot() { return m_isShot; }

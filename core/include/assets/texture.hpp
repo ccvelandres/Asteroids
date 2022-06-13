@@ -13,11 +13,11 @@ namespace assets
         SDL_Surface *m_surface;
     protected:
     public:
-        Texture( const std::string &path );
-        Texture( Texture &&o );
-        Texture &operator=( Texture &&o );
+        Texture(const std::string &path);
+        Texture(Texture &&o);
+        Texture &operator=(Texture &&o);
         ~Texture();
 
         SDL_Surface *getSurface() const;
     };
-}
+} // namespace assets

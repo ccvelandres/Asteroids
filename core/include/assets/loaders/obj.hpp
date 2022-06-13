@@ -21,9 +21,10 @@ namespace assets::loaders::obj
         std::vector<int>     verticeCount; /** vertice count per face */
     };
 
-    struct Object {
+    struct Object
+    {
         std::string name;
-        Mesh mesh;
+        Mesh        mesh;
     };
 
     class Loader
@@ -42,4 +43,4 @@ namespace assets::loaders::obj
 
         bool loadFile(const std::string &filename);
     };
-} // namespace assets::loaders
+} // namespace assets::loaders::obj

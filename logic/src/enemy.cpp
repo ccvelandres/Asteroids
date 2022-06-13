@@ -1,17 +1,13 @@
 #include <enemy.hpp>
 
-Enemy::Enemy()
-{
-}
+Enemy::Enemy() {}
 
-Enemy::~Enemy()
-{
-}
+Enemy::~Enemy() {}
 
 void Enemy::init()
 {
     L_TAG("Player::init");
-    
+
     m_transform = &this->addComponent<TransformComponent>();
 
     m_transform->scale = glm::vec3(2);
@@ -19,26 +15,16 @@ void Enemy::init()
     m_isActive = false;
 }
 
-void Enemy::preUpdate()
-{
-    L_TAG("Player::preUpdate");
-
-}
+void Enemy::preUpdate() { L_TAG("Player::preUpdate"); }
 
 void Enemy::update(time_ms delta)
 {
     L_TAG("Player::update");
 
-    if (!m_isActive)
-        return;
-
+    if (!m_isActive) return;
 }
 
-void Enemy::postUpdate()
-{
-    L_TAG("Player::postUpdate");
-
-}
+void Enemy::postUpdate() { L_TAG("Player::postUpdate"); }
 
 void Enemy::spawn(int type, const glm::vec3 &position)
 {

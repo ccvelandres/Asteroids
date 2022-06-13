@@ -16,9 +16,9 @@ private:
 
 protected:
 public:
-    VulkanDevice( VulkanDevice &&o );
-    VulkanDevice &operator=( VulkanDevice &&o );
-    VulkanDevice( SDL_Window *window, const VulkanPhysicalDevice &physicalDevice, const VulkanSurface &surface );
+    VulkanDevice(VulkanDevice &&o);
+    VulkanDevice &operator=(VulkanDevice &&o);
+    VulkanDevice(SDL_Window *window, const VulkanPhysicalDevice &physicalDevice, const VulkanSurface &surface);
     ~VulkanDevice();
 
     const vk::Device                &getDevice() const;
@@ -27,8 +27,8 @@ public:
     const vk::Queue                 &getPresentQueue() const;
     const uint32_t                   getPresentQueueIndex() const;
     const bool                       hasDiscreteQueue() const;
-    std::vector<vk::UniqueSemaphore> createSemaphores( const uint32_t count ) const;
-    std::vector<vk::UniqueFence>     createFences( const uint32_t count ) const;
+    std::vector<vk::UniqueSemaphore> createSemaphores(const uint32_t count) const;
+    std::vector<vk::UniqueFence>     createFences(const uint32_t count) const;
 
     operator vk::Device() { return getDevice(); }
 };

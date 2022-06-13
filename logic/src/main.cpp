@@ -23,15 +23,15 @@ constexpr int originY      = windowHeight / 2;
 
 auto app_start = std::chrono::high_resolution_clock::now();
 
-int main( int arc, char **argv )
+int main(int arc, char **argv)
 {
     /** Set compact pattern for logging */
-    logging::set_pattern( "[%H:%M:%S.%e] [%t] %L : %v" );
-    logging::set_level( logging::level::trace );
+    logging::set_pattern("[%H:%M:%S.%e] [%t] %L : %v");
+    logging::set_level(logging::level::trace);
 
-    Game *game = new Game( "Asteroids", windowWidth, windowHeight );
+    Game *game = new Game("Asteroids", windowWidth, windowHeight);
     game->init();
-    game->setTargetFPS( 90 );
+    game->setTargetFPS(90);
 
     // Player            player  = Game::entityManager()->addEntity<Player>();
     // EntityList<Enemy> enemies = Game::entityManager()->addEntities<Enemy>( 8 );

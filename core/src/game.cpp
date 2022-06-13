@@ -10,27 +10,25 @@
 
 #include <thread>
 
-Game *g_game = nullptr;
-EntityManager *g_entityManager = nullptr;
+Game             *g_game             = nullptr;
+EntityManager    *g_entityManager    = nullptr;
 ComponentManager *g_componentManager = nullptr;
-EventManager *g_eventManager = nullptr;
-Renderer *g_renderer = nullptr;
-InputManager *g_inputManager = nullptr;
-Time *g_time = nullptr;
+EventManager     *g_eventManager     = nullptr;
+Renderer         *g_renderer         = nullptr;
+InputManager     *g_inputManager     = nullptr;
+Time             *g_time             = nullptr;
 
-Game::Game(const std::string &windowTitle,
-           const int &windowWidth,
-           const int &windowHeight) : m_windowTitle(windowTitle),
-                                      m_windowWidth(windowWidth),
-                                      m_windowHeight(windowHeight)
+Game::Game(const std::string &windowTitle, const int &windowWidth, const int &windowHeight)
+    : m_windowTitle(windowTitle),
+      m_windowWidth(windowWidth),
+      m_windowHeight(windowHeight)
 {
     L_TAG("Game::Game");
 
     /** Start profiling */
     PROFILER_START();
-    
-    if (g_game)
-        assert("Only one Game class object may exist");
+
+    if (g_game) assert("Only one Game class object may exist");
     g_game = this;
     g_time = new Time();
 
@@ -52,11 +50,11 @@ Game::Game(const std::string &windowTitle,
     // g_renderer = new VulkanRenderer(m_window);
     g_renderer = new OpenGLRenderer(windowTitle, windowWidth, windowHeight);
 
-    g_inputManager = new InputManager();
-    g_eventManager = new EventManager();
+    g_inputManager     = new InputManager();
+    g_eventManager     = new EventManager();
     g_componentManager = new ComponentManager();
-    g_entityManager = new EntityManager();
-    
+    g_entityManager    = new EntityManager();
+
     /** FPS Defaults */
     m_targetDelta = time_ds(time_step::den / 60);
 }
@@ -86,20 +84,22 @@ void Game::startGameLoop()
     bool isRunning = true;
 
     /** Register Event filter for exit @todo: replace this */
-    SDL_AddEventWatch([](void *data, SDL_Event *e) -> int
-                      {
-        bool *isRunning = static_cast<bool*>(data);
-        switch (e->type) {
+    SDL_AddEventWatch(
+        [](void *data, SDL_Event *e) -> int {
+            bool *isRunning = static_cast<bool *>(data);
+            switch (e->type)
+            {
             case SDL_WINDOWEVENT:
-                if (e->window.event != SDL_WINDOWEVENT_CLOSE)
-                    break;
+                if (e->window.event != SDL_WINDOWEVENT_CLOSE) break;
             case SDL_QUIT:
                 *isRunning = false;
                 break;
-            default: break;
-        }
-        return 0; /** ignored */ },
-                      &isRunning);
+            default:
+                break;
+            }
+            return 0; /** ignored */
+        },
+        &isRunning);
 
     while (isRunning)
     {
@@ -146,7 +146,7 @@ void Game::startGameLoop()
         {
             PROFILER_BLOCK("FrameRender");
             g_renderer->renderBegin();
-            /** @todo: Maybe rework this part to let the scene or renderer handle 
+            /** @todo: Maybe rework this part to let the scene or renderer handle
              * the draw calls
              */
             g_renderer->renderEnd();
@@ -186,7 +186,7 @@ void Game::startGameLoop()
             float fps = time_fs::period::den / (Time::getTime<time_fs>() - g_time->unscaledFrameStart<time_fs>()).count();
             m_minfps = (fps < m_minfps ? fps : m_minfps);
             m_maxfps = (fps > m_maxfps ? fps : m_maxfps);
-            m_fps = fps;
+            m_fps    = fps;
             // logging::trace("{},{}: FPS: ({})", __LINE__, __func__, m_fps);
             // logging::trace("{},{}: MIN: ({})", __LINE__, __func__, m_minfps);
             PROFILER_VALUE("FPS", fps, PROFILER_VIN("FPS"));
@@ -200,10 +200,10 @@ void Game::setTargetFPS(const float fps)
     m_targetDelta = time_ds(static_cast<time_ds::rep>(time_step::den / fps));
 }
 
-Game *Game::this_game() { return g_game; }
-EntityManager *Game::entityManager() { return g_entityManager; }
+Game             *Game::this_game() { return g_game; }
+EntityManager    *Game::entityManager() { return g_entityManager; }
 ComponentManager *Game::componentManager() { return g_componentManager; }
-EventManager *Game::eventManager() { return g_eventManager; }
-InputManager *Game::inputManager() { return g_inputManager; }
-Time *Game::time() { return g_time; }
-Renderer *Game::renderer() { return g_renderer; }
+EventManager     *Game::eventManager() { return g_eventManager; }
+InputManager     *Game::inputManager() { return g_inputManager; }
+Time             *Game::time() { return g_time; }
+Renderer         *Game::renderer() { return g_renderer; }

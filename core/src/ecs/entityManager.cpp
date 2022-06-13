@@ -38,9 +38,6 @@ void EntityManager::refresh()
     for (auto &v : m_entities)
         v.second.erase(std::remove_if(v.second.begin(),
                                       v.second.end(),
-                                      [](const std::shared_ptr<Entity> &e)
-                                      {
-                                          return e.use_count() == 0;
-                                      }),
+                                      [](const std::shared_ptr<Entity> &e) { return e.use_count() == 0; }),
                        v.second.end());
 }

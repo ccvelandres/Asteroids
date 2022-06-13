@@ -3,8 +3,8 @@
 bool VulkanUtils::checkSwapchainSupport(vk::PhysicalDevice &device)
 {
     // Check if device supports swapchain
-    bool swapchainSupport = false;
-    std::string swapchainName = VK_KHR_SWAPCHAIN_EXTENSION_NAME;
+    bool        swapchainSupport = false;
+    std::string swapchainName    = VK_KHR_SWAPCHAIN_EXTENSION_NAME;
 
     for (const auto &extension : device.enumerateDeviceExtensionProperties())
     {
@@ -18,7 +18,7 @@ bool VulkanUtils::checkSwapchainSupport(vk::PhysicalDevice &device)
     return swapchainSupport;
 }
 
-bool VulkanUtils::checkValidationLayerSupport(const char *validationLayer,
+bool VulkanUtils::checkValidationLayerSupport(const char                             *validationLayer,
                                               const std::vector<vk::LayerProperties> &availableLayers)
 {
     for (const auto &layer : availableLayers)

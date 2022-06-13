@@ -14,9 +14,9 @@ private:
 
 protected:
 public:
-    VulkanSurface( VulkanSurface &&o );
-    VulkanSurface &operator=( VulkanSurface &&o );
-    VulkanSurface( SDL_Window *window, const VulkanInstance &instance );
+    VulkanSurface(VulkanSurface &&o);
+    VulkanSurface &operator=(VulkanSurface &&o);
+    VulkanSurface(SDL_Window *window, const VulkanInstance &instance);
     ~VulkanSurface();
 
     const vk::SurfaceKHR &getSurface() const;

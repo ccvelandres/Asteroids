@@ -4,11 +4,11 @@
 
 using time_type = int64_t;
 using time_step = std::micro;
-using time_ds = std::chrono::duration<time_type, time_step>;
-using time_fs = std::chrono::duration<float>;
-using time_ms = std::chrono::milliseconds;
-using time_us = std::chrono::microseconds;
-using time_ns = std::chrono::nanoseconds;
+using time_ds   = std::chrono::duration<time_type, time_step>;
+using time_fs   = std::chrono::duration<float>;
+using time_ms   = std::chrono::milliseconds;
+using time_us   = std::chrono::microseconds;
+using time_ns   = std::chrono::nanoseconds;
 
 class Time
 {
@@ -25,7 +25,7 @@ private:
     time_ds m_unscaledFrameEnd;
     time_ds m_unscaledTime;
 
-    float m_timeScale;
+    float   m_timeScale;
     time_ds m_scaledFrameDelta;
     time_ds m_scaledFrameTime;
     time_ds m_scaledFrameStart;
@@ -37,8 +37,10 @@ public:
     Time();
     /** Unless needing the exact time, use unscaledTime as much as possible */
     template <typename T>
-    static T getTime() { return std::chrono::duration_cast<T>(clock::now() - m_startTime); }
-
+    static T getTime()
+    {
+        return std::chrono::duration_cast<T>(clock::now() - m_startTime);
+    }
 
     /** Called every start of game loop update */
     void preUpdate();
@@ -52,31 +54,56 @@ public:
 
     /** Get scaled delta frame time */
     template <typename T = time_ds>
-    T scaledDeltaTime() const { return std::chrono::duration_cast<T>(m_scaledFrameDelta); }
+    T scaledDeltaTime() const
+    {
+        return std::chrono::duration_cast<T>(m_scaledFrameDelta);
+    }
     /** Get the scaled frame time */
     template <typename T = time_ds>
-    T scaledFrameTime() const { return std::chrono::duration_cast<T>(m_scaledFrameTime); }
+    T scaledFrameTime() const
+    {
+        return std::chrono::duration_cast<T>(m_scaledFrameTime);
+    }
     /** Get elapsed scaled time */
     template <typename T = time_ds>
-    T scaledTime() const { return std::chrono::duration_cast<T>(m_scaledTime); }
+    T scaledTime() const
+    {
+        return std::chrono::duration_cast<T>(m_scaledTime);
+    }
 
     /** Get unscaled delta frame time */
     template <typename T = time_ds>
-    T unscaledDeltaTime() const { return std::chrono::duration_cast<T>(m_unscaledFrameDelta); }
+    T unscaledDeltaTime() const
+    {
+        return std::chrono::duration_cast<T>(m_unscaledFrameDelta);
+    }
     /** Get unscaled frame start time */
     template <typename T = time_ds>
-    T unscaledFrameStart() const { return std::chrono::duration_cast<T>(m_unscaledFrameStart); }
+    T unscaledFrameStart() const
+    {
+        return std::chrono::duration_cast<T>(m_unscaledFrameStart);
+    }
     /** Get unscaled frame end time */
     template <typename T = time_ds>
-    T unscaledFrameEnd() const { return std::chrono::duration_cast<T>(m_unscaledFrameEnd); }
+    T unscaledFrameEnd() const
+    {
+        return std::chrono::duration_cast<T>(m_unscaledFrameEnd);
+    }
     /** Get unscaled frame time */
     template <typename T = time_ds>
-    T unscaledFrameTime() const { return std::chrono::duration_cast<T>(m_unscaledFrameTime); }
+    T unscaledFrameTime() const
+    {
+        return std::chrono::duration_cast<T>(m_unscaledFrameTime);
+    }
     /** Get elapsed unscaled time */
     template <typename T = time_ds>
-    T unscaledTime() { return std::chrono::duration_cast<T>(m_unscaledTime); }
+    T unscaledTime()
+    {
+        return std::chrono::duration_cast<T>(m_unscaledTime);
+    }
 
-    static constexpr double ticksPerSecond = std::chrono::duration<double, clock::period>(std::chrono::seconds(1)).count();
+    static constexpr double ticksPerSecond =
+        std::chrono::duration<double, clock::period>(std::chrono::seconds(1)).count();
 
     /** Get elapsed time in milliseconds */
     time_ms millis() { return std::chrono::duration_cast<time_ms>(m_unscaledTime); }

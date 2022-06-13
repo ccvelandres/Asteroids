@@ -1,18 +1,14 @@
 #include <player.hpp>
 #include <game.hpp>
 
-Player::Player()
-{
-}
+Player::Player() {}
 
-Player::~Player()
-{
-}
+Player::~Player() {}
 
 void Player::init()
 {
     L_TAG("Player::init");
-    
+
     m_transform = &this->addComponent<TransformComponent>();
 
     m_transform->scale = glm::vec3(2);
@@ -20,15 +16,12 @@ void Player::init()
     /** Preallocate bullet objects */
     m_bullets = Game::entityManager()->addEntities<Bullet>(32, *this);
 
-    speed = 300;
+    speed         = 300;
     shootInterval = time_ms(100);
-    m_lastShoot = time_ds(0);
+    m_lastShoot   = time_ds(0);
 }
 
-void Player::preUpdate()
-{
-    L_TAG("Player::preUpdate");
-}
+void Player::preUpdate() { L_TAG("Player::preUpdate"); }
 
 void Player::update(time_ms delta)
 {
@@ -50,43 +43,33 @@ void Player::update(time_ms delta)
     if (l_inputForce.length())
     {
         glm::vec3 offset = l_inputForce * (delta.count() * (speed / 1000.f));
-        // logging::trace("{},{}: InputForce {}", 
+        // logging::trace("{},{}: InputForce {}",
         //     __LINE__, __func__, offset);
         // m_transform->position += offset;
     }
 
     /** Shooting */
-    if (Game::inputManager()->isPressed(SDL_SCANCODE_SPACE) &&
-        (m_lastShoot + shootInterval < Game::time()->unscaledTime()))
+    if (Game::inputManager()->isPressed(SDL_SCANCODE_SPACE)
+        && (m_lastShoot + shootInterval < Game::time()->unscaledTime()))
     {
         /** Look for free bullet object */
-        auto it = std::find_if(m_bullets.begin(),
-                               m_bullets.end(),
-                               [](std::shared_ptr<Bullet> &p)
-                               {
-                                   return !p->isShot();
-                               });
+        auto it =
+            std::find_if(m_bullets.begin(), m_bullets.end(), [](std::shared_ptr<Bullet> &p) { return !p->isShot(); });
         if (it != m_bullets.end())
         {
             Bullet &bullet = (*it->get());
-            bullet.shoot(m_transform->position + glm::vec3(0, 0, 0),
-                         glm::vec3(0, -500, 0));
+            bullet.shoot(m_transform->position + glm::vec3(0, 0, 0), glm::vec3(0, -500, 0));
             m_lastShoot = Game::time()->unscaledTime();
-            logging::trace("{},{}: Shooting bullet object", 
-                __LINE__, __func__);
+            logging::trace("{},{}: Shooting bullet object", __LINE__, __func__);
         }
     }
 
     {
         int activeBullets = 0;
-        std::for_each(m_bullets.begin(), m_bullets.end(),
-            [&activeBullets](std::shared_ptr<Bullet> &b) {
-                if (b->isShot()) activeBullets++;
-            });
+        std::for_each(m_bullets.begin(), m_bullets.end(), [&activeBullets](std::shared_ptr<Bullet> &b) {
+            if (b->isShot()) activeBullets++;
+        });
     }
 }
 
-void Player::postUpdate()
-{
-    L_TAG("Player::postUpdate");
-}
+void Player::postUpdate() { L_TAG("Player::postUpdate"); }

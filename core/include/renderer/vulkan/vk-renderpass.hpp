@@ -15,11 +15,11 @@ private:
 
 protected:
 public:
-    VulkanRenderPass( VulkanRenderPass &&o );
-    VulkanRenderPass &operator=( VulkanRenderPass &&o );
-    VulkanRenderPass( const VulkanPhysicalDevice &physicalDevice,
-                      const VulkanDevice         &device,
-                      const VulkanSwapchain      &swapchain );
+    VulkanRenderPass(VulkanRenderPass &&o);
+    VulkanRenderPass &operator=(VulkanRenderPass &&o);
+    VulkanRenderPass(const VulkanPhysicalDevice &physicalDevice,
+                     const VulkanDevice         &device,
+                     const VulkanSwapchain      &swapchain);
     ~VulkanRenderPass();
 
     const vk::RenderPass &getRenderPass() const;

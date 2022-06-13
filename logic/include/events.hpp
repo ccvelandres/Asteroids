@@ -2,6 +2,7 @@
 
 #include <cstddef>
 
-enum class Events : std::size_t {
-    
+enum class Events : std::size_t
+{
+
 };

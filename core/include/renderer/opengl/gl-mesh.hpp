@@ -13,11 +13,10 @@ private:
 protected:
 public:
     OpenGLMesh(const assets::Mesh &mesh);
-    OpenGLMesh(OpenGLMesh&&o);
-    OpenGLMesh &operator=(OpenGLMesh&&o);
+    OpenGLMesh(OpenGLMesh &&o);
+    OpenGLMesh &operator=(OpenGLMesh &&o);
     ~OpenGLMesh();
 
     GLuint getVertexBufferId() const;
     GLuint getIndiceBufferId() const;
 };
-

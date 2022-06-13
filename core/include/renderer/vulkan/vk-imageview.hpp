@@ -15,13 +15,13 @@ private:
 
 protected:
 public:
-    VulkanImageView( VulkanImageView &&o );
-    VulkanImageView &operator=( VulkanImageView &&o );
-    VulkanImageView( const VulkanDevice         &device,
-                     const vk::Image            &image,
-                     const vk::Format           &format,
-                     const vk::ImageAspectFlags &aspectFlags,
-                     const uint32_t             &mipLevels );
+    VulkanImageView(VulkanImageView &&o);
+    VulkanImageView &operator=(VulkanImageView &&o);
+    VulkanImageView(const VulkanDevice         &device,
+                    const vk::Image            &image,
+                    const vk::Format           &format,
+                    const vk::ImageAspectFlags &aspectFlags,
+                    const uint32_t             &mipLevels);
     ~VulkanImageView();
 
     const vk::ImageView &getImageView() const;

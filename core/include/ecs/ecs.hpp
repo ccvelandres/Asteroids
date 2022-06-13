@@ -33,7 +33,7 @@ class EntityManager;
  * std::size_t type_id() { return reinterpret_cast<std::size_t>(&type<T>::id); }
  */
 
-using ComponentID = std::size_t;
+using ComponentID                   = std::size_t;
 constexpr std::size_t maxComponents = 32;
 
 inline ComponentID getComponentID()
@@ -53,7 +53,7 @@ class Component
 {
 private:
     Entity *m_entity;
-    bool m_enabled;
+    bool    m_enabled;
 
 protected:
 public:
@@ -90,7 +90,7 @@ class ComponentManager
 {
 private:
     std::array<std::vector<std::weak_ptr<Component>>, maxComponents> m_components;
-    Entity *m_entity;
+    Entity                                                          *m_entity;
 
 protected:
 public:
@@ -105,7 +105,7 @@ public:
     template <typename T>
     ComponentList<T> getComponents()
     {
-        auto &a = m_components[getComponentID<T>()];
+        auto            &a = m_components[getComponentID<T>()];
         ComponentList<T> list;
         list.reserve(a.size());
         for (auto &c : a)
@@ -123,7 +123,7 @@ public:
         {
             /** @todo: maybe build vector of shared_ptrs first */
             auto p = c.lock();
-            callback(dynamic_cast<T&>(*p.get()));
+            callback(dynamic_cast<T &>(*p.get()));
         }
     }
 
@@ -135,8 +135,7 @@ public:
         for (auto &c : m_components[getComponentID<T>()])
         {
             auto l = c.lock();
-            if (l->enabled())
-                l->update(delta);
+            if (l->enabled()) l->update(delta);
         }
     }
     void refresh();
@@ -146,9 +145,9 @@ class Entity
 {
 private:
     std::array<std::shared_ptr<Component>, maxComponents> m_components;
-    std::bitset<maxComponents> m_componentBitset;
+    std::bitset<maxComponents>                            m_componentBitset;
 
-    std::shared_ptr<Entity> m_parent;
+    std::shared_ptr<Entity>              m_parent;
     std::vector<std::shared_ptr<Entity>> m_children;
 
 protected:
@@ -172,18 +171,20 @@ public:
     T &addComponent(TArgs &&...args)
     {
         /** @todo: change return type to ComponentPtr<T> */
-        
+
         T *c = nullptr;
-        if (!hasComponent<T>()) {
+        if (!hasComponent<T>())
+        {
             c = new T(std::forward<TArgs>(args)...);
             std::shared_ptr<Component> p(c);
 
-            m_components[getComponentID<T>()] = p;
+            m_components[getComponentID<T>()]      = p;
             m_componentBitset[getComponentID<T>()] = true;
             Game::componentManager()->registerComponent<T>(p);
         }
-        else {
-            c = dynamic_cast<T*>(m_components[getComponentID<T>()].get());
+        else
+        {
+            c = dynamic_cast<T *>(m_components[getComponentID<T>()].get());
         }
 
         c->m_entity = this;
@@ -217,10 +218,10 @@ public:
     /** Called once before sending object back to be reused */
     virtual void clean() {}
 
-    void parent(std::shared_ptr<Entity> &parent) { m_parent = parent; }
+    void                    parent(std::shared_ptr<Entity> &parent) { m_parent = parent; }
     std::shared_ptr<Entity> parent() { return m_parent; }
 
-    void addChild(std::shared_ptr<Entity> &child) { m_children.push_back(child); }
+    void                                       addChild(std::shared_ptr<Entity> &child) { m_children.push_back(child); }
     const std::vector<std::shared_ptr<Entity>> children() { return m_children; }
 
     friend EntityManager;
@@ -238,17 +239,15 @@ private:
 protected:
 public:
     EntityManager() {}
-    
+
     /** Creates and allocates a new entity object of type */
     template <typename T, typename... TArgs>
     T &addEntity(TArgs &&...args)
     {
         L_TAG("EntityManager::addEntity");
 
-        L_DEBUG("{}, hash({})", 
-            typeid(T).name(), 
-            typeid(T).hash_code());
-        T *e = new T(std::forward<TArgs>(args)...);
+        L_DEBUG("{}, hash({})", typeid(T).name(), typeid(T).hash_code());
+        T                      *e = new T(std::forward<TArgs>(args)...);
         std::shared_ptr<Entity> p(e);
         m_entities[std::type_index(typeid(T))].push_back(std::move(p));
 
@@ -257,15 +256,11 @@ public:
     }
 
     template <typename T, typename... TArgs>
-    EntityList<T> addEntities(const int numEntities,
-                              TArgs &&...args)
+    EntityList<T> addEntities(const int numEntities, TArgs &&...args)
     {
         L_TAG("EntityManager::addEntities");
 
-        L_DEBUG("{}, count({}), hash({})", 
-            typeid(T).name(), 
-            numEntities,
-            typeid(T).hash_code());
+        L_DEBUG("{}, count({}), hash({})", typeid(T).name(), numEntities, typeid(T).hash_code());
         std::vector<std::shared_ptr<T>> l_entities;
         l_entities.reserve(numEntities);
 
@@ -289,7 +284,7 @@ public:
         for (auto &c : a)
         {
             /** @todo: maybe build vector of shared_ptrs first */
-            callback(dynamic_cast<T&>(*c.get()));
+            callback(dynamic_cast<T &>(*c.get()));
         }
     }
 

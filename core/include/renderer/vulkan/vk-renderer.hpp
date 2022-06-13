@@ -12,17 +12,17 @@ private:
 
 protected:
 public:
-    VulkanRenderer( VulkanRenderer &&o );
-    VulkanRenderer &operator=( VulkanRenderer &&o );
-    VulkanRenderer( SDL_Window *window );
+    VulkanRenderer(VulkanRenderer &&o);
+    VulkanRenderer &operator=(VulkanRenderer &&o);
+    VulkanRenderer(SDL_Window *window);
     ~VulkanRenderer();
 
     void init() override;
-    void update( const time_ms delta ) override;
+    void update(const time_ms delta) override;
     void clean() override;
     void refresh() override;
 
     bool renderBegin() override;
-    void render( const std::vector<assets::Mesh> &meshes ) override;
+    void render(const std::vector<assets::Mesh> &meshes) override;
     void renderEnd() override;
 };

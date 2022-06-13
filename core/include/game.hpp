@@ -28,14 +28,14 @@ private:
     friend Renderer;
 protected:
 public:
-    Game( const std::string &windowTitle, const int &windowWidth, const int &windowHeight );
+    Game(const std::string &windowTitle, const int &windowWidth, const int &windowHeight);
 
     ~Game();
 
     void init();
     void startGameLoop();
 
-    void setTargetFPS( const float fps );
+    void setTargetFPS(const float fps);
 
     /** @note Globals for manager objects (probably bad but this saves storing pointers on each object) */
     static Game             *this_game();        /** Get the current game object */

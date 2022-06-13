@@ -13,14 +13,13 @@
     profiler::startListen();
 #define PROFILER_BLOCK(...) EASY_BLOCK(__VA_ARGS__)
 #define PROFILER_VALUE(...) EASY_VALUE(__VA_ARGS__)
-#define PROFILER_VIN(...) EASY_VIN(__VA_ARGS__)
-#define PROFILER_END(...) \
-    profiler::dumpBlocksToFile("dump.prof")
+#define PROFILER_VIN(...)   EASY_VIN(__VA_ARGS__)
+#define PROFILER_END(...)   profiler::dumpBlocksToFile("dump.prof")
 
 #else
 
 /** Profiler Macros */
-#define PROFILER_START(...) 
+#define PROFILER_START(...)
 #define PROFILER_BLOCK(...)
 #define PROFILER_VALUE(...)
 #define PROFILER_VIN(...)

@@ -3,16 +3,17 @@
 #include <manager.hpp>
 #include <SDL_scancode.h>
 
-class InputManager {
+class InputManager
+{
 private:
-    const uint8_t *keyState;
-    std::vector<uint8_t> lastFrameKeyState; 
+    const uint8_t       *keyState;
+    std::vector<uint8_t> lastFrameKeyState;
 public:
     InputManager() {}
 
-    bool isPressed(const SDL_Scancode& scanCode);
-    bool isTapped(const SDL_Scancode& scanCode);
-    
+    bool isPressed(const SDL_Scancode &scanCode);
+    bool isTapped(const SDL_Scancode &scanCode);
+
     void keyDown(const SDL_Scancode &scanCode);
     void keyUp(const SDL_Scancode &scanCode);
 

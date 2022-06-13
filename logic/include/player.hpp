@@ -13,9 +13,9 @@ private:
     TransformComponent *m_transform;
 
     EntityList<Bullet> m_bullets;
-    int speed;
-    time_ds shootInterval;
-    time_ds m_lastShoot;
+    int                speed;
+    time_ds            shootInterval;
+    time_ds            m_lastShoot;
 protected:
 public:
     Player();

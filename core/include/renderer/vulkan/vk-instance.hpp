@@ -13,9 +13,9 @@ private:
 
 protected:
 public:
-    VulkanInstance( VulkanInstance &&o );
-    VulkanInstance &operator=( VulkanInstance &&o );
-    VulkanInstance( SDL_Window *window );
+    VulkanInstance(VulkanInstance &&o);
+    VulkanInstance &operator=(VulkanInstance &&o);
+    VulkanInstance(SDL_Window *window);
     ~VulkanInstance();
 
     const vk::Instance &getInstance() const;

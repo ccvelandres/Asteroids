@@ -17,9 +17,9 @@ private:
 
 protected:
 public:
-    VulkanContext( VulkanContext &&o );
-    VulkanContext &operator=( VulkanContext &&o );
-    VulkanContext( SDL_Window *window );
+    VulkanContext(VulkanContext &&o);
+    VulkanContext &operator=(VulkanContext &&o);
+    VulkanContext(SDL_Window *window);
     ~VulkanContext();
 
     bool renderBegin() const;

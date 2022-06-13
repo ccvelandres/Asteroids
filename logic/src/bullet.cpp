@@ -2,14 +2,9 @@
 
 #include <utils/logging.hpp>
 
-Bullet::Bullet(Entity &parent) : m_parent(&parent),
-                                 m_isShot(false)
-{
-}
+Bullet::Bullet(Entity &parent) : m_parent(&parent), m_isShot(false) {}
 
-Bullet::~Bullet()
-{
-}
+Bullet::~Bullet() {}
 
 void Bullet::init()
 {
@@ -18,19 +13,15 @@ void Bullet::init()
     m_transform->scale = glm::vec3(2);
 }
 
-void Bullet::preUpdate()
-{
-}
+void Bullet::preUpdate() {}
 
 void Bullet::update(time_ms delta)
 {
     L_TAG("Bullet::update");
 
-    if (!m_isShot)
-        return;
+    if (!m_isShot) return;
 
-    if ((m_transform->position.y < -50) ||
-        (m_shootTime + time_ms(5000) < Game::time()->getTime<time_ms>()))
+    if ((m_transform->position.y < -50) || (m_shootTime + time_ms(5000) < Game::time()->getTime<time_ms>()))
     {
         m_isShot = false;
         L_DEBUG("Freeing bullet object");
@@ -40,22 +31,19 @@ void Bullet::update(time_ms delta)
     m_transform->position *= delta.count();
 }
 
-void Bullet::postUpdate()
-{
-}
+void Bullet::postUpdate() {}
 
-void Bullet::shoot(const glm::vec3 &position,
-                   const glm::vec3 &velocity)
+void Bullet::shoot(const glm::vec3 &position, const glm::vec3 &velocity)
 {
     L_TAG("Bullet::shoot");
-    
+
     assert(m_isShot == false);
 
-   L_DEBUG("Shooting bullet object");
+    L_DEBUG("Shooting bullet object");
 
     m_transform->position = position;
-    m_velocity = velocity;
+    m_velocity            = velocity;
 
-    m_isShot = true;
+    m_isShot    = true;
     m_shootTime = Game::time()->getTime<time_ms>();
 }

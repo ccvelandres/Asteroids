@@ -3,8 +3,8 @@
 #include <ecs/ecs.hpp>
 #include <ecs/components.hpp>
 
-
-class Enemy : public Entity {
+class Enemy : public Entity
+{
 private:
     TransformComponent *m_transform;
 

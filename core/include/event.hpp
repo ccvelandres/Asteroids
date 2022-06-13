@@ -24,17 +24,17 @@ protected:
 public:
     EventManager() {}
 
-    void addListener(const EventType &evType,
-                     const EventHandler &eventHandler)
+    void addListener(const EventType &evType, const EventHandler &eventHandler)
     {
         m_eventListeners[evType].push_back(eventHandler);
     }
 
     void init()
     {
-        SDL_SetEventFilter([](void *userdata, SDL_Event *event) -> int
-                           {
-            switch (event->type) {
+        SDL_SetEventFilter(
+            [](void *userdata, SDL_Event *event) -> int {
+                switch (event->type)
+                {
                 case SDL_KEYUP:
                 case SDL_KEYDOWN:
                 case SDL_TEXTEDITING:
@@ -42,8 +42,9 @@ public:
                     return 0;
                 default:
                     return 1;
-            } },
-                           NULL);
+                }
+            },
+            NULL);
     }
 
     /** Poll SDL Events */
