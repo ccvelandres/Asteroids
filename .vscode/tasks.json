@@ -9,7 +9,7 @@
             "args": [
                 "-B${workspaceFolder}/build",
                 "-DCMAKE_BUILD_TYPE:STRING=Debug",
-                "-H${workspaceFolder}"
+                "--preset=debug"
             ],
             "problemMatcher": [
                 "$gcc"
@@ -21,8 +21,6 @@
             "args": [
                 "--build",
                 "${workspaceFolder}/build",
-                "--config",
-                "Debug",
                 "--target",
                 "all",
                 "--parallel"
@@ -44,8 +42,7 @@
             "command": "cmake",
             "args": [
                 "-B${workspaceFolder}/build",
-                "-DCMAKE_BUILD_TYPE:STRING=Release",
-                "-H${workspaceFolder}"
+                "-DCMAKE_BUILD_TYPE:STRING=Release"
             ],
             "problemMatcher": [
                 "$gcc"
@@ -57,8 +54,6 @@
             "args": [
                 "--build",
                 "${workspaceFolder}/build",
-                "--config",
-                "Release",
                 "--target",
                 "all",
                 "--parallel"
@@ -71,6 +66,10 @@
         {
             "label": "Launch Profiler",
             "command": "${workspaceFolder}/build/out/profiler_gui",
+            "isBackground": true,
+            "runOptions": {
+                "instanceLimit": 1
+            },
             "dependsOn": [
                 "CMake Build : Debug"
             ],

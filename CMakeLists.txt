@@ -13,6 +13,10 @@ set(BUILD_SHARED_LIBS ON)
 
 set(CMAKE_C_STANDARD 11) # Requires C11 standard
 set(CMAKE_CXX_STANDARD 20) # Requires C++20 standard
+#################################################################
+## Core Options
+
+set(CORE_LOG_ENABLE_TAG OFF CACHE BOOL "Sets whether the tags are included in logs")
 
 #################################################################
 ## Project Settings
@@ -90,6 +94,10 @@ target_link_libraries(${CORE_TARGET} PUBLIC glm::glm)
 target_link_libraries(${CORE_TARGET} PUBLIC OpenGL::GL)
 # target_link_libraries(${CORE_TARGET} PUBLIC OpenGL::GLU)
 target_link_libraries(${CORE_TARGET} PUBLIC GLEW::glew)
+
+# Add compile options as definitions
+include(cmake/define_target_option.cmake)
+define_target_option(${CORE_TARGET} ${CORE_LOG_ENABLE_TAG} CORE_LOG_ENABLE_TAG)
 
 #################################################################
 ## Logic

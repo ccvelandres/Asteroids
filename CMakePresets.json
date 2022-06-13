@@ -1,0 +1,19 @@
+{
+    "version": 4,
+    "configurePresets": [
+        {
+            "name": "debug",
+            "displayName": "Examples",
+            "description": "Debug build",
+            "cacheVariables": {
+                "CORE_LOG_ENABLE_TAG": "ON"
+            }
+        }
+    ],
+    "buildPresets": [
+        {
+            "name": "default",
+            "configurePreset": "debug"
+        }
+    ]
+}

@@ -26,7 +26,11 @@ constexpr const char *baseFileName( const char *path )
     PROFILER_BLOCK(STR); \
     static const std::string tag__ { std::string(baseFileName(__FILE__)) + std::string(": " STR) }
 
+#if (CORE_LOG_ENABLE_TAG)
 #define L_LOG(level, STR, ...) logging::level("[{}] " STR, tag__, ##__VA_ARGS__)
+#else
+#define L_LOG(level, STR, ...) logging::level(STR, ##__VA_ARGS__)
+#endif
 #define L_ERROR(STR, ...) L_LOG(error, STR, ##__VA_ARGS__)
 #define L_WARN(STR, ...) L_LOG(warn, STR, ##__VA_ARGS__)
 #define L_INFO(STR, ...) L_LOG(info, STR, ##__VA_ARGS__)
