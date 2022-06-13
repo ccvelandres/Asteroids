@@ -23,7 +23,7 @@ constexpr int originY      = windowHeight / 2;
 
 auto app_start = std::chrono::high_resolution_clock::now();
 
-int main1( int arc, char **argv )
+int main( int arc, char **argv )
 {
     /** Set compact pattern for logging */
     logging::set_pattern( "[%H:%M:%S.%e] [%t] %L : %v" );
@@ -49,22 +49,4 @@ int main1( int arc, char **argv )
 
     delete game;
     return 0;
-}
-
-#include <assets/loaders/obj.hpp>
-#include <utils/profiler.hpp>
-
-int main()
-{
-    /** Set compact pattern for logging */
-    logging::set_pattern( "[%H:%M:%S.%e] [%t] %L : %v" );
-    logging::set_level( logging::level::trace );
-
-    /** Start profiling */
-    PROFILER_START();
-
-    assets::loaders::OBJLoader obj;
-    obj.loadFile("assets/models/crate.obj");
-    /** Start profiling */
-    PROFILER_END();
 }
