@@ -6,15 +6,22 @@
 
 #include <utils/logging.hpp>
 
-void initGLEW()
+static void initGL()
 {
-    L_TAG( "initGLEW" );
+    L_TAG("initGL");
+
+    const char *version = (const char *)(glGetString(GL_VERSION));
+    if (version != NULL) L_DEBUG("OpenGL Version: {}", version);
+    const char *vendor = (const char *)(glGetString(GL_VENDOR));
+    if (vendor != NULL) L_INFO("OpenGL Vendor: {}", vendor);
+    const char *renderer = (const char *)(glGetString(GL_RENDERER));
+    if (renderer != NULL) L_DEBUG("OpenGL Renderer: {}", renderer);
 
     /** Initialize glew */
     GLenum gres = glewInit();
-    if ( gres != GLEW_OK )
+    if (gres != GLEW_OK)
     {
-        L_THROW_RUNTIME( "Failed to initialize glew" );
+        L_THROW_RUNTIME("Failed to initialize glew");
     }
 
     // if (! glewIsSupported("GL_VERSION_4_6"))
@@ -27,21 +34,16 @@ SDL_Window *createWindow( const std::string &windowTitle, const int windowWidth,
 {
     L_TAG( "createWindow" );
 
-    /** Use OpenGL 3.1 core */
-    SDL_GL_SetAttribute( SDL_GL_CONTEXT_MAJOR_VERSION, 3 );
-    SDL_GL_SetAttribute( SDL_GL_CONTEXT_MINOR_VERSION, 3 );
-    SDL_GL_SetAttribute( SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE );
+    SDL_Window *window = SDL_CreateWindow(windowTitle.c_str(),
+                                          SDL_WINDOWPOS_CENTERED,
+                                          SDL_WINDOWPOS_CENTERED,
+                                          windowWidth,
+                                          windowHeight,
+                                          SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE | SDL_WINDOW_OPENGL);
 
-    SDL_Window *window = SDL_CreateWindow( windowTitle.c_str(),
-                                           SDL_WINDOWPOS_CENTERED,
-                                           SDL_WINDOWPOS_CENTERED,
-                                           windowWidth,
-                                           windowHeight,
-                                           SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE | SDL_WINDOW_OPENGL );
-
-    if ( window == NULL )
+    if (window == NULL)
     {
-        L_THROW_RUNTIME( "Could not create window" );
+        L_THROW_RUNTIME("Could not create window");
     }
 
     return window;
@@ -53,7 +55,7 @@ SDL_GLContext createContext( SDL_Window *window )
 
     SDL_GLContext context = SDL_GL_CreateContext( window );
 
-    initGLEW();
+    initGL();
 
     int viewportWidth, viewportHeight;
     SDL_GL_GetDrawableSize( window, &viewportWidth, &viewportHeight );
