@@ -31,16 +31,15 @@ namespace assets::loaders::obj
     {
     public:
     private:
-        std::vector<float> m_vertices;
-        std::vector<float> m_normals;
-        std::vector<float> m_texCoordinates;
-
-        std::vector<Object> m_objects;
 
         bool parse(std::istream &s) noexcept;
     public:
+        std::vector<float> vertices; /** Contains all the geometry vertices */
+        std::vector<float> normals; /** vertex normals */
+        std::vector<float> texCoordinates; /** Texture coordinates */
+        std::vector<Object> objects; /** all objects in obj file */
+        
         Loader();
-
         bool loadFile(const std::string &filename);
     };
 } // namespace assets::loaders::obj

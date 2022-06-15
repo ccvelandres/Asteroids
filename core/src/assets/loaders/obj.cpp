@@ -256,7 +256,7 @@ namespace assets::loaders::obj
                 if (ret)
                 {
                     L_DEBUG("Parsed mesh with {} faces", object.mesh.verticeCount.size());
-                    m_objects.push_back(object);
+                    objects.push_back(object);
                 }
 
                 /** Start a new object/group */
@@ -291,13 +291,13 @@ namespace assets::loaders::obj
         ret = pushObject(object, processGroup, v, objectName);
         if (ret)
         {
-            m_objects.push_back((object));
+            objects.push_back((object));
         }
 
         /** Move vectors to class */
-        std::swap(v, m_vertices);
-        std::swap(vt, m_texCoordinates);
-        std::swap(vn, m_normals);
+        std::swap(v, vertices);
+        std::swap(vt, texCoordinates);
+        std::swap(vn, normals);
 
         return true;
     }
@@ -315,10 +315,10 @@ namespace assets::loaders::obj
         std::size_t   fileSize = (std::size_t)f.tellg();
         f.seekg(0);
 
-        // m_normals.clear();
-        // m_objects.clear();
-        // m_texCoordinates.clear();
-        // m_vertices.clear();
+        normals.clear();
+        objects.clear();
+        texCoordinates.clear();
+        vertices.clear();
 
         L_DEBUG("Parsing {}", filename);
         bool ret = parse(f);
