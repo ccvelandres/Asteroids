@@ -32,28 +32,30 @@ project(${PROJECT_NAME} VERSION 0.1.0)
 set(PROJECT_LIBRARY_DIR "${CMAKE_SOURCE_DIR}/lib")
 
 # SDL2 can be replaced with find_package
-find_library(SDL2_LIBRARY NAME SDL2 PATHS ${SDL2_DIR})
-find_path(SDL2_INCLUDE_DIR SDL.h PATHS ${SDL2_DIR} PATH_SUFFIXES SDL2)
-message("SDL Library: ${SDL2_LIBRARY}")
-message("SDL IncludeDir: ${SDL2_INCLUDE_DIR}")
+find_package(SDL2 REQUIRED)
+# find_library(SDL2_LIBRARY NAME SDL2 PATHS ${SDL2_DIR})
+# find_path(SDL2_INCLUDE_DIR SDL.h PATHS ${SDL2_DIR} PATH_SUFFIXES SDL2)
+# message("SDL Library: ${SDL2_LIBRARY}")
+# message("SDL IncludeDir: ${SDL2_INCLUDE_DIR}")
 
-find_library(SDL2_IMAGE_LIBRARY NAME SDL2_image PATHS ${SDL2_DIR})
-find_path(SDL2_IMAGE_INCLUDE_DIR SDL_image.h PATHS ${SDL2_DIR} PATH_SUFFIXES SDL2)
-message("SDL_image Library: ${SDL2_IMAGE_LIBRARY}")
-message("SDL_image IncludeDir: ${SDL2_IMAGE_INCLUDE_DIR}")
+find_package(SDL2_image REQUIRED)
+# find_library(SDL2_IMAGE_LIBRARY NAME SDL2_image PATHS ${SDL2_DIR})
+# find_path(SDL2_IMAGE_INCLUDE_DIR SDL_image.h PATHS ${SDL2_DIR} PATH_SUFFIXES SDL2)
+# message("SDL_image Library: ${SDL2_IMAGE_LIBRARY}")
+# message("SDL_image IncludeDir: ${SDL2_IMAGE_INCLUDE_DIR}")
 
 # Vulkan
 find_package(Vulkan REQUIRED)
 
 # libglm (OpenGL Mathematics)
-# find_package(glm REQUIRED)
 add_subdirectory(${PROJECT_LIBRARY_DIR}/glm)
 
 # OpenGL
 find_package(OpenGL REQUIRED)
 
 # GLEW
-find_package(GLEW REQUIRED)
+# find_package(GLEW REQUIRED)
+add_subdirectory(${PROJECT_LIBRARY_DIR}/glew/build/cmake)
 message("GLEW_VERSION: ${GLEW_VERSION}")
 
 # fmt
@@ -64,6 +66,7 @@ message("GLEW_VERSION: ${GLEW_VERSION}")
 add_subdirectory(${PROJECT_LIBRARY_DIR}/spdlog)
 
 # easy_profiler
+# set(EASY_PROFILER_NO_GUI OFF CACHE BOOL "Build easy_profiler without the GUI application (required Qt)" FORCE)
 set(EASY_OPTION_LISTEN ON CACHE BOOL "Enable automatic startListen on startup" FORCE)
 add_subdirectory(${PROJECT_LIBRARY_DIR}/easy_profiler)
 add_custom_target(easy_profiler_bin DEPENDS easy_profiler
@@ -71,30 +74,33 @@ add_custom_target(easy_profiler_bin DEPENDS easy_profiler
 )
 #################################################################
 ## Core
+
 set(CORE_TARGET "core")
+add_subdirectory(core)
+# set(CORE_TARGET "core")
 
-file(GLOB_RECURSE SRC_C_CORE ${CMAKE_SOURCE_DIR}/core/src/*.c)
-file(GLOB_RECURSE SRC_CPP_CORE ${CMAKE_SOURCE_DIR}/core/src/*.cpp)
+# file(GLOB_RECURSE SRC_C_CORE ${CMAKE_SOURCE_DIR}/core/src/*.c)
+# file(GLOB_RECURSE SRC_CPP_CORE ${CMAKE_SOURCE_DIR}/core/src/*.cpp)
 
-add_library(${CORE_TARGET} ${SRC_C_CORE} ${SRC_CPP_CORE})
-target_include_directories(${CORE_TARGET} PRIVATE ${CMAKE_SOURCE_DIR}/core/src)
-target_include_directories(${CORE_TARGET} PUBLIC ${CMAKE_SOURCE_DIR}/core/include)
+# add_library(${CORE_TARGET} ${SRC_C_CORE} ${SRC_CPP_CORE})
+# target_include_directories(${CORE_TARGET} PRIVATE ${CMAKE_SOURCE_DIR}/core/src)
+# target_include_directories(${CORE_TARGET} PUBLIC ${CMAKE_SOURCE_DIR}/core/include)
 
-# Add dependencies
-add_dependencies(${CORE_TARGET} easy_profiler_bin)
+# # Add dependencies
+# add_dependencies(${CORE_TARGET} easy_profiler_bin)
 
 ## Link Libraries
-target_link_libraries(${CORE_TARGET} PUBLIC easy_profiler)
-target_link_libraries(${CORE_TARGET} PUBLIC ${SDL2_LIBRARY})
-target_include_directories(${CORE_TARGET} PUBLIC ${SDL2_INCLUDE_DIR})
-target_link_libraries(${CORE_TARGET} PUBLIC ${SDL2_IMAGE_LIBRARY})
-target_include_directories(${CORE_TARGET} PUBLIC ${SDL2_IMAGE_INCLUDE_DIR})
-target_link_libraries(${CORE_TARGET} PUBLIC Vulkan::Vulkan)
-target_link_libraries(${CORE_TARGET} PUBLIC spdlog)
-target_link_libraries(${CORE_TARGET} PUBLIC glm::glm)
-target_link_libraries(${CORE_TARGET} PUBLIC OpenGL::GL)
-# target_link_libraries(${CORE_TARGET} PUBLIC OpenGL::GLU)
-target_link_libraries(${CORE_TARGET} PUBLIC GLEW::glew)
+# target_link_libraries(${CORE_TARGET} PUBLIC easy_profiler)
+# target_link_libraries(${CORE_TARGET} PUBLIC ${SDL2_LIBRARY})
+# target_include_directories(${CORE_TARGET} PUBLIC ${SDL2_INCLUDE_DIR})
+# target_link_libraries(${CORE_TARGET} PUBLIC ${SDL2_IMAGE_LIBRARY})
+# target_include_directories(${CORE_TARGET} PUBLIC ${SDL2_IMAGE_INCLUDE_DIR})
+# target_link_libraries(${CORE_TARGET} PUBLIC Vulkan::Vulkan)
+# target_link_libraries(${CORE_TARGET} PUBLIC spdlog)
+# target_link_libraries(${CORE_TARGET} PUBLIC glm::glm)
+# target_link_libraries(${CORE_TARGET} PUBLIC OpenGL::GL)
+# # target_link_libraries(${CORE_TARGET} PUBLIC OpenGL::GLU)
+# target_link_libraries(${CORE_TARGET} PUBLIC glew)
 
 # Add compile options as definitions
 include(cmake/define_target_option.cmake)
@@ -102,15 +108,15 @@ define_target_option(${CORE_TARGET} ${CORE_LOG_ENABLE_TAG} CORE_LOG_ENABLE_TAG)
 
 #################################################################
 ## Logic
+add_subdirectory(logic)
+# file(GLOB_RECURSE SRC_C_LOGIC ${CMAKE_SOURCE_DIR}/logic/src/*.c)
+# file(GLOB_RECURSE SRC_CPP_LOGIC ${CMAKE_SOURCE_DIR}/logic/src/*.cpp)
 
-file(GLOB_RECURSE SRC_C_LOGIC ${CMAKE_SOURCE_DIR}/logic/src/*.c)
-file(GLOB_RECURSE SRC_CPP_LOGIC ${CMAKE_SOURCE_DIR}/logic/src/*.cpp)
+# add_executable(${PROJECT_NAME} ${SRC_C_LOGIC} ${SRC_CPP_LOGIC})
+# target_include_directories(${PROJECT_NAME} PRIVATE ${CMAKE_SOURCE_DIR}/logic/src)
+# target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_SOURCE_DIR}/logic/include)
 
-add_executable(${PROJECT_NAME} ${SRC_C_LOGIC} ${SRC_CPP_LOGIC})
-target_include_directories(${PROJECT_NAME} PRIVATE ${CMAKE_SOURCE_DIR}/logic/src)
-target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_SOURCE_DIR}/logic/include)
-
-target_link_libraries(${PROJECT_NAME} PUBLIC ${CORE_TARGET})
+# target_link_libraries(${PROJECT_NAME} PUBLIC ${CORE_TARGET})
 
 # Package assets with binary
 file(COPY assets DESTINATION ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})

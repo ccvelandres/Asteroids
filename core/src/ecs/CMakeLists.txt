@@ -1,0 +1,4 @@
+
+message(STATUS "Adding Core: ECS")
+file(GLOB SRC_ECS ${CMAKE_CURRENT_SOURCE_DIR}/*.cpp ${CMAKE_CURRENT_SOURCE_DIR}/*.c)
+target_sources(${CORE_TARGET} PRIVATE ${SRC_ECS})

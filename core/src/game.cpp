@@ -1,12 +1,19 @@
 #include <game.hpp>
 #include <ecs/ecs.hpp>
 #include <ecs/components.hpp>
-#include <renderer/vulkan/vk-renderer.hpp>
-#include <renderer/opengl/gl-renderer.hpp>
 #include <event.hpp>
 #include <input/inputManager.hpp>
 #include <utils/profiler.hpp>
 #include <utils/logging.hpp>
+
+#include <renderer/renderer.hpp>
+#ifdef CORE_RENDERER_VULKAN
+#include <renderer/vulkan/vk-renderer.hpp>
+#endif
+
+#ifdef CORE_RENDERER_OPENGL
+#include <renderer/opengl/gl-renderer.hpp>
+#endif
 
 #include <thread>
 
@@ -48,8 +55,9 @@ Game::Game(const std::string &windowTitle, const int &windowWidth, const int &wi
     //     L_ERROR("Failed to initialize window");
     // }
     // g_renderer = new VulkanRenderer(m_window);
+#ifdef CORE_RENDERER_OPENGL
     g_renderer = new OpenGLRenderer(windowTitle, windowWidth, windowHeight);
-
+#endif
     g_inputManager     = new InputManager();
     g_eventManager     = new EventManager();
     g_componentManager = new ComponentManager();

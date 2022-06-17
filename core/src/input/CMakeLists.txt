@@ -1,0 +1,4 @@
+
+message(STATUS "Adding Core: Input Manager")
+file(GLOB SRC_INPUT_MANAGER ${CMAKE_CURRENT_SOURCE_DIR}/*.cpp ${CMAKE_CURRENT_SOURCE_DIR}/*.c)
+target_sources(${CORE_TARGET} PRIVATE ${SRC_INPUT_MANAGER})
