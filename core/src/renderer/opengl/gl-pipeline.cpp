@@ -26,7 +26,7 @@ GLuint compileShader(const GLenum shaderType, const std::string &shaderSource)
         glGetShaderiv(shaderId, GL_INFO_LOG_LENGTH, &messageLength);
         std::string msg(messageLength + 1, '\0');
         glGetShaderInfoLog(shaderId, messageLength, nullptr, msg.data());
-        L_THROW_RUNTIME("Shader failed to compile: {}", msg);
+        L_THROW_RUNTIME("{} failed to compile: {}", shaderSource, msg);
     }
 
     return shaderId;
