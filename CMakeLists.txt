@@ -11,8 +11,8 @@ set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/out")
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/out")
 set(BUILD_SHARED_LIBS ON)
 
-set(CMAKE_C_STANDARD 11) # Requires C11 standard
-set(CMAKE_CXX_STANDARD 20) # Requires C++20 standard
+set(CMAKE_C_STANDARD 99) # Requires C11 standard
+set(CMAKE_CXX_STANDARD 17) # Requires C++20 standard
 #################################################################
 ## Core Options
 
@@ -46,7 +46,8 @@ message("SDL_image IncludeDir: ${SDL2_IMAGE_INCLUDE_DIR}")
 find_package(Vulkan REQUIRED)
 
 # libglm (OpenGL Mathematics)
-find_package(glm REQUIRED)
+# find_package(glm REQUIRED)
+add_subdirectory(${PROJECT_LIBRARY_DIR}/glm)
 
 # OpenGL
 find_package(OpenGL REQUIRED)

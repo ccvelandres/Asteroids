@@ -9,3 +9,6 @@
 [submodule "lib/easy_profiler"]
 	path = lib/easy_profiler
 	url = https://github.com/yse/easy_profiler.git
+[submodule "lib/glm"]
+	path = lib/glm
+	url = git@github.com:g-truc/glm.git
