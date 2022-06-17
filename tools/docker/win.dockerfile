@@ -1,13 +1,9 @@
 #!docker
 # FROM mcr.microsoft.com/windows/nanoserver:ltsc2022
-FROM amd64/windows
-
-# Install chocolatey
-RUN @powershell -NoProfile -ExecutionPolicy unrestricted -Command "(iex ((new-object net.webclient).DownloadString('https://chocolatey.org/install.ps1'))) >$null 2>&1"
-RUN choco install mingw
-CMD ["cmd.exe"]
-
-
+FROM ubuntu:jammy
+RUN apt update
+RUN apt install -y cmake ninja-build build-essential wget 
+RUN apt install -y mingw-w64 binutils-mingw-w64
 
 
 

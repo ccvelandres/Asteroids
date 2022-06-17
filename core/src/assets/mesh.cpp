@@ -33,6 +33,31 @@ namespace assets
     {
     }
 
+    Mesh::Mesh(const std::string &filename)
+    {
+        L_TAG("Mesh::Mesh(std::string&)");
+        assets::loaders::obj::Loader objLoader;
+
+        try
+        {
+            bool res = objLoader.loadFile(filename);
+            if (!res) L_THROW_RUNTIME("Failed to load obj: {}", filename);
+
+            for (auto &obj : objLoader.objects)
+            {
+                for (auto &index : obj.mesh.indices)
+                {
+                }
+            }
+
+            // m_internal = std::make_unique<Internal>();
+        }
+        catch (std::exception &ex)
+        {
+            L_THROW_RUNTIME("Failed to load obj: {}", filename);
+        }
+    }
+
     Mesh::Mesh(Mesh &&o)            = default;
     Mesh &Mesh::operator=(Mesh &&o) = default;
     Mesh::~Mesh()                   = default;
