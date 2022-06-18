@@ -1,0 +1,25 @@
+From 498756bf0ecbfd0c12ceaab234c22f75d86dc484 Mon Sep 17 00:00:00 2001
+From: ccvelandres <ccvelandres@gmail.com>
+Date: Sat, 18 Jun 2022 21:57:25 +0800
+Subject: [PATCH] Fix incorrect patch for glmConfig.cmake install source path
+
+Signed-off-by: ccvelandres <ccvelandres@gmail.com>
+---
+ cmake/CMakeLists.txt | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/cmake/CMakeLists.txt b/cmake/CMakeLists.txt
+index 6432bfdb..8b3bed73 100644
+--- a/cmake/CMakeLists.txt
++++ b/cmake/CMakeLists.txt
+@@ -31,7 +31,7 @@ configure_package_config_file(
+ 	NO_CHECK_REQUIRED_COMPONENTS_MACRO)
+ 
+ install(FILES
+-	"${CMAKE_CURRENT_BINARY_DIR}/${GLM_INSTALL_CONFIGDIR}/glmConfig.cmake"
++	"${CMAKE_CURRENT_BINARY_DIR}/glmConfig.cmake"
+ 	"${CMAKE_CURRENT_BINARY_DIR}/glmConfigVersion.cmake"
+ 	DESTINATION ${GLM_INSTALL_CONFIGDIR})
+ 
+-- 
+2.25.1
