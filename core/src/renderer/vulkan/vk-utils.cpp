@@ -8,7 +8,7 @@ bool VulkanUtils::checkSwapchainSupport(vk::PhysicalDevice &device)
 
     for (const auto &extension : device.enumerateDeviceExtensionProperties())
     {
-        if (extension.extensionName == swapchainName)
+        if (strcmp(extension.extensionName, swapchainName.c_str()) == 0)
         {
             swapchainSupport = true;
             break;

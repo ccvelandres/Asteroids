@@ -2,6 +2,7 @@
 
 #include <memory>
 #include <vector>
+#include <string>
 #include "gl-wrapper.hpp"
 
 #include <glm/glm.hpp>

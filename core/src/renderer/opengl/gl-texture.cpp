@@ -1,7 +1,7 @@
 #include <renderer/opengl/gl-texture.hpp>
 #include <utils/logging.hpp>
 
-#include "SDL_opengl.h"
+#include "SDL2/SDL_opengl.h"
 
 #include <vector>
 

@@ -1,7 +1,7 @@
 #pragma once
 #include <vector>
 #include <manager.hpp>
-#include <SDL_scancode.h>
+#include <SDL2/SDL_scancode.h>
 
 class InputManager
 {

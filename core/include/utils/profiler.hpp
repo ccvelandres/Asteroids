@@ -1,9 +1,8 @@
 #pragma once
 
 /** Interface file for easy_profiler */
-#define PROFILER_ENABLE
 
-#ifdef PROFILER_ENABLE
+#if (CORE_PROFILER_ENABLE)
 #include <easy/arbitrary_value.h>
 #include <easy/profiler.h>
 

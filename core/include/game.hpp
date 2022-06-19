@@ -22,7 +22,7 @@ private:
     int         m_windowWidth, m_windowHeight;
 
     time_ds m_targetDelta;
-    float   m_minfps = MAXFLOAT, m_maxfps;
+    float   m_minfps = std::numeric_limits<float>::max(), m_maxfps;
     float   m_fps;
 
     friend Renderer;
