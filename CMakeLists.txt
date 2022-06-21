@@ -25,53 +25,49 @@ string(REPLACE " " "_" PROJECT_NAME ${PROJECT_FOLDER_NAME})
 message("Project Name: ${PROJECT_NAME}")
 
 project(${PROJECT_NAME} VERSION 0.1.0)
-
-#################################################################
-## SDL
-
 set(PROJECT_LIBRARY_DIR "${CMAKE_SOURCE_DIR}/lib")
 
-# SDL2 can be replaced with find_package
+#################################################################
+## Libraries
+include(FindPkgConfig)
+
+### easy_profiler
+if (UNIX)
+    message(STATUS "Profiler: easy_profiler")
+    set(EASY_OPTION_LISTEN ON CACHE BOOL "Enable automatic startListen on startup" FORCE)
+    add_subdirectory(${PROJECT_LIBRARY_DIR}/easy_profiler)
+    add_custom_target(easy_profiler_bin DEPENDS easy_profiler
+        COMMAND ${CMAKE_COMMAND} -E copy_directory  ${CMAKE_BINARY_DIR}/lib/easy_profiler/bin/ ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}
+    )
+else()
+    message(STATUS "Profiler: disabled")
+endif()
+
+### spdlog 
+if (WIN32)
+    message(STATUS "spdlog: using library")
+    find_package(spdlog REQUIRED)
+else()
+message(STATUS "spdlog: built from source")
+    add_subdirectory(${PROJECT_LIBRARY_DIR}/spdlog)
+endif()
+
+### SDL2
 find_package(SDL2 REQUIRED)
-# find_library(SDL2_LIBRARY NAME SDL2 PATHS ${SDL2_DIR})
-# find_path(SDL2_INCLUDE_DIR SDL.h PATHS ${SDL2_DIR} PATH_SUFFIXES SDL2)
-# message("SDL Library: ${SDL2_LIBRARY}")
-# message("SDL IncludeDir: ${SDL2_INCLUDE_DIR}")
-
 find_package(SDL2_image REQUIRED)
-# find_library(SDL2_IMAGE_LIBRARY NAME SDL2_image PATHS ${SDL2_DIR})
-# find_path(SDL2_IMAGE_INCLUDE_DIR SDL_image.h PATHS ${SDL2_DIR} PATH_SUFFIXES SDL2)
-# message("SDL_image Library: ${SDL2_IMAGE_LIBRARY}")
-# message("SDL_image IncludeDir: ${SDL2_IMAGE_INCLUDE_DIR}")
 
-# Vulkan
+# pkg_search_module(SDL2IMAGE REQUIRED SDL2_image)
+
+
+### Vulkan
 find_package(Vulkan REQUIRED)
-
-# libglm (OpenGL Mathematics)
-add_subdirectory(${PROJECT_LIBRARY_DIR}/glm)
-
-# OpenGL
+### glm
+find_package(glm REQUIRED)
+### OpenGL
 find_package(OpenGL REQUIRED)
+### GLEW
+find_package(GLEW REQUIRED)
 
-# GLEW
-# find_package(GLEW REQUIRED)
-add_subdirectory(${PROJECT_LIBRARY_DIR}/glew/build/cmake)
-message("GLEW_VERSION: ${GLEW_VERSION}")
-
-# fmt
-# add_subdirectory(${PROJECT_LIBRARY_DIR}/fmt)
-# target_link_libraries(${PROJECT_NAME} PUBLIC fmt)
-
-# spdlog
-add_subdirectory(${PROJECT_LIBRARY_DIR}/spdlog)
-
-# easy_profiler
-# set(EASY_PROFILER_NO_GUI OFF CACHE BOOL "Build easy_profiler without the GUI application (required Qt)" FORCE)
-set(EASY_OPTION_LISTEN ON CACHE BOOL "Enable automatic startListen on startup" FORCE)
-add_subdirectory(${PROJECT_LIBRARY_DIR}/easy_profiler)
-add_custom_target(easy_profiler_bin DEPENDS easy_profiler
-    COMMAND ${CMAKE_COMMAND} -E copy_directory  ${CMAKE_BINARY_DIR}/lib/easy_profiler/bin/ ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}
-)
 #################################################################
 ## Core
 

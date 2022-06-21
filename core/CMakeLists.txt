@@ -30,20 +30,23 @@ endif()
 target_link_libraries(${CORE_TARGET} PUBLIC spdlog)
 
 ## SDL2
-target_include_directories(${CORE_TARGET} PUBLIC ${SDL2_INCLUDE_DIR})
-target_link_libraries(${CORE_TARGET} PUBLIC ${SDL2_LIBRARY})
+target_link_libraries(${CORE_TARGET} PUBLIC SDL2)
 
 ## SDL2_image
 target_link_libraries(${CORE_TARGET} PUBLIC ${SDL2_IMAGE_LIBRARY})
 target_include_directories(${CORE_TARGET} PUBLIC ${SDL2_IMAGE_INCLUDE_DIR})
 
-target_link_libraries(${CORE_TARGET} PUBLIC Vulkan::Headers)
+target_link_libraries(${CORE_TARGET} PUBLIC Vulkan::Vulkan)
 
-target_link_libraries(${CORE_TARGET} PUBLIC glm)
+if (TARGET glm::glm)
+target_link_libraries(${CORE_TARGET} PUBLIC glm::glm)
+else()
+    message(ERROR "Could not find glm library")
+endif()
 
 target_link_libraries(${CORE_TARGET} PUBLIC OpenGL::GL)
 
-target_link_libraries(${CORE_TARGET} PUBLIC glew)
+target_link_libraries(${CORE_TARGET} PUBLIC GLEW::glew)
 
 
 message(STATUS "------ END CORE -------")
