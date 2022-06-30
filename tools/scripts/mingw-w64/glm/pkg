@@ -16,22 +16,22 @@ sha256sums=('7d508ab72cb5d43227a3711420f06ff99b0a0cb63ee2f93631b162bfe1fe9592'
             'c989c083b365ec90896fd34816de242bb02e4b3f0000c938d9fa3cdc039b0c8b')
 
 prepare() {
-    cd "$_srcdir"
+    cd "$SRCDIR/$_srcdir"
     patch -p1 -i ../cmake-install-back.patch
     patch -p1 -i ../cmake-install.patch
 }
 
 build() {
     for _arch in ${_architectures[@]}; do
-        ${_arch}-cmake -S "${_srcdir}" -B "build-${_arch}" -DGLM_TEST_ENABLE=OFF
-        cd "build-${_arch}" && make 
-        cd ${srcdir}
+        cd ${SRCDIR}
+        ${_arch}-cmake -S "$SRCDIR/${_srcdir}" -B "build-${_arch}" -DGLM_TEST_ENABLE=OFF
+        make -C "build-${_arch}" -j $JOBS
     done
 }
 
 package() {
-  for _arch in ${_architectures[@]}; do
-    cd "build-${_arch}" && make install DESTDIR="${pkgdir}"
-    cd ${srcdir}
-  done
+    for _arch in ${_architectures[@]}; do
+        cd ${SRCDIR}
+        make -C "build-${_arch}" install DESTDIR="${pkgdir}"
+    done
 }

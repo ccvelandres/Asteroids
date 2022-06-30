@@ -7,22 +7,22 @@ _realname="SDL2_image"
 pkgname="${arch}-${_pkgname}"
 pkgver="2.0.5"
 
-sources=("https://www.libsdl.org/projects/SDL_image/release/SDL2_image-devel-${pkgver}-mingw.tar.gz")
-sha256sums=('0e91e35973366aa1e6f81ee368924d9b4f93f9da4d2f2a89ec80b06eadcf23d1')
+sources=("SDL2_image-devel-${pkgver}-mingw.tar.gz::https://www.libsdl.org/projects/SDL_image/release/SDL2_image-devel-${pkgver}-mingw.tar.gz")
+sha256sums=('41d9e5ff98aa84cf66e6c63c78e7c346746982fa53d3f36633423cc9177f986c')
 
 prepare() {
-    cd "${srcdir}/"${_realname}-${pkgver}""
+    cd "${SRCDIR}/${_realname}-${pkgver}"
 }
 
 build() {
-    cd "${srcdir}/"${_realname}-${pkgver}""
+    cd "${SRCDIR}/${_realname}-${pkgver}"
 
     for _arch in "${_architectures[@]}"; do
-        mkdir -p "$pkgdir/usr/${_arch}"
+        mkdir -p "$PKGDIR/usr/${_arch}"
     done
-    make cross CROSS_PATH="${pkgdir}/usr"
+    make cross CROSS_PATH="${PKGDIR}/usr"
 }
 
 package(){
-    cd "${srcdir}/"${_realname}-${pkgver}""
+    cd "${SRCDIR}/"${_realname}-${pkgver}""
 }

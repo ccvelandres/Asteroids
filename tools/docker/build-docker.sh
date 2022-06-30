@@ -1,3 +1,5 @@
 #!/bin/bash
 
-docker buildx build --platform windows/amd64,linux/amd64 
+docker build -t gamedev -f "$(pwd)/win.dockerfile" .
+project_root=$(realpath "$(pwd)/../..")
+docker run -v "$project_root":/project -dit --name ast gamedev
