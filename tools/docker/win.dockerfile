@@ -2,7 +2,7 @@
 # FROM mcr.microsoft.com/windows/nanoserver:ltsc2022
 FROM ubuntu:jammy
 RUN apt update
-RUN apt install -y cmake ninja-build build-essential wget curl
+RUN apt install -y cmake ninja-build build-essential wget curl pkg-config
 RUN apt install -y mingw-w64 binutils-mingw-w64
 
 
