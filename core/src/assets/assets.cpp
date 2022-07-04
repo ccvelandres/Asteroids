@@ -1,7 +1,7 @@
 #include <fstream>
 #include <filesystem>
 
-#include <assets/assets.hpp>
+#include <assets/utils.hpp>
 #include <utils/logging.hpp>
 
 namespace assets::utils

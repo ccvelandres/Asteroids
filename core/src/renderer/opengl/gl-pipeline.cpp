@@ -1,5 +1,5 @@
 #include <renderer/opengl/gl-pipeline.hpp>
-#include <assets/assets.hpp>
+#include <assets/utils.hpp>
 #include <utils/logging.hpp>
 
 #include <vector>

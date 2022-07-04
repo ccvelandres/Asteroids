@@ -2,7 +2,7 @@
 #include <renderer/vulkan/vk-shader.hpp>
 #include <renderer/vulkan/vk-utils.hpp>
 
-#include <assets/assets.hpp>
+#include <assets/utils.hpp>
 #include <utils/logging.hpp>
 
 #include <exception>
