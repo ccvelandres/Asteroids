@@ -30,4 +30,12 @@ public:
     ~OpenGLPipeline();
 
     void render(const OpenGLMesh &mesh, const glm::mat4 &mvp) const;
+
+    /**
+     * @brief Identify type of shader based from name
+     * 
+     * @param name shader name
+     * @return GLenum type of shader
+     */
+    static GLenum shaderTypeFromName(const std::string &name);
 };

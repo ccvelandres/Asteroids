@@ -137,3 +137,34 @@ OpenGLPipeline &OpenGLPipeline::operator=(OpenGLPipeline &&o) = default;
 OpenGLPipeline::~OpenGLPipeline()                             = default;
 
 void OpenGLPipeline::render(const OpenGLMesh &mesh, const glm::mat4 &mvp) const { m_internal->render(mesh, mvp); }
+
+GLenum OpenGLPipeline::shaderTypeFromName(const std::string &name)
+{
+    L_TAG("OpenGLPipeline::shaderTypeFromName");
+
+    const std::unordered_map<std::string, GLenum> shaderExtensions = {
+        {".vert", GL_VERTEX_SHADER}, // Vertex Shader
+        {".vs", GL_VERTEX_SHADER}, // Vertex Shader
+        {".frag", GL_FRAGMENT_SHADER}, // Fragment Shader
+        {".fs", GL_FRAGMENT_SHADER}, // Fragment Shader
+        {".gs", GL_GEOMETRY_SHADER}, // Geometry Shader
+        {".geom", GL_GEOMETRY_SHADER}, // Geometry Shader
+        {".comp", GL_COMPUTE_SHADER}, // Compute Shader
+        {".tesc", GL_TESS_CONTROL_SHADER}, // Tesselation Control Shader
+        {".tese", GL_TESS_EVALUATION_SHADER}, // Tesselation Evaluation Shader
+        {".rgen", GL_FALSE}, // Ray Generation shader
+        {".rint", GL_FALSE}, // Ray Intersection shader
+        {".rahit", GL_FALSE}, // Ray Any-hit shader
+        {".rchit", GL_FALSE}, // Ray Closest-hit shader
+        {".rmiss", GL_FALSE}, // Ray Miss shader
+        {".rcall", GL_FALSE}, // Ray Callable shader
+        {".mesh", GL_FALSE}, // Mesh Shader
+        {".task", GL_FALSE} // Task Shader
+    };
+
+    auto it = shaderExtensions.find(name);
+    if(it != shaderExtensions.end())
+        return (*it).second;
+    else
+        L_THROW_RUNTIME("Could not identify shader type: {}", name);
+}
