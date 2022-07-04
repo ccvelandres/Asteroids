@@ -37,6 +37,8 @@ namespace assets
     {
         L_TAG("Mesh::Mesh(std::string&)");
         assets::loaders::obj::Loader objLoader;
+        std::vector<Vertex> vertices;
+        std::vector<uint32_t> indices;
 
         try
         {
@@ -45,8 +47,35 @@ namespace assets
 
             for (auto &obj : objLoader.objects)
             {
+                L_DEBUG("indicesCount: {}", obj.mesh.indices.size());
+                L_DEBUG("verticeCount: {}", obj.mesh.verticeCount.size());
                 for (auto &index : obj.mesh.indices)
                 {
+                    // L_DEBUG("Index: {:#3}, {:#3}, {:#3}", index.v, index.vn, index.vt);
+
+                    Vertex vertex = {
+                        .position = {
+                            objLoader.vertices[(3 * index.v) + 0],
+                            objLoader.vertices[(3 * index.v) + 1],
+                            objLoader.vertices[(3 * index.v) + 2],
+                        },
+                        .texCoordinates = {
+                            objLoader.texCoordinates[(2 * index.vt) + 0],
+                            objLoader.texCoordinates[(2 * index.vt) + 1] 
+                        }
+                    };
+
+                    // L_DEBUG("Vertex: ( {}, {}, {} )-( {}, {} )",
+                    //         vertex.position.x,
+                    //         vertex.position.y,
+                    //         vertex.position.z,
+                    //         vertex.texCoordinates.x,
+                    //         vertex.texCoordinates.y);
+
+                    /** @todo: deduplicate vertices? */
+
+                    indices.push_back(static_cast<uint32_t>(vertices.size()));
+                    vertices.push_back(vertex);
                 }
             }
 
@@ -56,6 +85,8 @@ namespace assets
         {
             L_THROW_RUNTIME("Failed to load obj: {}", filename);
         }
+
+        m_internal = std::make_unique<Internal>(std::move(vertices), std::move(indices));
     }
 
     Mesh::Mesh(Mesh &&o)            = default;
