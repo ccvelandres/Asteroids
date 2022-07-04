@@ -25,39 +25,91 @@ string(REPLACE " " "_" PROJECT_NAME ${PROJECT_FOLDER_NAME})
 message("Project Name: ${PROJECT_NAME}")
 
 project(${PROJECT_NAME} VERSION 0.1.0)
+set(PROJECT_ROOT "${CMAKE_SOURCE_DIR}")
 set(PROJECT_LIBRARY_DIR "${CMAKE_SOURCE_DIR}/lib")
+
+if(WIN32)
+    add_link_options(-static-libgcc -static-libstdc++)
+endif()
 
 #################################################################
 ## Libraries
 include(FindPkgConfig)
+include(GNUInstallDirs)
 
 ### easy_profiler
 if (UNIX)
-    message(STATUS "Profiler: easy_profiler")
+    message(STATUS "Profiler: easy_profiler (source)")
     set(EASY_OPTION_LISTEN ON CACHE BOOL "Enable automatic startListen on startup" FORCE)
     add_subdirectory(${PROJECT_LIBRARY_DIR}/easy_profiler)
     add_custom_target(easy_profiler_bin DEPENDS easy_profiler
         COMMAND ${CMAKE_COMMAND} -E copy_directory  ${CMAKE_BINARY_DIR}/lib/easy_profiler/bin/ ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}
     )
 else()
+    # @TODO: Fix enabling easy_profiler in win builds
     message(STATUS "Profiler: disabled")
 endif()
 
 ### spdlog 
 if (WIN32)
-    message(STATUS "spdlog: using library")
+    message(STATUS "Logger: spdlog")
     find_package(spdlog REQUIRED)
 else()
-message(STATUS "spdlog: built from source")
+    message(STATUS "Logger: spdlog (source)")
     add_subdirectory(${PROJECT_LIBRARY_DIR}/spdlog)
 endif()
 
 ### SDL2
-find_package(SDL2 REQUIRED)
-find_package(SDL2_image REQUIRED)
+# pkg-config would probably help here
+find_library(SDL2_LIBRARIES
+    NAMES SDL2 
+    HINTS
+        ENV SDL2_DIR
+    PATHS ${SDL2_DIR})
+find_path(SDL2_INCLUDE_DIR 
+    NAMES SDL.h 
+    HINTS
+        ENV SDL2_DIR
+    PATHS ${SDL2_DIR} 
+    PATH_SUFFIXES SDL2)
+if(SDL2_LIBRARIES AND SDL2_INCLUDE_DIR)
+    message(STATUS "Found library: SDL2")
+    message(STATUS "    Library: ${SDL2_LIBRARIES}")
+    message(STATUS "    Include: ${SDL2_INCLUDE_DIR}")
+    add_library(SDL2 UNKNOWN IMPORTED)
+    set_target_properties(SDL2 PROPERTIES 
+        IMPORTED_LOCATION "${SDL2_LIBRARIES}"
+        INTERFACE_INCLUDE_DIRECTORIES "${SDL2_INCLUDE_DIR}")
+else()
+    message(FATAL_ERROR "Could not find SDL2")
+endif()
 
-# pkg_search_module(SDL2IMAGE REQUIRED SDL2_image)
-
+# SDL2_image
+# pkg-config would probably help here
+find_library(SDL2_IMAGE_LIBRARIES 
+    NAMES SDL2_image
+    HINTS
+        ENV SDL2_DIR
+        ENV SDL2_IMAGE_DIR
+    PATHS ${SDL2_IMAGE_PATH})
+find_path(SDL2_IMAGE_INCLUDE_DIR 
+    NAMES SDL_image.h
+    HINTS
+        ENV SDL2_DIR
+        ENV SDL2_IMAGE_DIR
+    PATHS ${SDL2_IMAGE_PATH} 
+    PATH_SUFFIXES SDL2)
+if(SDL2_IMAGE_LIBRARIES AND SDL2_IMAGE_INCLUDE_DIR)
+    message(STATUS "Found library: SDL2_image")
+    message(STATUS "    Library: ${SDL2_IMAGE_LIBRARIES}")
+    message(STATUS "    Include: ${SDL2_IMAGE_INCLUDE_DIR}")
+    add_library(SDL2_image UNKNOWN IMPORTED)
+    set_target_properties(SDL2_image PROPERTIES 
+        IMPORTED_LOCATION "${SDL2_IMAGE_LIBRARIES}"
+        INTERFACE_INCLUDE_DIRECTORIES "${SDL2_IMAGE_INCLUDE_DIR}")
+else()
+    message(FATAL_ERROR "Could not find SDL2_image")
+endif()
 
 ### Vulkan
 find_package(Vulkan REQUIRED)
@@ -73,30 +125,6 @@ find_package(GLEW REQUIRED)
 
 set(CORE_TARGET "core")
 add_subdirectory(core)
-# set(CORE_TARGET "core")
-
-# file(GLOB_RECURSE SRC_C_CORE ${CMAKE_SOURCE_DIR}/core/src/*.c)
-# file(GLOB_RECURSE SRC_CPP_CORE ${CMAKE_SOURCE_DIR}/core/src/*.cpp)
-
-# add_library(${CORE_TARGET} ${SRC_C_CORE} ${SRC_CPP_CORE})
-# target_include_directories(${CORE_TARGET} PRIVATE ${CMAKE_SOURCE_DIR}/core/src)
-# target_include_directories(${CORE_TARGET} PUBLIC ${CMAKE_SOURCE_DIR}/core/include)
-
-# # Add dependencies
-# add_dependencies(${CORE_TARGET} easy_profiler_bin)
-
-## Link Libraries
-# target_link_libraries(${CORE_TARGET} PUBLIC easy_profiler)
-# target_link_libraries(${CORE_TARGET} PUBLIC ${SDL2_LIBRARY})
-# target_include_directories(${CORE_TARGET} PUBLIC ${SDL2_INCLUDE_DIR})
-# target_link_libraries(${CORE_TARGET} PUBLIC ${SDL2_IMAGE_LIBRARY})
-# target_include_directories(${CORE_TARGET} PUBLIC ${SDL2_IMAGE_INCLUDE_DIR})
-# target_link_libraries(${CORE_TARGET} PUBLIC Vulkan::Vulkan)
-# target_link_libraries(${CORE_TARGET} PUBLIC spdlog)
-# target_link_libraries(${CORE_TARGET} PUBLIC glm::glm)
-# target_link_libraries(${CORE_TARGET} PUBLIC OpenGL::GL)
-# # target_link_libraries(${CORE_TARGET} PUBLIC OpenGL::GLU)
-# target_link_libraries(${CORE_TARGET} PUBLIC glew)
 
 # Add compile options as definitions
 include(cmake/define_target_option.cmake)
@@ -105,14 +133,13 @@ define_target_option(${CORE_TARGET} ${CORE_LOG_ENABLE_TAG} CORE_LOG_ENABLE_TAG)
 #################################################################
 ## Logic
 add_subdirectory(logic)
-# file(GLOB_RECURSE SRC_C_LOGIC ${CMAKE_SOURCE_DIR}/logic/src/*.c)
-# file(GLOB_RECURSE SRC_CPP_LOGIC ${CMAKE_SOURCE_DIR}/logic/src/*.cpp)
 
-# add_executable(${PROJECT_NAME} ${SRC_C_LOGIC} ${SRC_CPP_LOGIC})
-# target_include_directories(${PROJECT_NAME} PRIVATE ${CMAKE_SOURCE_DIR}/logic/src)
-# target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_SOURCE_DIR}/logic/include)
+#################################################################
+## Shaders
 
-# target_link_libraries(${PROJECT_NAME} PUBLIC ${CORE_TARGET})
+add_custom_target(Shaders ALL
+    COMMAND ${PROJECT_ROOT}/tools/scripts/compile_shaders.sh OUTDIR=${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/shaders
+    DEPENDS ${CORE_TARGET})
 
 # Package assets with binary
 file(COPY assets DESTINATION ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
