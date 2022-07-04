@@ -24,7 +24,7 @@ public:
         ShaderStage(GLenum shaderType, std::string shaderSource) : shaderType(shaderType), shaderSource(shaderSource) {}
     };
 
-    OpenGLPipeline(const std::vector<ShaderStage> &shaderStages);
+    OpenGLPipeline(const std::string &name, const std::vector<ShaderStage> &shaderStages);
     OpenGLPipeline(OpenGLPipeline &&o);
     OpenGLPipeline &operator=(OpenGLPipeline &&o);
     ~OpenGLPipeline();

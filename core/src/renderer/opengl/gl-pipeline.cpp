@@ -74,6 +74,7 @@ GLuint createPipelineProgram(const std::vector<OpenGLPipeline::ShaderStage> &sha
 
 struct OpenGLPipeline::Internal
 {
+    const std::string pipelineName;
     const GLuint  shaderProgramId;
     const GLuint  s_uniformLocationMVP;
     const GLuint  s_vertexPosition;
@@ -82,8 +83,9 @@ struct OpenGLPipeline::Internal
     const GLsizei offsetPosition;
     const GLsizei offsetTexCoord;
 
-    Internal(const std::vector<ShaderStage> &shaderStages)
-        : shaderProgramId(::createPipelineProgram(shaderStages)),
+    Internal(const std::string &name, const std::vector<ShaderStage> &shaderStages)
+        : pipelineName(name),
+          shaderProgramId(::createPipelineProgram(shaderStages)),
           s_uniformLocationMVP(glGetUniformLocation(shaderProgramId, "u_mvp")),
           s_vertexPosition(glGetAttribLocation(shaderProgramId, "a_vertexPosition")),
           s_textureCoord(glGetAttribLocation(shaderProgramId, "a_texCoord")),
@@ -92,6 +94,7 @@ struct OpenGLPipeline::Internal
           offsetTexCoord(3 * sizeof(float))
     {
         L_TAG("OpenGLPipeline::Internal");
+        L_DEBUG("Pipeline \"{}\" created with {} shaders", pipelineName, shaderStages.size());
         L_TRACE("Internal resources initialized ({})", static_cast<void *>(this));
     }
 
@@ -124,8 +127,8 @@ struct OpenGLPipeline::Internal
     }
 };
 
-OpenGLPipeline::OpenGLPipeline(const std::vector<ShaderStage> &shaderStages)
-    : m_internal(std::make_unique<Internal>(shaderStages))
+OpenGLPipeline::OpenGLPipeline(const std::string &name, const std::vector<ShaderStage> &shaderStages)
+    : m_internal(std::make_unique<Internal>(name, shaderStages))
 {
 }
 
