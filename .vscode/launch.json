@@ -8,9 +8,11 @@
             "name": "(gdb) Launch",
             "type": "lldb",
             "request": "launch",
-            "program": "${workspaceFolder}/build/out/${workspaceFolderBasename}",
-            "cwd": "${workspaceFolder}/build/out",
-            "preLaunchTask": "CMake Build : Debug",
+            "linux": {
+                "program": "${workspaceFolder}/build/linux/out/${workspaceFolderBasename}",
+                "cwd": "${workspaceFolder}/build/linux/out",
+            },
+            "preLaunchTask": "Build:Debug",
             "env": {
                 "__NV_PRIME_RENDER_OFFLOAD": "1",
                 "__GLX_VENDOR_LIBRARY_NAME": "nvidia"

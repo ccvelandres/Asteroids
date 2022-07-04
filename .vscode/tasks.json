@@ -4,27 +4,31 @@
     "version": "2.0.0",
     "tasks": [
         {
-            "label": "CMake Configure : Debug",
-            "command": "cmake",
-            "args": [
-                "-B${workspaceFolder}/build",
-                "-DCMAKE_BUILD_TYPE:STRING=Debug",
-                "--preset=debug"
-            ],
+            "label": "Configure:Debug",
+            "linux":{
+                "command": "cmake",
+                "args": [
+                    "-B${workspaceFolder}/build/linux",
+                    "-DCMAKE_BUILD_TYPE:STRING=Debug",
+                    "--preset=debug"
+                ]
+            },
             "problemMatcher": [
                 "$gcc"
             ]
         },
         {
-            "label": "CMake Build : Debug",
-            "command": "cmake",
-            "args": [
-                "--build",
-                "${workspaceFolder}/build",
-                "--target",
-                "all",
-                "--parallel"
-            ],
+            "label": "Build:Debug",
+            "linux":{
+                "command": "cmake",
+                "args": [
+                    "--build",
+                    "${workspaceFolder}/build/linux",
+                    "--target",
+                    "all",
+                    "--parallel"
+                ],
+            },
             "problemMatcher": [
                 "$gcc"
             ],
@@ -33,45 +37,51 @@
                 "isDefault": true
             },
             "dependsOn": [
-                "CMake Configure : Debug"
+                "Configure:Debug"
             ],
             "dependsOrder": "sequence"
         },
         {
-            "label": "CMake Configure : Release",
-            "command": "cmake",
-            "args": [
-                "-B${workspaceFolder}/build",
-                "-DCMAKE_BUILD_TYPE:STRING=Release"
-            ],
+            "label": "Configure:Release",
+            "linux":{
+                "command": "cmake",
+                "args": [
+                    "-B${workspaceFolder}/build/linux",
+                    "-DCMAKE_BUILD_TYPE:STRING=Release"
+                ],
+            },
             "problemMatcher": [
                 "$gcc"
             ]
         },
         {
-            "label": "CMake Build : Release",
-            "command": "cmake",
-            "args": [
-                "--build",
-                "${workspaceFolder}/build",
-                "--target",
-                "all",
-                "--parallel"
-            ],
+            "label": "Build:Release",
+            "linux":{
+                "command": "cmake",
+                "args": [
+                    "--build",
+                    "${workspaceFolder}/build/linux",
+                    "--target",
+                    "all",
+                    "--parallel"
+                ],
+            },
             "dependsOn": [
-                "CMake Configure : Release"
+                "Configure:Release"
             ],
             "dependsOrder": "sequence"
         },
         {
-            "label": "Launch Profiler",
-            "command": "${workspaceFolder}/build/out/profiler_gui",
+            "label": "Launch:Profiler",
+            "linux":{
+                "command": "${workspaceFolder}/build/linux/out/profiler_gui",
+            },
             "isBackground": true,
             "runOptions": {
                 "instanceLimit": 1
             },
             "dependsOn": [
-                "CMake Build : Debug"
+                "Build:Debug"
             ],
             "type": "process",
             "problemMatcher": []
