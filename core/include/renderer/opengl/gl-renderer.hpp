@@ -1,7 +1,7 @@
 #pragma once
 
 #include <memory>
-
+#include <renderer/asset-manager.hpp>
 #include <renderer/renderer.hpp>
 
 class OpenGLRenderer : public Renderer
@@ -24,4 +24,6 @@ public:
     bool renderBegin() override;
     void render(const std::vector<assets::Mesh> &meshes) override;
     void renderEnd() override;
+
+    AssetManager& getAssetManager() override;
 };

@@ -1,6 +1,7 @@
 #include <renderer/opengl/gl-pipeline.hpp>
 #include <renderer/opengl/gl-renderer.hpp>
 #include <renderer/opengl/gl-wrapper.hpp>
+#include <renderer/opengl/gl-assetManager.hpp>
 
 #include <SDL2/SDL.h>
 
@@ -71,28 +72,25 @@ SDL_GLContext createContext(SDL_Window *window)
     return context;
 }
 
-OpenGLPipeline createDefaultPipeline()
-{
-    std::vector<OpenGLPipeline::ShaderStage> stages;
-
-    stages.push_back(OpenGLPipeline::ShaderStage(GL_VERTEX_SHADER, "shaders/opengl/default.vert"));
-    stages.push_back(OpenGLPipeline::ShaderStage(GL_FRAGMENT_SHADER, "shaders/opengl/default.frag"));
-
-    return OpenGLPipeline(stages);
-}
-
 struct OpenGLRenderer::Internal
 {
     SDL_Window *const window;
     SDL_GLContext     context;
-
-    OpenGLPipeline pipeline;
+    OpenGLAssetManager assetManager;
 
     Internal(const std::string &windowTitle, const int windowWidth, const int windowHeight)
         : window(::createWindow(windowTitle, windowWidth, windowHeight)),
           context(::createContext(window)),
-          pipeline(::createDefaultPipeline())
+          assetManager()
     {
+        L_TAG("OpenGLRenderer::Internal");
+        L_TRACE("Internal resources initialized ({})", static_cast<void *>(this));
+    }
+
+    ~Internal()
+    {
+        L_TAG("OpenGLRenderer::~Internal");
+        L_TRACE("Internal resources freed ({})", static_cast<void *>(this));
     }
 };
 
@@ -118,3 +116,5 @@ bool OpenGLRenderer::renderBegin() { return true; }
 void OpenGLRenderer::render(const std::vector<assets::Mesh> &meshes) {}
 
 void OpenGLRenderer::renderEnd() {}
+
+AssetManager& OpenGLRenderer::getAssetManager() { return m_internal->assetManager; }
