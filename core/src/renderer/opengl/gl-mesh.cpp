@@ -63,6 +63,7 @@ struct OpenGLMesh::Internal
 
 OpenGLMesh::OpenGLMesh(const assets::Mesh &mesh) : m_internal(std::make_unique<Internal>(mesh)) {}
 
+OpenGLMesh::OpenGLMesh()                          = default;
 OpenGLMesh::OpenGLMesh(OpenGLMesh &&o)            = default;
 OpenGLMesh &OpenGLMesh::operator=(OpenGLMesh &&o) = default;
 OpenGLMesh::~OpenGLMesh()                         = default;

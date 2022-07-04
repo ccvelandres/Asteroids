@@ -13,6 +13,7 @@ namespace assets
         struct Internal;
         std::unique_ptr<Internal> m_internal;
     public:
+        Mesh();
         Mesh(const std::string &filename);
         Mesh(const std::vector<Vertex> &vertices, const std::vector<uint32_t> &indices);
         Mesh(Mesh &&o);

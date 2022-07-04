@@ -12,6 +12,7 @@ private:
     std::unique_ptr<Internal> m_internal;
 protected:
 public:
+    OpenGLMesh();
     OpenGLMesh(const assets::Mesh &mesh);
     OpenGLMesh(OpenGLMesh &&o);
     OpenGLMesh &operator=(OpenGLMesh &&o);

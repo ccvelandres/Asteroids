@@ -89,6 +89,7 @@ namespace assets
         m_internal = std::make_unique<Internal>(std::move(vertices), std::move(indices));
     }
 
+    Mesh::Mesh()                    = default;
     Mesh::Mesh(Mesh &&o)            = default;
     Mesh &Mesh::operator=(Mesh &&o) = default;
     Mesh::~Mesh()                   = default;
