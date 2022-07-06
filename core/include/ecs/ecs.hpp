@@ -20,6 +20,7 @@
  */
 
 class Component;
+class ComponentManager;
 class Entity;
 class EntityManager;
 
@@ -56,8 +57,8 @@ private:
     bool    m_enabled;
 
 protected:
-public:
     Component() : m_enabled(true) {}
+public:
     virtual ~Component(){};
 
     /** Called when the component is first created */
@@ -72,13 +73,12 @@ public:
     /** Returns the entity attached to this component */
     Entity &entity() { return *m_entity; }
 
-    /** Returns status of component */
-    inline bool enabled() { return m_enabled; }
-    /** Set enable status of component */
-    inline void enabled(const bool &enabled) { m_enabled = enabled; }
+    /** Controls whether the component is updated/active  */
+    inline bool &enabled() { return m_enabled; }
 
     friend Entity;
     friend EntityManager;
+    friend ComponentManager;
 };
 
 template <typename T>
@@ -90,7 +90,6 @@ class ComponentManager
 {
 private:
     std::array<std::vector<std::weak_ptr<Component>>, maxComponents> m_components;
-    Entity                                                          *m_entity;
 
 protected:
 public:
@@ -147,12 +146,15 @@ private:
     std::array<std::shared_ptr<Component>, maxComponents> m_components;
     std::bitset<maxComponents>                            m_componentBitset;
 
-    std::shared_ptr<Entity>              m_parent;
-    std::vector<std::shared_ptr<Entity>> m_children;
-
+    bool isActive = true;
 protected:
-public:
     Entity() {}
+public:
+    ~Entity()
+    {
+        /** Mark entity for garbage collection */
+        isActive = false;
+    }
 
     /** Check if entity has component T */
     template <typename T>
@@ -217,12 +219,6 @@ public:
     virtual void reset() {}
     /** Called once before sending object back to be reused */
     virtual void clean() {}
-
-    void                    parent(std::shared_ptr<Entity> &parent) { m_parent = parent; }
-    std::shared_ptr<Entity> parent() { return m_parent; }
-
-    void                                       addChild(std::shared_ptr<Entity> &child) { m_children.push_back(child); }
-    const std::vector<std::shared_ptr<Entity>> children() { return m_children; }
 
     friend EntityManager;
 };
