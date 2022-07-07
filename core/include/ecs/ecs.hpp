@@ -147,14 +147,17 @@ private:
     std::bitset<maxComponents>                            m_componentBitset;
 
     bool isActive = true;
+
+    /** Disable copy-constructors */
+    Entity(Entity &o)            = delete;
+    Entity &operator=(Entity &o) = delete;
 protected:
-    Entity() {}
+    Entity() = default; /** Use entity manager to create entities */
 public:
-    ~Entity()
-    {
-        /** Mark entity for garbage collection */
-        isActive = false;
-    }
+    /** Allow move constructors */
+    Entity(Entity &&o)            = default;
+    Entity &operator=(Entity &&o) = default;
+    ~Entity()                     = default;
 
     /** Check if entity has component T */
     template <typename T>
@@ -225,12 +228,12 @@ public:
 
 using EntityType = std::size_t;
 template <typename T>
-using EntityList = std::vector<std::shared_ptr<T>>;
+using EntityList = std::vector<T *>;
 
 class EntityManager
 {
 private:
-    std::map<std::type_index, std::vector<std::shared_ptr<Entity>>> m_entities;
+    std::map<std::type_index, std::vector<std::unique_ptr<Entity>>> m_entities;
 
 protected:
 public:
@@ -242,9 +245,9 @@ public:
     {
         L_TAG("EntityManager::addEntity");
 
-        L_DEBUG("{}, hash({})", typeid(T).name(), typeid(T).hash_code());
-        T                      *e = new T(std::forward<TArgs>(args)...);
-        std::shared_ptr<Entity> p(e);
+        T *e = new T(std::forward<TArgs>(args)...);
+        L_DEBUG("{}, addr({}) hash(0x{:x})", typeid(T).name(), static_cast<void *>(e), typeid(T).hash_code());
+        std::unique_ptr<Entity> p(e);
         m_entities[std::type_index(typeid(T))].push_back(std::move(p));
 
         e->init();
@@ -256,16 +259,16 @@ public:
     {
         L_TAG("EntityManager::addEntities");
 
-        L_DEBUG("{}, count({}), hash({})", typeid(T).name(), numEntities, typeid(T).hash_code());
-        std::vector<std::shared_ptr<T>> l_entities;
+        L_DEBUG("{}, count({}), hash(0x{:x})", typeid(T).name(), numEntities, typeid(T).hash_code());
+        EntityList<T> l_entities;
         l_entities.reserve(numEntities);
 
         for (int i = 0; i < numEntities; i++)
         {
             T *e = new T(std::forward<TArgs>(args)...);
             l_entities.emplace_back(e);
-            std::shared_ptr<T> &p = l_entities[l_entities.size() - 1];
-            m_entities[std::type_index(typeid(T))].push_back(p);
+            std::unique_ptr<T> p(e);
+            m_entities[std::type_index(typeid(T))].push_back(std::move(p));
 
             e->init();
         }
@@ -294,5 +297,6 @@ public:
     /** Calls postUpdate for all entities */
     void postUpdate();
 
+    /** Deletes inactive entities */
     void refresh();
 };
