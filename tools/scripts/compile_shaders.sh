@@ -7,6 +7,7 @@ function fatal() { echo -ne "\x1b[31mFATAL\x1b[0m: "; echo $@; exit 1; }
 function info()  { echo -ne "\x1b[32mINFO\x1b[0m: " ; echo $@; }
 function debug() { echo -ne "\x1b[34mDEBUG\x1b[0m: "; echo $@; }
 function warn()  { echo -ne "\x1b[33mWARN\x1b[0m: " ; echo $@; }
+function trim_path() { echo "$(echo "$1" | sed -e "s@${2}@@g" | sed -e 's@^/@@g')"; }
 
 help_text="
 Compiles shaders
@@ -55,13 +56,13 @@ mkdir -p "${OUTPUT_OPENGL_DIR}"
 find ${SHADER_OPENGL_SRC_DIR} -type f | while read f; do
     # Skip if extension does not match
     echo ${SHADER_EXT[@]} | grep "${f##*.}" &> /dev/null || continue
-    f_shader_path=$(echo "$f" | sed -e "s@${SHADER_OPENGL_SRC_DIR}@@g" | sed -e 's@^/@@g')
+    f_shader_path="$(trim_path "$f" "$SHADER_OPENGL_SRC_DIR")" # $(echo "$f" | sed -e "s@${SHADER_OPENGL_SRC_DIR}@@g" | sed -e 's@^/@@g')
     f_output_path="${OUTPUT_OPENGL_DIR}/$f_shader_path"
     # make sure subdir is created
     mkdir -p "$(dirname "$f_output_path")"
     echo -n "Found: $f_shader_path"
     cp "$f" "${f_output_path}"
-    echo " - compiled to $f_output_path"
+    echo " - compiled to $(trim_path "$f_output_path" "$OUTDIR")"
 done
 
 
