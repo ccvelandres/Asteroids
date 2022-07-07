@@ -1,11 +1,12 @@
 #pragma once
 
-#include "ecs.hpp"
+#include "../ecs.hpp"
 #include <glm/glm.hpp>
 
 class TransformComponent : public Component
 {
-public:
+private:
+protected:
     TransformComponent() : position(), scale(1), rotation(0) {}
     TransformComponent(const float &posX, const float &posY, const float &posZ)
         : position(posX, posY, posZ),
@@ -13,6 +14,7 @@ public:
           rotation(0)
     {
     }
+public:
 
     /** Component overrides */
     // void awake() override;
@@ -23,4 +25,8 @@ public:
     glm::vec3 position;
     glm::vec3 scale;
     float     rotation;
+
+    friend Entity;
+    friend EntityManager;
+    friend ComponentManager;
 };

@@ -1,3 +1,4 @@
 #pragma once
 
-#include "transformComponent.hpp"
+#include "components/transformComponent.hpp"
+#include "components/renderComponent.hpp"
