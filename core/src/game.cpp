@@ -7,6 +7,7 @@
 #include <utils/logging.hpp>
 
 #include <renderer/renderer.hpp>
+
 #ifdef CORE_RENDERER_VULKAN
 #include <renderer/vulkan/vk-renderer.hpp>
 #endif
@@ -62,6 +63,7 @@ Game::Game(const std::string &windowTitle, const int &windowWidth, const int &wi
     g_eventManager     = new EventManager();
     g_componentManager = new ComponentManager();
     g_entityManager    = new EntityManager();
+    AssetInventory::loadInventory();
 
     /** FPS Defaults */
     m_targetDelta = time_ds(time_step::den / 60);

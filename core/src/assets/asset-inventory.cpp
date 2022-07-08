@@ -2,6 +2,7 @@
 
 namespace AssetInventory
 {
+    /** @todo: Add thread-protection */
     struct Inventory
     {
         std::unordered_map<std::string, AssetList> cache;

@@ -1,5 +1,6 @@
 #pragma once
 
+#include "asset-manager.hpp"
 #include <renderer/vertex.hpp>
 #include <assets/mesh.hpp>
 #include <time.hpp>
@@ -18,4 +19,6 @@ public:
     virtual bool renderBegin()                                   = 0;
     virtual void render(const std::vector<assets::Mesh> &meshes) = 0;
     virtual void renderEnd()                                     = 0;
+
+    virtual AssetManager &getAssetManager() = 0;
 };
