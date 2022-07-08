@@ -1,9 +1,9 @@
 #pragma once
 
 #include "asset-manager.hpp"
-#include <renderer/vertex.hpp>
-#include <assets/mesh.hpp>
-#include <time.hpp>
+#include "vertex.hpp"
+#include "../assets/mesh.hpp"
+#include "../time.hpp"
 
 class Renderer
 {

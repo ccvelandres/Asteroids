@@ -5,15 +5,14 @@
 
 #include <SDL2/SDL.h>
 
-#include <ecs/ecs.hpp>
-#include <event.hpp>
-#include <game.hpp>
-#include <utils/logging.hpp>
+#include <core/ecs/ecs.hpp>
+#include <core/event.hpp>
+#include <core/game.hpp>
+#include <core/renderer/renderer.hpp>
+#include <core/utils/logging.hpp>
 
 #include <enemy.hpp>
 #include <player.hpp>
-
-#include <renderer/vulkan/vk-renderer.hpp>
 
 constexpr int windowWidth  = 1280;
 constexpr int windowHeight = 720;

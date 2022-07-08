@@ -1,6 +1,6 @@
 #pragma once
 #include <vector>
-#include <manager.hpp>
+#include "../manager.hpp"
 #include <SDL2/SDL_scancode.h>
 
 class InputManager

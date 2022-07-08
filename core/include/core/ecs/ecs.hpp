@@ -9,9 +9,9 @@
 #include <functional>
 #include <typeindex>
 
-#include <game.hpp>
-#include <time.hpp>
-#include <utils/logging.hpp>
+#include "../game.hpp"
+#include "../time.hpp"
+#include "../utils/logging.hpp"
 
 /**
  * @brief ECS Component system

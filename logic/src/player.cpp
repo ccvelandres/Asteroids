@@ -1,5 +1,5 @@
 #include <player.hpp>
-#include <game.hpp>
+#include <core/game.hpp>
 
 Player::Player() {}
 
@@ -54,11 +54,11 @@ void Player::update(time_ms delta)
     {
         /** Look for free bullet object */
         auto it =
-            std::find_if(m_bullets.begin(), m_bullets.end(), [](std::shared_ptr<Bullet> &p) { return !p->isShot(); });
+            std::find_if(m_bullets.begin(), m_bullets.end(), [](Bullet *p) { return !p->isShot(); });
         if (it != m_bullets.end())
         {
-            Bullet &bullet = (*it->get());
-            bullet.shoot(m_transform->position + glm::vec3(0, 0, 0), glm::vec3(0, -500, 0));
+            Bullet *bullet = (*it);
+            bullet->shoot(m_transform->position + glm::vec3(0, 0, 0), glm::vec3(0, -500, 0));
             m_lastShoot = Game::time()->unscaledTime();
             logging::trace("{},{}: Shooting bullet object", __LINE__, __func__);
         }
@@ -66,7 +66,7 @@ void Player::update(time_ms delta)
 
     {
         int activeBullets = 0;
-        std::for_each(m_bullets.begin(), m_bullets.end(), [&activeBullets](std::shared_ptr<Bullet> &b) {
+        std::for_each(m_bullets.begin(), m_bullets.end(), [&activeBullets](Bullet *b) {
             if (b->isShot()) activeBullets++;
         });
     }

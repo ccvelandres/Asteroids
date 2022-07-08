@@ -3,7 +3,7 @@
 #include <vector>
 #include <string>
 
-#include <utils/logging.hpp>
+#include "../utils/logging.hpp"
 
 namespace assets::utils
 {

@@ -4,7 +4,7 @@
 #include <cstdint>
 #include <vector>
 
-#include <renderer/vertex.hpp>
+#include "../renderer/vertex.hpp"
 
 namespace assets
 {

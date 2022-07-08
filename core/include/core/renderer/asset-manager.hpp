@@ -1,6 +1,6 @@
 #pragma once
 
-#include <assets/asset-inventory.hpp>
+#include "../assets/asset-inventory.hpp"
 
 using AssetID = std::size_t;
 

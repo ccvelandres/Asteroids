@@ -1,6 +1,6 @@
 #include <bullet.hpp>
 
-#include <utils/logging.hpp>
+#include <core/utils/logging.hpp>
 
 Bullet::Bullet(Entity &parent) : m_parent(&parent), m_isShot(false) {}
 

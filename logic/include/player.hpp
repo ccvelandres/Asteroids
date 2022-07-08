@@ -1,9 +1,9 @@
 #pragma once
 
-#include <game.hpp>
-#include <ecs/ecs.hpp>
-#include <input/inputManager.hpp>
-#include <ecs/components.hpp>
+#include <core/game.hpp>
+#include <core/ecs/ecs.hpp>
+#include <core/input/inputManager.hpp>
+#include <core/ecs/components.hpp>
 
 #include <bullet.hpp>
 

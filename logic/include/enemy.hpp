@@ -1,7 +1,7 @@
 #pragma once
 
-#include <ecs/ecs.hpp>
-#include <ecs/components.hpp>
+#include <core/ecs/ecs.hpp>
+#include <core/ecs/components.hpp>
 
 class Enemy : public Entity
 {

@@ -12,6 +12,7 @@ add_library(${CORE_TARGET} ${SRC_CORE})
 add_subdirectory(src)
 
 target_include_directories(${CORE_TARGET} PRIVATE ${CMAKE_SOURCE_DIR}/core/src)
+target_include_directories(${CORE_TARGET} PRIVATE ${CMAKE_SOURCE_DIR}/core/include/core)
 target_include_directories(${CORE_TARGET} PUBLIC ${CMAKE_SOURCE_DIR}/core/include)
 
 ######################################################
