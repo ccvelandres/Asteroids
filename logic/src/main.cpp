@@ -5,7 +5,7 @@
 
 #include <SDL2/SDL.h>
 
-#include <core/ecs/ecs.hpp>
+#include <core/ecs/entity.hpp>
 #include <core/event.hpp>
 #include <core/game.hpp>
 #include <core/renderer/renderer.hpp>

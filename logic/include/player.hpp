@@ -1,7 +1,7 @@
 #pragma once
 
 #include <core/game.hpp>
-#include <core/ecs/ecs.hpp>
+#include <core/ecs/entity.hpp>
 #include <core/input/inputManager.hpp>
 #include <core/ecs/components.hpp>
 

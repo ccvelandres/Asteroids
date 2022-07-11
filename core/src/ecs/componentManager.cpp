@@ -1,4 +1,6 @@
-#include <ecs/ecs.hpp>
+#include <core/ecs/componentManager.hpp>
+
+ComponentManager::ComponentManager() = default;
 
 void ComponentManager::refresh()
 {

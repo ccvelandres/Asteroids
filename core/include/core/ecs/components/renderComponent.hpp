@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../ecs.hpp"
+#include "../component.hpp"
 #include "transformComponent.hpp"
 
 class RenderComponent : public Component

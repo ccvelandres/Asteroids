@@ -1,4 +1,5 @@
 #include <enemy.hpp>
+#include <core/utils/logging.hpp>
 
 Enemy::Enemy() {}
 

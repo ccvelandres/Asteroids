@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../ecs.hpp"
+#include "../component.hpp"
 #include <glm/glm.hpp>
 
 class TransformComponent : public Component

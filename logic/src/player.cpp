@@ -1,5 +1,9 @@
 #include <player.hpp>
 #include <core/game.hpp>
+#include <core/time.hpp>
+#include <core/ecs/entityManager.hpp>
+
+#include <core/utils/logging.hpp>
 
 Player::Player() {}
 

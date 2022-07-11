@@ -1,6 +1,6 @@
 #pragma once
 
-#include <core/ecs/ecs.hpp>
+#include <core/ecs/entity.hpp>
 #include <core/ecs/components.hpp>
 
 class Enemy : public Entity

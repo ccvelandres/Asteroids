@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../ecs.hpp"
+#include "../component.hpp"
 #include "renderComponent.hpp"
 
 class MeshRenderer : public RenderComponent

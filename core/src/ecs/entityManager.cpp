@@ -1,4 +1,5 @@
-#include <ecs/ecs.hpp>
+#include <core/ecs/entityManager.hpp>
+#include <core/utils/logging.hpp>
 
 void EntityManager::preUpdate()
 {

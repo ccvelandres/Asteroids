@@ -1,19 +1,22 @@
-#include <game.hpp>
-#include <ecs/ecs.hpp>
-#include <ecs/components.hpp>
-#include <event.hpp>
-#include <input/inputManager.hpp>
-#include <utils/profiler.hpp>
-#include <utils/logging.hpp>
+#include <core/game.hpp>
 
-#include <renderer/renderer.hpp>
+#include <core/ecs/entityManager.hpp>
+#include <core/ecs/componentManager.hpp>
+#include <core/ecs/components.hpp>
+
+#include <core/event.hpp>
+#include <core/input/inputManager.hpp>
+#include <core/utils/profiler.hpp>
+#include <core/utils/logging.hpp>
+
+#include <core/renderer/renderer.hpp>
 
 #ifdef CORE_RENDERER_VULKAN
-#include <renderer/vulkan/vk-renderer.hpp>
+#include <core/renderer/vulkan/vk-renderer.hpp>
 #endif
 
 #ifdef CORE_RENDERER_OPENGL
-#include <renderer/opengl/gl-renderer.hpp>
+#include <core/renderer/opengl/gl-renderer.hpp>
 #endif
 
 #include <thread>
@@ -143,7 +146,6 @@ void Game::startGameLoop()
             PROFILER_BLOCK("ECS::update");
             time_ms delta = g_time->scaledDeltaTime<time_ms>();
             g_entityManager->update(delta);
-            g_componentManager->update<TransformComponent>(delta);
         }
 
         {
