@@ -29,10 +29,10 @@ private:
 
     /** Disable all constructors */
     EntityManager();
-    EntityManager(EntityManager &o)                   = delete;
-    EntityManager(EntityManager &&o)                  = delete;
-    EntityManager &operator=(const EntityManager &o)  = delete;
-    EntityManager &operator=(const EntityManager &&o) = delete;
+    EntityManager(EntityManager &o)             = delete;
+    EntityManager(EntityManager &&o)            = delete;
+    EntityManager &operator=(EntityManager &o)  = delete;
+    EntityManager &operator=(EntityManager &&o) = delete;
 protected:
 public:
     ~EntityManager();

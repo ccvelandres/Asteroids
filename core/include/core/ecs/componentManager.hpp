@@ -24,10 +24,10 @@ private:
 
     /** Disable all constructors */
     ComponentManager();
-    ComponentManager(ComponentManager &o)                   = delete;
-    ComponentManager(ComponentManager &&o)                  = delete;
-    ComponentManager &operator=(const ComponentManager &o)  = delete;
-    ComponentManager &operator=(const ComponentManager &&o) = delete;
+    ComponentManager(ComponentManager &o)             = delete;
+    ComponentManager(ComponentManager &&o)            = delete;
+    ComponentManager &operator=(ComponentManager &o)  = delete;
+    ComponentManager &operator=(ComponentManager &&o) = delete;
 protected:
 public:
     ~ComponentManager();
