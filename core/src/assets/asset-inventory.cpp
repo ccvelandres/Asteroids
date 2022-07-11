@@ -19,11 +19,14 @@ namespace AssetInventory
         ivn->cache["mesh"]["crate"].push_back("assets/models/crate.obj");
         ivn->cache["pipeline"]["default"].push_back("shaders/opengl/default.vert");
         ivn->cache["pipeline"]["default"].push_back("shaders/opengl/default.frag");
+        ivn->cache["texture"]["crate"].push_back("assets/textures/crate.png");
 
         inventory.reset(ivn);
+
+        return EXIT_SUCCESS;
     }
 
-    int loadInventory(const std::string &filename){}
+    int loadInventory(const std::string &filename){ return EXIT_FAILURE; }
 
     AssetPaths resolvePath(const std::string &type, const std::string &name) { return inventory->cache[type][name]; }
 } // namespace AssetInventory
