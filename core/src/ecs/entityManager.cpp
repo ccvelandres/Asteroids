@@ -1,6 +1,22 @@
 #include <core/ecs/entityManager.hpp>
 #include <core/utils/logging.hpp>
 
+EntityManager *EntityManager::m_instance = nullptr;
+
+EntityManager::EntityManager() = default;
+EntityManager::~EntityManager() { delete m_instance; }
+
+EntityManager &EntityManager::getInstance()
+{
+    if (!m_instance) m_instance = new EntityManager();
+    return *m_instance;
+}
+
+void EntityManager::registerEntity(EntityID id, Entity *const entity)
+{
+    m_entities[id].emplace_back(EntityPtr<Entity>(entity));
+}
+
 void EntityManager::preUpdate()
 {
     for (auto &[hash, vector] : m_entities)

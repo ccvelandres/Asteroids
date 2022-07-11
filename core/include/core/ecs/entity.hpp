@@ -5,17 +5,37 @@
  * @{
  */
 
-#include "common.hpp"
+#include "component.hpp"
 #include "componentManager.hpp"
-#include "../game.hpp"
 #include "../time.hpp"
 #include "../utils/logging.hpp"
 
 #include <array>
 #include <bitset>
 #include <memory>
+#include <typeindex>
 
-class EntityManager; /** Forward declaration for the EntityManager */
+class EntityManager; /** Forward declartion for EntityManager */
+
+using EntityID = std::type_index;
+
+template <typename T = Entity, std::enable_if_t<std::is_base_of<Entity, T>::value, bool> = true>
+using EntityPtr = std::unique_ptr<T>;
+
+template <typename T, std::enable_if_t<std::is_base_of<Entity, T>::value, bool> = true>
+inline EntityPtr<T> make_entity_ptr(const T *e)
+{
+    return EntityPtr<T>(e);
+}
+
+template <typename T, std::enable_if_t<std::is_base_of<Entity, T>::value, bool> = true>
+constexpr EntityID getEntityID()
+{
+    return std::type_index(typeid(T));
+}
+
+template <typename T, std::enable_if_t<std::is_base_of<Entity, T>::value, bool> = true>
+using EntityList = std::vector<T *>;
 
 /**
  * @brief Base Class for all entities
@@ -29,16 +49,14 @@ private:
 
     bool isActive = true;
 
-    /** Disable copy-constructors */
-    Entity(Entity &o)            = delete;
-    Entity &operator=(Entity &o) = delete;
 protected:
-    Entity() = default; /** Use entity manager to create entities */
+    Entity();
 public:
-    /** Allow move constructors */
+    ~Entity();
+    Entity(Entity &o)             = delete;
+    Entity &operator=(Entity &o)  = delete;
     Entity(Entity &&o)            = default;
     Entity &operator=(Entity &&o) = default;
-    ~Entity()                     = default;
 
     /**
      * @brief Checks if entity has component of type @p T
@@ -47,7 +65,7 @@ public:
      * @return true if entity has component of type T
      * @return false if entity has no component of type T
      */
-    template <typename T>
+    template <typename T, std::enable_if_t<std::is_base_of<Component, T>::value, bool> = true>
     bool hasComponent() noexcept
     {
         return m_componentBitset[getComponentID<T>()];
@@ -58,7 +76,7 @@ public:
      *
      * @tparam T type of component
      */
-    template <typename T>
+    template <typename T, std::enable_if_t<std::is_base_of<Component, T>::value, bool> = true>
     void removeComponent() noexcept
     {
         m_components[getComponentID<T>()].reset();
@@ -72,7 +90,7 @@ public:
      * @param args arguments forwarded to component constructor
      * @return T& reference to created component
      */
-    template <typename T, typename... TArgs>
+    template <typename T, typename... TArgs, std::enable_if_t<std::is_base_of<Component, T>::value, bool> = true>
     T &addComponent(TArgs &&...args)
     {
         /** @todo: change return type to ComponentPtr<T> */
@@ -81,12 +99,12 @@ public:
         if (!hasComponent<T>())
         {
             c = new T(std::forward<TArgs>(args)...);
-            std::shared_ptr<Component> p(c);
+            ComponentPtr<T> p(c);
 
             m_components[getComponentID<T>()]      = p;
             m_componentBitset[getComponentID<T>()] = true;
             /** @todo: refactor so we don't depend on Game class? */
-            Game::componentManager()->registerComponent<T>(p);
+            ComponentManager::getInstance().registerComponent<T>(p);
         }
         else
         {
@@ -107,7 +125,7 @@ public:
      *
      * @throw std::logic_error if entity has no component of type @p T
      */
-    template <typename T>
+    template <typename T, std::enable_if_t<std::is_base_of<Component, T>::value, bool> = true>
     T &getComponent()
     {
         /** @todo: change return type to ComponentPtr<T> */
@@ -134,8 +152,5 @@ public:
 
     friend EntityManager;
 };
-
-template <typename T, std::enable_if_t<std::is_base_of<Entity, T>::value, bool> = true>
-using EntityList = std::vector<T *>;
 
 /** @} endgroup ECS */

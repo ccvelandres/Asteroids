@@ -5,7 +5,6 @@
  * @{
  */
 
-#include "common.hpp"
 #include "entity.hpp"
 #include "componentManager.hpp"
 #include "../time.hpp"
@@ -25,13 +24,33 @@
 class EntityManager
 {
 private:
-    std::map<std::type_index, std::vector<std::unique_ptr<Entity>>> m_entities;
+    std::map<EntityID, std::vector<EntityPtr<Entity>>> m_entities;
+    static EntityManager                              *m_instance;
 
+    /** Disable all constructors */
+    EntityManager();
+    EntityManager(EntityManager &o)                   = delete;
+    EntityManager(EntityManager &&o)                  = delete;
+    EntityManager &operator=(const EntityManager &o)  = delete;
+    EntityManager &operator=(const EntityManager &&o) = delete;
 protected:
 public:
-    EntityManager() {}
+    ~EntityManager();
 
-    /** Creates and allocates a new entity object of type */
+    /**
+     * @brief Get the Instance object
+     *
+     * @return EntityManager& reference to EntityManager
+     */
+    static EntityManager &getInstance();
+
+    /**
+     * @brief Registers @p entity to list of entities with matching @p id
+     *
+     * @param id EntityID retrieved with @ref getEntityID<T>()
+     * @param entity entity to register
+     */
+    void registerEntity(EntityID id, Entity *const entity);
 
     /**
      * @brief Creates and allocates entity of type @p T
@@ -48,8 +67,7 @@ public:
 
         T *e = new T(std::forward<TArgs>(args)...);
         L_DEBUG("{}, addr({}) hash(0x{:x})", typeid(T).name(), static_cast<void *>(e), typeid(T).hash_code());
-        std::unique_ptr<Entity> p(e);
-        m_entities[std::type_index(typeid(T))].push_back(std::move(p));
+        registerEntity(getEntityID<T>(), e);
 
         e->init();
         return *e;
@@ -74,14 +92,7 @@ public:
         l_entities.reserve(numEntities);
 
         for (int i = 0; i < numEntities; i++)
-        {
-            T *e = new T(std::forward<TArgs>(args)...);
-            l_entities.emplace_back(e);
-            std::unique_ptr<T> p(e);
-            m_entities[std::type_index(typeid(T))].push_back(std::move(p));
-
-            e->init();
-        }
+            l_entities.push_back(&addEntity<T>(std::forward<TArgs>(args)...));
 
         return l_entities;
     }
@@ -95,7 +106,7 @@ public:
     template <typename T>
     void foreach (const std::function<void(T &)> &callback)
     {
-        auto &a = m_entities[std::type_index(typeid(T))];
+        auto &a = m_entities[getEntityID<T>()];
         for (auto &c : a)
         {
             /** @todo: maybe build vector of shared_ptrs first */

@@ -5,7 +5,6 @@
  * @{
  */
 
-#include "common.hpp"
 #include "component.hpp"
 
 #include <memory>
@@ -21,9 +20,32 @@ class ComponentManager
 {
 private:
     std::array<std::vector<std::weak_ptr<Component>>, maxComponents> m_components;
+    static ComponentManager                                         *m_instance;
+
+    /** Disable all constructors */
+    ComponentManager();
+    ComponentManager(ComponentManager &o)                   = delete;
+    ComponentManager(ComponentManager &&o)                  = delete;
+    ComponentManager &operator=(const ComponentManager &o)  = delete;
+    ComponentManager &operator=(const ComponentManager &&o) = delete;
 protected:
 public:
-    ComponentManager();
+    ~ComponentManager();
+
+    /**
+     * @brief Get the Instance object
+     *
+     * @return ComponentManager& reference to ComponentManager
+     */
+    static ComponentManager &getInstance();
+
+    /**
+     * @brief Register @p component to list of component with matching @p id
+     *
+     * @param id ComponentID retrieved with @ref getComponentID<T>
+     * @param component component to register
+     */
+    void registerComponent(ComponentID id, const ComponentPtr<Component> &component);
 
     /**
      * @brief Register @p component to the list of components of type @p T
@@ -31,10 +53,10 @@ public:
      * @tparam T typename of @p component
      * @param component component to register
      */
-    template <typename T>
-    void registerComponent(std::shared_ptr<Component> &component)
+    template <typename T, std::enable_if_t<std::is_base_of<Component, T>::value, bool> = true>
+    void registerComponent(const ComponentPtr<T> &component)
     {
-        m_components[getComponentID<T>()].push_back(component);
+        registerComponent(getComponentID<T>(), component);
     }
 
     /**

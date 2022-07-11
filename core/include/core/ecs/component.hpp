@@ -5,14 +5,47 @@
  * @{
  */
 
-#include "common.hpp"
 #include "../time.hpp"
 
 #include <memory>
+#include <vector>
 
+class Component; /** Forward declaration for Component Class */
 class Entity; /** Forward declaration for Base Entity Class */
 class EntityManager; /** Forward declaration for EntityManager Class */
 class ComponentManager; /** Forward declaration for ComponentManager Class */
+
+using ComponentID                   = std::size_t;
+constexpr std::size_t maxComponents = 32;
+
+/**
+ * @todo Replace component ID with no RTTI
+ *
+ * template<typename T>
+ * struct type { static void id() { } };
+ *
+ * template<typename T>
+ * std::size_t type_id() { return reinterpret_cast<std::size_t>(&type<T>::id); }
+ */
+inline ComponentID getComponentID()
+{
+    static ComponentID lastID = 0;
+    return lastID++;
+}
+
+template <typename T>
+inline ComponentID getComponentID() noexcept
+{
+    static ComponentID cID = getComponentID();
+    return cID;
+}
+
+template <typename T = Component, std::enable_if_t<std::is_base_of<Component, T>::value, bool> = true>
+using ComponentPtr = std::shared_ptr<T>; /** Alias for Component Pointer */
+
+template <typename T = Component, std::enable_if_t<std::is_base_of<Component, T>::value, bool> = true>
+using ComponentList = std::vector<ComponentPtr<T>>; /** Alias for vector of ComponentPtr */
+
 
 /**
  * @brief Contains the Base Component Class for the ECS System
@@ -48,11 +81,5 @@ public:
     friend EntityManager;
     friend ComponentManager;
 };
-
-template <typename T, std::enable_if_t<std::is_base_of<Component, T>::value, bool> = true>
-using ComponentPtr = std::shared_ptr<T>; /** Alias for Component Pointer */
-
-template <typename T, std::enable_if_t<std::is_base_of<Component, T>::value, bool> = true>
-using ComponentList = std::vector<ComponentPtr<T>>; /** Alias for vector of ComponentPtr */
 
 /** @} endgroup ECS */
