@@ -69,11 +69,18 @@ AssetID OpenGLAssetManager::loadMesh(const std::string &name)
 AssetID OpenGLAssetManager::loadTexture(const std::string &name)
 {
     L_TAG("OpenGLAssetManager::loadMesh");
-    auto   &cache = m_internal->meshCache;
+    auto   &cache = m_internal->textureCache;
     AssetID id    = cache.size();
 
     /** Get paths from asset manager */
     AssetInventory::AssetPaths assetPaths = AssetInventory::resolvePath("texture", name);
+
+    /** Load texture from file */
+    assert(assetPaths.size() == 1);
+    assets::Texture texture(assetPaths[0]);
+
+    cache.insert(std::make_pair(id, OpenGLTexture(texture)));
+    L_DEBUG("Texture loaded {}: {}", id, name);
 
     return id;
 }
