@@ -60,16 +60,23 @@ Game::Game(const std::string &windowTitle, const int &windowWidth, const int &wi
     // }
     // g_renderer = new VulkanRenderer(m_window);
 #ifdef CORE_RENDERER_OPENGL
+    L_DEBUG("Initializing Renderer (OpenGL)");
     g_renderer = new OpenGLRenderer(windowTitle, windowWidth, windowHeight);
 #endif
+    L_DEBUG("Initializing InputManager");
     g_inputManager     = new InputManager();
+    L_DEBUG("Initializing EventManager");
     g_eventManager     = new EventManager();
-    g_componentManager = new ComponentManager();
-    g_entityManager    = new EntityManager();
+    L_DEBUG("Initializing ComponentManager");
+    g_componentManager = &ComponentManager::getInstance();
+    L_DEBUG("Initializing EntityManager");
+    g_entityManager    = &EntityManager::getInstance();
+    L_DEBUG("Initializing AssetInventory");
     AssetInventory::loadInventory();
 
     /** FPS Defaults */
     m_targetDelta = time_ds(time_step::den / 60);
+    L_DEBUG("Initialization done");
 }
 
 Game::~Game()
