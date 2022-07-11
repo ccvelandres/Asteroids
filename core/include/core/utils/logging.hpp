@@ -40,3 +40,9 @@ constexpr const char *baseFileName(const char *path)
 #define L_THROW(EX, STR, ...)     throw EX(fmt::format("[{}] " STR, tag__, ##__VA_ARGS__))
 #define L_THROW_RUNTIME(STR, ...) L_THROW(std::runtime_error, STR, ##__VA_ARGS__)
 #define L_THROW_LOGIC(STR, ...)   L_THROW(std::logic_error, STR, ##__VA_ARGS__)
+
+#define L_ASSERT(cond, msg, ...)                       \
+    if (static_cast<bool>(cond) ? 0 : 1)               \
+    {                                                  \
+        L_THROW(std::logic_error, msg, ##__VA_ARGS__); \
+    }
