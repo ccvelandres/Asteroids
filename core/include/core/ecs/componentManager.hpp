@@ -28,6 +28,14 @@ private:
     ComponentManager(ComponentManager &&o)            = delete;
     ComponentManager &operator=(ComponentManager &o)  = delete;
     ComponentManager &operator=(ComponentManager &&o) = delete;
+
+    /**
+     * @brief Register @p component to list of component with matching @p id
+     *
+     * @param id ComponentID retrieved with @ref getComponentID<T>
+     * @param component component to register
+     */
+    void registerComponent(ComponentID id, const ComponentPtr<Component> &component);
 protected:
 public:
     ~ComponentManager();
@@ -38,14 +46,6 @@ public:
      * @return ComponentManager& reference to ComponentManager
      */
     static ComponentManager &getInstance();
-
-    /**
-     * @brief Register @p component to list of component with matching @p id
-     *
-     * @param id ComponentID retrieved with @ref getComponentID<T>
-     * @param component component to register
-     */
-    void registerComponent(ComponentID id, const ComponentPtr<Component> &component);
 
     /**
      * @brief Register @p component to the list of components of type @p T
@@ -106,6 +106,8 @@ public:
     // void clean();
     /** Refreshes the component index */
     void refresh();
+
+    friend Entity;
 };
 
 /** @} endgroup ECS */

@@ -44,11 +44,18 @@ using EntityList = std::vector<T *>;
 class Entity
 {
 private:
-    std::array<std::shared_ptr<Component>, maxComponents> m_components;
-    std::bitset<maxComponents>                            m_componentBitset;
+    std::array<ComponentPtr<Component>, maxComponents> m_components;
+    std::bitset<maxComponents>                         m_componentBitset;
 
     bool isActive = true;
 
+    /**
+     * @brief Registers component to the entity 
+     * 
+     * @param id componentID retrieved from getComponentID<T>()
+     * @param component component to register
+     */
+    void addComponent(ComponentID id, const ComponentPtr<Component> &component);
 protected:
     Entity();
 public:
@@ -93,24 +100,15 @@ public:
     template <typename T, typename... TArgs, std::enable_if_t<std::is_base_of<Component, T>::value, bool> = true>
     T &addComponent(TArgs &&...args)
     {
+        L_TAG("Entity::addComponent<T>");
         /** @todo: change return type to ComponentPtr<T> */
+        if (hasComponent<T>()) L_THROW_LOGIC("Entity already has component {}", typeid(T).name());
 
-        T *c = nullptr;
-        if (!hasComponent<T>())
-        {
-            c = new T(std::forward<TArgs>(args)...);
-            ComponentPtr<T> p(c);
-
-            m_components[getComponentID<T>()]      = p;
-            m_componentBitset[getComponentID<T>()] = true;
-            /** @todo: refactor so we don't depend on Game class? */
-            ComponentManager::getInstance().registerComponent<T>(p);
-        }
-        else
-        {
-            c = dynamic_cast<T *>(m_components[getComponentID<T>()].get());
-        }
-
+        T *c = new T(std::forward<TArgs>(args)...);
+        L_ASSERT(c != NULL, "Failed to instantiate component of type {}", typeid(T).name());
+        ComponentPtr<T> p(c);
+        
+        addComponent(getComponentID<T>(), p);
         c->m_entity = this;
         c->init();
 

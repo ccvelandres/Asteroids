@@ -33,6 +33,14 @@ private:
     EntityManager(EntityManager &&o)            = delete;
     EntityManager &operator=(EntityManager &o)  = delete;
     EntityManager &operator=(EntityManager &&o) = delete;
+
+    /**
+     * @brief Registers @p entity to list of entities with matching @p id
+     *
+     * @param id EntityID retrieved with @ref getEntityID<T>()
+     * @param entity entity to register
+     */
+    void registerEntity(EntityID id, Entity *const entity);
 protected:
 public:
     ~EntityManager();
@@ -43,14 +51,6 @@ public:
      * @return EntityManager& reference to EntityManager
      */
     static EntityManager &getInstance();
-
-    /**
-     * @brief Registers @p entity to list of entities with matching @p id
-     *
-     * @param id EntityID retrieved with @ref getEntityID<T>()
-     * @param entity entity to register
-     */
-    void registerEntity(EntityID id, Entity *const entity);
 
     /**
      * @brief Creates and allocates entity of type @p T

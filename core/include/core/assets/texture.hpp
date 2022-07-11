@@ -13,10 +13,13 @@ namespace assets
         SDL_Surface *m_surface;
     protected:
     public:
+        Texture();
         Texture(const std::string &path);
-        Texture(Texture &&o);
-        Texture &operator=(Texture &&o);
         ~Texture();
+        Texture(Texture &o)             = delete;
+        Texture &operator=(Texture &o)  = delete;
+        Texture(Texture &&o)            = default;
+        Texture &operator=(Texture &&o) = default;
 
         SDL_Surface *getSurface() const;
     };

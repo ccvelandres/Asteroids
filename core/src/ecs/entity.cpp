@@ -5,3 +5,10 @@
 
 Entity::Entity()  = default;
 Entity::~Entity() = default;
+
+void Entity::addComponent(ComponentID id, const ComponentPtr<Component> &component)
+{
+    m_components[id]      = component;
+    m_componentBitset[id] = true;
+    ComponentManager::getInstance().registerComponent(id, component);
+}
