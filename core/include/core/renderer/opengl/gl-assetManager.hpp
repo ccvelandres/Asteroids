@@ -18,9 +18,9 @@ public:
     OpenGLAssetManager &operator=(OpenGLAssetManager &&o);
     ~OpenGLAssetManager();
 
-    virtual AssetID loadPipeline(const std::string &name) override;
-    virtual AssetID loadMesh(const std::string &name) override;
-    virtual AssetID loadTexture(const std::string &name) override;
+    AssetID loadPipeline(const std::string &name) override;
+    AssetID loadMesh(const std::string &name) override;
+    AssetID loadTexture(const std::string &name) override;
 
     OpenGLMesh     &getMesh(AssetID id);
     OpenGLPipeline &getPipeline(AssetID id);

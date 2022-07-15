@@ -6,9 +6,9 @@
 struct OpenGLAssetManager::Internal
 {
     /** @todo: probably better to replace this with vector? but need to ensure index-value should not change ever */
-    std::unordered_map<AssetID, OpenGLMesh>     meshCache;
-    std::unordered_map<AssetID, OpenGLPipeline> pipelineCache;
-    std::unordered_map<AssetID, OpenGLTexture>  textureCache;
+    std::vector<OpenGLMesh>     meshCache;
+    std::vector<OpenGLPipeline> pipelineCache;
+    std::vector<OpenGLTexture>  textureCache;
 
     Internal()
     {
@@ -26,8 +26,9 @@ struct OpenGLAssetManager::Internal
 AssetID OpenGLAssetManager::loadPipeline(const std::string &name)
 {
     L_TAG("OpenGLAssetManager::loadPipeline");
-    auto &cache = m_internal->pipelineCache;
-    AssetID id = cache.size();
+    auto   &cache     = m_internal->pipelineCache;
+    auto    insertPos = cache.end();
+    AssetID id        = cache.size();
 
     /** Get paths from asset manager */
     AssetInventory::AssetPaths assetPaths = AssetInventory::resolvePath("pipeline", name);
@@ -43,7 +44,7 @@ AssetID OpenGLAssetManager::loadPipeline(const std::string &name)
         stages.push_back(OpenGLPipeline::ShaderStage(type, stagePath));
     }
 
-    cache.insert(std::make_pair(id, OpenGLPipeline(name, stages)));
+    cache.insert(insertPos, OpenGLPipeline(name, stages));
     L_DEBUG("Pipeline created {}: {}", id, name);
     return id;
 }
@@ -51,8 +52,9 @@ AssetID OpenGLAssetManager::loadPipeline(const std::string &name)
 AssetID OpenGLAssetManager::loadMesh(const std::string &name)
 {
     L_TAG("OpenGLAssetManager::loadMesh");
-    auto   &cache = m_internal->meshCache;
-    AssetID id    = cache.size();
+    auto   &cache     = m_internal->meshCache;
+    auto    insertPos = cache.end();
+    AssetID id        = cache.size();
 
     /** Get paths from asset manager */
     L_DEBUG("Loading mesh from {}", name);
@@ -62,15 +64,16 @@ AssetID OpenGLAssetManager::loadMesh(const std::string &name)
     assert(assetPaths.size() == 1);
     assets::Mesh mesh(assetPaths[0]);
 
-    cache.insert(std::make_pair(id, OpenGLMesh(mesh)));
+    cache.insert(insertPos, OpenGLMesh(mesh));
     L_DEBUG("Mesh loaded {}: {}", id, name);
     return id;
 }
 AssetID OpenGLAssetManager::loadTexture(const std::string &name)
 {
     L_TAG("OpenGLAssetManager::loadMesh");
-    auto   &cache = m_internal->textureCache;
-    AssetID id    = cache.size();
+    auto   &cache     = m_internal->textureCache;
+    auto    insertPos = cache.end();
+    AssetID id        = cache.size();
 
     /** Get paths from asset manager */
     AssetInventory::AssetPaths assetPaths = AssetInventory::resolvePath("texture", name);
@@ -79,7 +82,7 @@ AssetID OpenGLAssetManager::loadTexture(const std::string &name)
     assert(assetPaths.size() == 1);
     assets::Texture texture(assetPaths[0]);
 
-    cache.insert(std::make_pair(id, OpenGLTexture(texture)));
+    cache.insert(insertPos, OpenGLTexture(texture));
     L_DEBUG("Texture loaded {}: {}", id, name);
 
     return id;
@@ -89,9 +92,8 @@ OpenGLMesh &OpenGLAssetManager::getMesh(AssetID id)
 {
     L_TAG("OpenGLAssetManager::getMesh");
     auto &cache = m_internal->meshCache;
-    auto  it    = cache.find(id);
-    if (it != cache.find(id))
-        return (*it).second;
+    if (id < cache.size())
+        return cache.at(id);
     else
         L_THROW_RUNTIME("Cache empty for AssetID: {}", id);
 }
@@ -100,9 +102,8 @@ OpenGLPipeline &OpenGLAssetManager::getPipeline(AssetID id)
 {
     L_TAG("OpenGLAssetManager::getPipeline");
     auto &cache = m_internal->pipelineCache;
-    auto  it    = cache.find(id);
-    if (it != cache.find(id))
-        return (*it).second;
+    if (id < cache.size())
+        return cache.at(id);
     else
         L_THROW_RUNTIME("Cache empty for AssetID: {}", id);
 }
@@ -111,9 +112,8 @@ OpenGLTexture &OpenGLAssetManager::getTexture(AssetID id)
 {
     L_TAG("OpenGLAssetManager::getTexture");
     auto &cache = m_internal->textureCache;
-    auto  it    = cache.find(id);
-    if (it != cache.find(id))
-        return (*it).second;
+    if (id < cache.size())
+        return cache.at(id);
     else
         L_THROW_RUNTIME("Cache empty for AssetID: {}", id);
 }
