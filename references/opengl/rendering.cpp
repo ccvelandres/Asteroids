@@ -434,15 +434,15 @@ int main(int argc, const char *argv[])
     float     fieldOfView     = 90.0f;
     float     aspectRatio     = 4.0f / 3.0f;
 
-    glm::vec3 cameraPosition(0.0f, 0.0f, 5.0f), positionInput(0.0f);
+    glm::vec3 cameraPosition(-5.0f, 0.0f, -5.0f), cameraDirection(5.0f, 0.0f, 5.0f), positionInput(0.0f);
     glm::vec2 cameraAngle(3.14f, 0.0f), cameraInput(0.0f);
     float     cameraSpeed = 0.1f;
 
     auto keyFunc = [&]() {
         const uint8_t *state = SDL_GetKeyboardState(NULL);
-        cameraInput.y     = (state[SDL_SCANCODE_UP] ? cameraSpeed : (state[SDL_SCANCODE_DOWN] ? -cameraSpeed : 0));
-        cameraInput.x = (state[SDL_SCANCODE_LEFT] ? cameraSpeed : (state[SDL_SCANCODE_RIGHT] ? -cameraSpeed : 0));
-        positionInput.z     = (state[SDL_SCANCODE_W] ? cameraSpeed : (state[SDL_SCANCODE_S] ? -cameraSpeed : 0));
+        cameraInput.y        = (state[SDL_SCANCODE_UP] ? cameraSpeed : (state[SDL_SCANCODE_DOWN] ? -cameraSpeed : 0));
+        cameraInput.x   = (state[SDL_SCANCODE_LEFT] ? cameraSpeed : (state[SDL_SCANCODE_RIGHT] ? -cameraSpeed : 0));
+        positionInput.z = (state[SDL_SCANCODE_W] ? cameraSpeed : (state[SDL_SCANCODE_S] ? -cameraSpeed : 0));
         positionInput.x = (state[SDL_SCANCODE_A] ? cameraSpeed : (state[SDL_SCANCODE_D] ? -cameraSpeed : 0));
         positionInput.y = (state[SDL_SCANCODE_LSHIFT] ? cameraSpeed : (state[SDL_SCANCODE_LCTRL] ? -cameraSpeed : 0));
         cameraSpeed += state[SDL_SCANCODE_KP_PLUS] ? 1.0f : (state[SDL_SCANCODE_KP_MINUS] ? -1.0f : 0);
@@ -476,39 +476,34 @@ int main(int argc, const char *argv[])
 
         cameraAngle += cameraInput;
 
-        glm::vec3 cameraDirection(cos(cameraAngle.y) * sin(cameraAngle.x),
-                                  sin(cameraAngle.y),
-                                  cos(cameraAngle.y) * cos(cameraAngle.x));
-        glm::vec3 right(sin(cameraAngle.x - 3.14f / 2), 0, cos(cameraAngle.x - 3.14f / 2));
+        cameraDirection = glm::vec3(cos(cameraAngle.y) * sin(cameraAngle.x),
+                                    sin(cameraAngle.y),
+                                    cos(cameraAngle.y) * cos(cameraAngle.x));
+        // glm::vec3 right(sin(cameraAngle.x - 3.14f / 2), 0, cos(cameraAngle.x - 3.14f / 2));
+        glm::vec3 right = glm::normalize(glm::cross(glm::vec3(0.0f, 1.0f, 0.0f), cameraDirection));
         glm::vec3 up = glm::cross(right, cameraDirection);
 
         cameraPosition += cameraDirection * positionInput.z;
         cameraPosition += right * positionInput.x;
         cameraPosition += up * positionInput.y;
 
-
         spdlog::trace("------------------------------");
         spdlog::trace("cameraInput:      x:       {:16}, y:      {:16}", cameraInput.x, cameraInput.y);
         spdlog::trace("Angles:              xAngle:  {:16}, yAngle: {:16}", cameraAngle.x, cameraAngle.y);
-        spdlog::trace("cameraDirection      x:       {:16}, y:      {:16}, z:      {:16}", cameraDirection.x,cameraDirection.y, cameraDirection.z);
-        spdlog::trace("right:               x:       {:16}, y:      {:16}, z:      {:16}", right.x,right.y, right.z);
-        spdlog::trace("up:                  x:       {:16}, y:      {:16}, z:      {:16}", up.x,up.y, up.z);
+        spdlog::trace("cameraDirection      x:       {:16}, y:      {:16}, z:      {:16}",
+                      cameraDirection.x,
+                      cameraDirection.y,
+                      cameraDirection.z);
+        spdlog::trace("right:               x:       {:16}, y:      {:16}, z:      {:16}", right.x, right.y, right.z);
+        spdlog::trace("up:                  x:       {:16}, y:      {:16}, z:      {:16}", up.x, up.y, up.z);
         glm::mat4 modelMatrix(1.0f);
         glm::mat4 projectionMatrix = glm::perspective(glm::radians(fieldOfView), aspectRatio, 0.1f, 100.0f);
-        glm::mat4 viewMatrix = glm::lookAt(cameraPosition, cameraPosition + cameraDirection, up);
-        glm::mat4 mvp        = projectionMatrix * viewMatrix * modelMatrix;
+        glm::mat4 viewMatrix       = glm::lookAt(cameraPosition, cameraPosition + cameraDirection, up);
+        glm::mat4 mvp              = projectionMatrix * viewMatrix * modelMatrix;
 
         if (nextRender < SDL_GetTicks())
         {
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-            // renderVertexBuffer(mvpShaderID,
-            //                    GL_TRIANGLES,
-            //                    cubeVertexBuffer,
-            //                    cubeTexCoordBufferID,
-            //                    cubeTextureID,
-            //                    g_vertex_buffer_cube.size() / 3,
-            //                    mvp);
 
             renderMesh(mvpShaderID, GL_TRIANGLES, crateVertexBufferID, crateIndiceBufferID, g_indice_buffer_crate.size(), mvp);
 
