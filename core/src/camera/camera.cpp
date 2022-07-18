@@ -54,9 +54,9 @@ void Camera::updateMatrix()
     }
 }
 
-void Camera::translate(glm::vec3 v) { m_position += v; }
+void Camera::translate(const glm::vec3 &v) { m_position += v; }
 
-void Camera::rotate(float angle, glm::vec3 axis)
+void Camera::rotate(float angle, const glm::vec3 &axis)
 {
     m_position = glm::vec3(glm::rotate(glm::mat4(1.0f), glm::radians(angle), axis) * glm::vec4(m_position, 1.0f));
 }

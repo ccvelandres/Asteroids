@@ -57,7 +57,7 @@ public:
      *
      * @param v translation vector
      */
-    void translate(glm::vec3 v);
+    void translate(const glm::vec3 &v);
 
     /**
      * @brief Rotates the camera @p angle degrees along the axis
@@ -65,7 +65,7 @@ public:
      * @param angle rotation angle in degrees
      * @param ax rotation axis
      */
-    void rotate(float angle, glm::vec3 ax);
+    void rotate(float angle, const glm::vec3 &ax);
 
     /**
      * @brief Updates the camera matrices. Should be called after updating components to update the matrices
