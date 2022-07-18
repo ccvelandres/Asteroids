@@ -5,6 +5,8 @@
 
 #include "profiler.hpp"
 
+/** @todo: add fallback macros to __func__, then replace L_TAG */
+
 /** We use alias for spdlog in case we change it in the future */
 namespace logging
 {
@@ -45,4 +47,10 @@ constexpr const char *baseFileName(const char *path)
     if (static_cast<bool>(cond) ? 0 : 1)               \
     {                                                  \
         L_THROW(std::logic_error, msg, ##__VA_ARGS__); \
+    }
+
+#define L_UNIMPLEMENTED()    \
+    {                        \
+        L_TAG(__func__);             \
+        L_THROW_RUNTIME("Unimplemented function"); \
     }
