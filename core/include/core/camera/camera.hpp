@@ -31,6 +31,9 @@ private:
 
     glm::mat4  m_projectionMatrix;  /** the projection matrix */
     glm::mat4  m_viewMatrix;        /** the view matrix */
+    glm::vec3  m_up;                /** the up vector for the camera */
+protected:
+public:
     glm::vec3  m_position;          /** the position of the camera */
     glm::vec3  m_front;             /** direction vector where the camera is facing (unit vector) */
     Projection m_projection;        /** projection mode of camera */
@@ -39,9 +42,6 @@ private:
     float      m_aspectRatio;       /** aspect ratio in perspective mode */
     float      m_nearClippingPlane; /** near clipping plane in perspective mode */
     float      m_farClippingPlane;  /** far clipping plane in perspective mode */
-    glm::vec3  m_up;                /** the up vector for the camera */
-protected:
-public:
 
     Camera(const float &width, const float &height, Projection mode);
 
