@@ -9,6 +9,7 @@ SET(CMAKE_INSTALL_RPATH "$\{ORIGIN\}")
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/out")
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/out")
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/out")
+set(CMAKE_DOCS_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/docs")
 set(BUILD_SHARED_LIBS ON)
 
 set(CMAKE_C_STANDARD 99) # Requires C11 standard
@@ -17,6 +18,10 @@ set(CMAKE_CXX_STANDARD 17) # Requires C++20 standard
 ## Core Options
 
 set(CORE_LOG_ENABLE_TAG OFF CACHE BOOL "Sets whether the tags are included in logs")
+set(CORE_BUILD_REFERENCES OFF CACHE BOOL "Build reference binaries")
+set(CORE_BUILD_DOXYGEN OFF CACHE BOOL "Build documentation")
+set(CORE_BUILD_DOXYGEN_HTML ON CACHE BOOL "Generate HTML documentation")
+set(CORE_BUILD_DOXYGEN_MAN ON CACHE BOOL "Generate MANPAGE documentation")
 
 #################################################################
 ## Project Settings
@@ -143,3 +148,36 @@ add_custom_target(Shaders ALL
 
 # Package assets with binary
 file(COPY assets DESTINATION ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
+
+
+#################################################################
+## References
+
+if(CORE_BUILD_REFERENCES)
+    add_subdirectory(references)
+endif()
+
+#################################################################
+## Documentation
+
+if(CORE_BUILD_DOXYGEN)
+    find_package(Doxygen
+        REQUIRED dot
+        OPTIONAL_COMPONENTS mscgen dia)
+
+    if(DOXYGEN_FOUND)
+        message(STATUS "Documentation: ON")
+
+        set(DOXYGEN_OUTPUT_DIRECTORY ${CMAKE_DOCS_OUTPUT_DIRECTORY})
+        set(DOXYGEN_GENERATE_HTML ${CORE_BUILD_DOXYGEN_HTML})
+        set(DOXYGEN_GENERATE_MAN ${CORE_BUILD_DOXYGEN_MAN})
+        set(DOXYGEN_STRIP_FROM_PATH "include")
+
+        doxygen_add_docs(docs
+            ${CMAKE_SOURCE_DIR}/core
+            WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/core
+            COMMENT "Generate man pages")
+    elseif()
+        message(STATUS "Documentation: DOXYGEN_NOT_FOUND")
+    endif()
+endif()

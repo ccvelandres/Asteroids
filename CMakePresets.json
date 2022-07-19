@@ -6,7 +6,10 @@
             "displayName": "Examples",
             "description": "Debug build",
             "cacheVariables": {
-                "CORE_LOG_ENABLE_TAG": "ON"
+                "CORE_LOG_ENABLE_TAG": "ON",
+                "CORE_BUILD_REFERENCES": "ON",
+                "CORE_BUILD_DOXYGEN": "ON",
+                "CMAKE_EXPORT_COMPILE_COMMANDS": "ON"
             }
         }
     ],
