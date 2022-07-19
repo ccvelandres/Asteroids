@@ -113,7 +113,7 @@ void OpenGLRenderer::refresh() {}
 
 bool OpenGLRenderer::renderBegin() { return true; }
 
-void OpenGLRenderer::render(const std::vector<assets::Mesh> &meshes) {}
+ender() {}
 
 void OpenGLRenderer::renderEnd() {}
 

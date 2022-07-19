@@ -23,6 +23,6 @@ public:
     void refresh() override;
 
     bool renderBegin() override;
-    void render(const std::vector<assets::Mesh> &meshes) override;
+    void render() override;
     void renderEnd() override;
 };
