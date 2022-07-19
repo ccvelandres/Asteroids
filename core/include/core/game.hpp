@@ -11,8 +11,9 @@ class EntityManager;
 class ComponentManager;
 class EventManager;
 class InputManager;
-
+class Camera;
 class Renderer;
+
 
 class Game
 {
@@ -45,4 +46,5 @@ public:
     static InputManager     *inputManager();     /** Get the InputManager Object */
     static Time             *time();             /** Get the Time Manager Object */
     static Renderer         *renderer();         /** Get the Renderer Object */
+    static Camera           *camera();           /** Get the default Camera object */
 };
