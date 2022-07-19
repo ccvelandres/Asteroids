@@ -29,6 +29,7 @@ class OpenGLPipeline
 private:
     struct Internal;
     std::unique_ptr<Internal> m_internal;
+    OpenGLPipeline();
 protected:
 public:
     struct ShaderStage
@@ -39,7 +40,6 @@ public:
         ShaderStage(GLenum shaderType, std::string shaderSource) : shaderType(shaderType), shaderSource(shaderSource) {}
     };
 
-    OpenGLPipeline();
     OpenGLPipeline(const std::string &name, const std::vector<ShaderStage> &shaderStages);
     ~OpenGLPipeline();
     
