@@ -34,9 +34,9 @@ namespace assets::loaders::obj
 
         bool parse(std::istream &s) noexcept;
     public:
-        std::vector<float> vertices; /** Contains all the geometry vertices */
-        std::vector<float> normals; /** vertex normals */
-        std::vector<float> texCoordinates; /** Texture coordinates */
+        std::vector<float> vertices; /** Geometry vertices */
+        std::vector<float> texCoords; /** Texture coordinates */
+        std::vector<float> normals; /** Vertex normals */
         std::vector<Object> objects; /** all objects in obj file */
         
         Loader();

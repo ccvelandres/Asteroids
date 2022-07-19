@@ -5,7 +5,7 @@
 class Vertex
 {
 public:
-    /** @todo: replace vector with maybe glm vectors */
     glm::vec3 position;
-    glm::vec2 texCoordinates;
+    glm::vec3 normals;
+    glm::vec2 texCoords;
 };

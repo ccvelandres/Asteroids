@@ -296,7 +296,7 @@ namespace assets::loaders::obj
 
         /** Move vectors to class */
         std::swap(v, vertices);
-        std::swap(vt, texCoordinates);
+        std::swap(vt, texCoords);
         std::swap(vn, normals);
 
         return true;
@@ -317,7 +317,7 @@ namespace assets::loaders::obj
 
         normals.clear();
         objects.clear();
-        texCoordinates.clear();
+        texCoords.clear();
         vertices.clear();
 
         L_DEBUG("Parsing {}", filename);

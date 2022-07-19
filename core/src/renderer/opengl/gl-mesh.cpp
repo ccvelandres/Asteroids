@@ -14,8 +14,8 @@ GLuint createVertexBuffer(const assets::Mesh &mesh)
         bufferData.push_back(vertex.position.y);
         bufferData.push_back(vertex.position.z);
         /** Texture Coordinates */
-        bufferData.push_back(vertex.texCoordinates.x);
-        bufferData.push_back(vertex.texCoordinates.y);
+        bufferData.push_back(vertex.texCoords.x);
+        bufferData.push_back(vertex.texCoords.y);
     }
 
     GLuint bufferId;
@@ -43,12 +43,14 @@ GLuint createIndiceBuffer(const assets::Mesh &mesh)
 
 struct OpenGLMesh::Internal
 {
-    const GLuint vertexBufferId;
-    const GLuint indiceBufferId;
+    const GLuint   vertexBufferId;
+    const GLuint   indiceBufferId;
+    const uint32_t indiceCount;
 
     Internal(const assets::Mesh &mesh)
         : vertexBufferId(::createVertexBuffer(mesh)),
-          indiceBufferId(::createIndiceBuffer(mesh))
+          indiceBufferId(::createIndiceBuffer(mesh)),
+          indiceCount(mesh.getIndices().size())
     {
         L_TAG("OpenGLMesh::Internal");
         L_TRACE("Internal resources initialized ({})", static_cast<void *>(this));
@@ -68,5 +70,6 @@ OpenGLMesh::OpenGLMesh(OpenGLMesh &&o)            = default;
 OpenGLMesh &OpenGLMesh::operator=(OpenGLMesh &&o) = default;
 OpenGLMesh::~OpenGLMesh()                         = default;
 
-GLuint OpenGLMesh::getVertexBufferId() const { return m_internal->vertexBufferId; }
-GLuint OpenGLMesh::getIndiceBufferId() const { return m_internal->indiceBufferId; }
+GLuint   OpenGLMesh::getVertexBufferId() const { return m_internal->vertexBufferId; }
+GLuint   OpenGLMesh::getIndiceBufferId() const { return m_internal->indiceBufferId; }
+uint32_t OpenGLMesh::getIndiceCount() const { return m_internal->indiceCount; }

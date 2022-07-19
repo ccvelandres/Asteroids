@@ -59,9 +59,14 @@ namespace assets
                             objLoader.vertices[(3 * index.v) + 1],
                             objLoader.vertices[(3 * index.v) + 2],
                         },
-                        .texCoordinates = {
-                            objLoader.texCoordinates[(2 * index.vt) + 0],
-                            objLoader.texCoordinates[(2 * index.vt) + 1] 
+                        .normals = {
+                            objLoader.normals[(3 * index.vn) + 0],
+                            objLoader.normals[(3 * index.vn) + 1],
+                            objLoader.normals[(3 * index.vn) + 2],
+                        },
+                        .texCoords = {
+                            objLoader.texCoords[(2 * index.vt) + 0],
+                            objLoader.texCoords[(2 * index.vt) + 1] 
                         }
                     };
 
