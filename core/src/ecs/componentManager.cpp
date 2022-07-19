@@ -3,7 +3,7 @@
 ComponentManager *ComponentManager::m_instance = nullptr;
 
 ComponentManager::ComponentManager() = default;
-ComponentManager::~ComponentManager() { delete m_instance; }
+ComponentManager::~ComponentManager() { m_instance = nullptr; }
 
 ComponentManager &ComponentManager::getInstance()
 {

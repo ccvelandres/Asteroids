@@ -4,7 +4,7 @@
 EntityManager *EntityManager::m_instance = nullptr;
 
 EntityManager::EntityManager() = default;
-EntityManager::~EntityManager() { delete m_instance; }
+EntityManager::~EntityManager() { m_instance = nullptr; }
 
 EntityManager &EntityManager::getInstance()
 {
