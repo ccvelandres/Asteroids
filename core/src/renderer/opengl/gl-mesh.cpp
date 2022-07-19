@@ -5,8 +5,8 @@
 static GLuint createVertexBuffer(const assets::Mesh &mesh)
 {
     L_TAG("OpenGLMesh::createVertexBuffer");
-    GLsizeiptr bufferSize = 0;
-    const void* bufferDataPtr = nullptr;
+    GLsizeiptr  bufferSize    = 0;
+    const void *bufferDataPtr = nullptr;
 
     // std::vector<float> bufferData;
     // for (const auto &vertex : mesh.getVertices())
@@ -28,8 +28,8 @@ static GLuint createVertexBuffer(const assets::Mesh &mesh)
 
     /** @todo: is it possible to just cast the std::vector<Vertex>? Is it POD? */
     auto &vertice = mesh.getVertices();
-    bufferSize = (vertice.size() * sizeof(Vertex));
-    bufferDataPtr = reinterpret_cast<const void*>(vertice.data());
+    bufferSize    = (vertice.size() * sizeof(Vertex));
+    bufferDataPtr = reinterpret_cast<const void *>(vertice.data());
 
     L_DEBUG("Loading {} bytes", bufferSize);
 
@@ -66,11 +66,19 @@ struct OpenGLMesh::Internal
     const GLuint   vertexBufferId;
     const GLuint   indiceBufferId;
     const uint32_t indiceCount;
+    const GLsizei  stride;
+    const GLsizei  offsetPosition;
+    const GLsizei  offsetNormals;
+    const GLsizei  offsetTexCoords;
 
     Internal(const assets::Mesh &mesh)
         : vertexBufferId(::createVertexBuffer(mesh)),
           indiceBufferId(::createIndiceBuffer(mesh)),
-          indiceCount(mesh.getIndices().size())
+          indiceCount(mesh.getIndices().size()),
+          stride(sizeof(Vertex)),
+          offsetPosition(offsetof(Vertex, position)),
+          offsetNormals(offsetof(Vertex, normals)),
+          offsetTexCoords(offsetof(Vertex, texCoords))
     {
         L_TAG("OpenGLMesh::Internal");
         L_TRACE("Internal resources initialized ({})", static_cast<void *>(this));
@@ -90,6 +98,10 @@ OpenGLMesh::OpenGLMesh(OpenGLMesh &&o)            = default;
 OpenGLMesh &OpenGLMesh::operator=(OpenGLMesh &&o) = default;
 OpenGLMesh::~OpenGLMesh()                         = default;
 
-GLuint   OpenGLMesh::getVertexBufferId() const { return m_internal->vertexBufferId; }
-GLuint   OpenGLMesh::getIndiceBufferId() const { return m_internal->indiceBufferId; }
-uint32_t OpenGLMesh::getIndiceCount() const { return m_internal->indiceCount; }
+GLuint   OpenGLMesh::getVertexBufferID() const noexcept { return m_internal->vertexBufferId; }
+GLuint   OpenGLMesh::getIndiceBufferID() const noexcept { return m_internal->indiceBufferId; }
+uint32_t OpenGLMesh::getIndiceCount() const noexcept { return m_internal->indiceCount; }
+GLsizei  OpenGLMesh::getStride() const noexcept { return m_internal->stride; }
+GLsizei  OpenGLMesh::getOffsetPosition() const noexcept { return m_internal->offsetPosition; }
+GLsizei  OpenGLMesh::getOffsetNormals() const noexcept { return m_internal->offsetNormals; }
+GLsizei  OpenGLMesh::getOffsetTexCoords() const noexcept { return m_internal->offsetTexCoords; }
