@@ -1,8 +1,10 @@
 #include <assets/mesh.hpp>
-
+#include <assets/loaders/obj.hpp>
 #include <utils/logging.hpp>
 
-#include <assets/loaders/obj.hpp>
+#include <glm/gtx/string_cast.hpp>
+
+#include <unordered_map>
 
 namespace assets
 {
@@ -16,8 +18,6 @@ namespace assets
               indices(indices)
         {
             L_TAG("Mesh::Internal");
-            /** Check if vertices count is equal to indices count*/
-            if (vertices.size() != indices.size()) L_THROW_RUNTIME("Vertice count is not equal to indice count");
             L_TRACE("Internal resources initialized ({})", static_cast<void *>(this));
         }
 
@@ -47,11 +47,19 @@ namespace assets
 
             for (auto &obj : objLoader.objects)
             {
-                L_DEBUG("indicesCount: {}", obj.mesh.indices.size());
-                L_DEBUG("verticeCount: {}", obj.mesh.verticeCount.size());
+                L_DEBUG("indicesCount: {}", obj.mesh.indices.size() / 3);
+
+                std::unordered_map<Vertex, uint32_t> uniqueVertice;
+                std::size_t duplicateVertice = 0;
+
                 for (auto &index : obj.mesh.indices)
                 {
-                    // L_DEBUG("Index: {:#3}, {:#3}, {:#3}", index.v, index.vn, index.vt);
+                    /** Bounds check */
+                    L_ASSERT(index.v + 3 < objLoader.vertices.size(), "Out of bonds index access for v");
+                    L_ASSERT(index.vn + 3 < objLoader.normals.size(), "Out of bonds index access for vn");
+                    L_ASSERT(index.vt + 3 < objLoader.texCoords.size(), "Out of bonds index access for vt");
+
+                    /** Build vertex with vertices */
 
                     Vertex vertex = {
                         .position = {
@@ -70,18 +78,28 @@ namespace assets
                         }
                     };
 
-                    // L_DEBUG("Vertex: ( {}, {}, {} )-( {}, {} )",
-                    //         vertex.position.x,
-                    //         vertex.position.y,
-                    //         vertex.position.z,
-                    //         vertex.texCoordinates.x,
-                    //         vertex.texCoordinates.y);
 
-                    /** @todo: deduplicate vertices? */
-
-                    indices.push_back(static_cast<uint32_t>(vertices.size()));
-                    vertices.push_back(vertex);
+                    /** Maintain a map of with Vertex as keys and the
+                     * indice as value to deduplicate vertexes
+                     * if vertex already exists, dont push vertex then
+                     * just add the index to indice vector
+                     */
+                    auto it = uniqueVertice.find(vertex);
+                    if(it == uniqueVertice.end())
+                    {
+                        uint32_t index = static_cast<uint32_t>(vertices.size());
+                        it = uniqueVertice.insert(it, std::make_pair(vertex, index));
+                        vertices.push_back(vertex);
+                    }
+                    else {
+                        duplicateVertice++;
+                    }
+                    
+                    indices.push_back(it->second);
                 }
+
+                L_DEBUG("VertexCount: {}", vertices.size());
+                L_TRACE("Deduplicated {} vertice", duplicateVertice);
             }
 
             // m_internal = std::make_unique<Internal>();

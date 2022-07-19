@@ -272,9 +272,9 @@ namespace assets::loaders::obj
         }
 
         L_DEBUG("Parsing done.");
-        L_DEBUG("      Found {} geometry vertices", v.size());
-        L_DEBUG("      Found {} texture coordinates", vt.size());
-        L_DEBUG("      Found {} vertex normals", vn.size());
+        L_DEBUG("      Found {} geometry vertices", v.size() / 3);
+        L_DEBUG("      Found {} vertex normals", vn.size() / 3);
+        L_DEBUG("      Found {} texture coordinates", vt.size() / 2);
         L_DEBUG("            {} lines unprocessed", unparsedLines.size());
         for (std::size_t linenum = 0; linenum < unparsedLines.size(); linenum++)
             L_TRACE("Unparsed {}: {}", linenum, unparsedLines[linenum]);
