@@ -7,6 +7,7 @@
 #include <SDL2/SDL_opengl.h>
 
 #include <glm/glm.hpp>
+#include <glm/gtc/quaternion.hpp>
 #include <glm/gtx/transform.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
@@ -365,6 +366,7 @@ void renderMesh(GLuint     shaderProgramID,
                 GLsizei    count,
                 glm::mat4 &mvp)
 {
+    glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
     glUseProgram(shaderProgramID);
     GLint mvpLocation = glGetUniformLocation(shaderProgramID, "u_mvp");
     if (mvpLocation >= 0) glUniformMatrix4fv(mvpLocation, 1, GL_FALSE, &mvp[0][0]);
@@ -374,6 +376,7 @@ void renderMesh(GLuint     shaderProgramID,
     {
         glEnableVertexAttribArray(vertexLocation);
         glBindBuffer(GL_ARRAY_BUFFER, vertexBufferID);
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indiceBufferID);
         glVertexAttribPointer(vertexLocation, 3, GL_FLOAT, GL_FALSE, 0, (void *)0);
     }
 
@@ -408,14 +411,14 @@ int main(int argc, const char *argv[])
 
     /** Create vertex buffers */
     GLuint triangleVertexBuffer   = loadBuffer<float>(GL_ARRAY_BUFFER, GL_STATIC_DRAW, g_vertex_buffer_triangle);
-    GLuint cubeVertexBuffer       = loadBuffer<float>(GL_ARRAY_BUFFER, GL_STATIC_DRAW, g_vertex_buffer_cube);
     GLuint xWorldLineVertexBuffer = loadBuffer<float>(GL_ARRAY_BUFFER, GL_STATIC_DRAW, g_xworld_lines_data);
     GLuint yWorldLineVertexBuffer = loadBuffer<float>(GL_ARRAY_BUFFER, GL_STATIC_DRAW, g_yworld_lines_data);
 
     /** Load Textures */
     // GLuint cubeTextureID        = loadTextureDDS("assets/uvtemplate.DDS");
-    GLuint cubeTextureID        = loadTextureBMP("assets/uvtemplate.bmp");
-    GLuint cubeTexCoordBufferID = loadBuffer<float>(GL_ARRAY_BUFFER, GL_STATIC_DRAW, g_texture_buffer_cube);
+    GLuint cubeTextureID      = loadTextureBMP("assets/uvtemplate.bmp");
+    GLuint cubeVertexBufferID = loadBuffer<float>(GL_ARRAY_BUFFER, GL_STATIC_DRAW, g_vertex_buffer_cube);
+    GLuint cubeUVBufferID     = loadBuffer<float>(GL_ARRAY_BUFFER, GL_STATIC_DRAW, g_texture_buffer_cube);
 
     /** Crate */
     GLuint crateVertexBufferID = loadBuffer<float>(GL_ARRAY_BUFFER, GL_STATIC_DRAW, g_vertex_buffer_crate);
@@ -426,24 +429,27 @@ int main(int argc, const char *argv[])
 
     bool isRunning = true;
 
+    glm::vec3 position(0.0f);
+    glm::vec3 scale(1.0f);
+    glm::quat orientation(glm::vec3(0.0f));
+
     glm::mat4 identity(1.0f);
     glm::vec3 modelPosition = glm::vec3(0.0f, 0.0f, 0.0f);
     glm::vec3 rotationAxis(0.0f, 1.0f, 0.0f);
-    glm::vec3 scale(1.0f, 1.0f, 1.0f);
     float     rotationDegrees = 0.0f;
     float     fieldOfView     = 90.0f;
     float     aspectRatio     = 4.0f / 3.0f;
 
-    glm::vec3 cameraPosition(-5.0f, 0.0f, -5.0f), cameraDirection(5.0f, 0.0f, 5.0f), positionInput(0.0f);
+    glm::vec3 cameraPosition(0.0f, 0.0f, 5.0f), cameraDirection(0.0f, 0.0f, 5.0f), positionInput(0.0f);
     glm::vec2 cameraAngle(3.14f, 0.0f), cameraInput(0.0f);
     float     cameraSpeed = 0.1f;
 
     auto keyFunc = [&]() {
         const uint8_t *state = SDL_GetKeyboardState(NULL);
-        cameraInput.y        = (state[SDL_SCANCODE_UP] ? cameraSpeed : (state[SDL_SCANCODE_DOWN] ? -cameraSpeed : 0));
-        cameraInput.x   = (state[SDL_SCANCODE_LEFT] ? cameraSpeed : (state[SDL_SCANCODE_RIGHT] ? -cameraSpeed : 0));
+        cameraInput.y        = (state[SDL_SCANCODE_DOWN] ? cameraSpeed : (state[SDL_SCANCODE_UP] ? -cameraSpeed : 0));
+        cameraInput.x   = (state[SDL_SCANCODE_RIGHT] ? cameraSpeed : (state[SDL_SCANCODE_LEFT] ? -cameraSpeed : 0));
         positionInput.z = (state[SDL_SCANCODE_W] ? cameraSpeed : (state[SDL_SCANCODE_S] ? -cameraSpeed : 0));
-        positionInput.x = (state[SDL_SCANCODE_A] ? cameraSpeed : (state[SDL_SCANCODE_D] ? -cameraSpeed : 0));
+        positionInput.x = (state[SDL_SCANCODE_D] ? cameraSpeed : (state[SDL_SCANCODE_A] ? -cameraSpeed : 0));
         positionInput.y = (state[SDL_SCANCODE_LSHIFT] ? cameraSpeed : (state[SDL_SCANCODE_LCTRL] ? -cameraSpeed : 0));
         cameraSpeed += state[SDL_SCANCODE_KP_PLUS] ? 1.0f : (state[SDL_SCANCODE_KP_MINUS] ? -1.0f : 0);
     };
@@ -473,19 +479,28 @@ int main(int argc, const char *argv[])
         }
         SDL_PumpEvents();
         keyFunc();
-
+        /** Route input to camera */
         cameraAngle += cameraInput;
 
+        /** Camera (projection and viwe matrix) */
         cameraDirection = glm::vec3(cos(cameraAngle.y) * sin(cameraAngle.x),
                                     sin(cameraAngle.y),
                                     cos(cameraAngle.y) * cos(cameraAngle.x));
-        // glm::vec3 right(sin(cameraAngle.x - 3.14f / 2), 0, cos(cameraAngle.x - 3.14f / 2));
         glm::vec3 right = glm::normalize(glm::cross(glm::vec3(0.0f, 1.0f, 0.0f), cameraDirection));
-        glm::vec3 up = glm::cross(right, cameraDirection);
+        glm::vec3 up    = glm::cross(right, cameraDirection);
 
         cameraPosition += cameraDirection * positionInput.z;
         cameraPosition += right * positionInput.x;
         cameraPosition += up * positionInput.y;
+
+        /** Route input to model */
+        glm::quat angleAx = glm::angleAxis(glm::radians(1.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+        orientation       = angleAx * orientation;
+
+        // Model matrix
+        glm::mat4 translationMatrix = glm::translate(identity, position);
+        glm::mat4 scaleMatrix       = glm::scale(identity, scale);
+        glm::mat4 rotationMatrix    = glm::mat4_cast(orientation);
 
         spdlog::trace("------------------------------");
         spdlog::trace("cameraInput:      x:       {:16}, y:      {:16}", cameraInput.x, cameraInput.y);
@@ -496,7 +511,8 @@ int main(int argc, const char *argv[])
                       cameraDirection.z);
         spdlog::trace("right:               x:       {:16}, y:      {:16}, z:      {:16}", right.x, right.y, right.z);
         spdlog::trace("up:                  x:       {:16}, y:      {:16}, z:      {:16}", up.x, up.y, up.z);
-        glm::mat4 modelMatrix(1.0f);
+
+        glm::mat4 modelMatrix      = translationMatrix * rotationMatrix * scaleMatrix;
         glm::mat4 projectionMatrix = glm::perspective(glm::radians(fieldOfView), aspectRatio, 0.1f, 100.0f);
         glm::mat4 viewMatrix       = glm::lookAt(cameraPosition, cameraPosition + cameraDirection, up);
         glm::mat4 mvp              = projectionMatrix * viewMatrix * modelMatrix;
@@ -505,6 +521,8 @@ int main(int argc, const char *argv[])
         {
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+            // renderVertexBuffer(mvpShaderID, GL_TRIANGLES, cubeVertexBufferID, cubeUVBufferID, cubeTextureID,
+            // g_vertex_buffer_cube.size(), mvp);
             renderMesh(mvpShaderID, GL_TRIANGLES, crateVertexBufferID, crateIndiceBufferID, g_indice_buffer_crate.size(), mvp);
 
             SDL_GL_SwapWindow(window);
