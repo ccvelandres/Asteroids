@@ -1,13 +1,15 @@
 #version 120
 
-uniform mat4 mvp;
+uniform mat4 u_mvp;
 
-attribute vec3 vPos;
+attribute vec3 a_v;
+attribute vec3 a_vn;
+attribute vec2 a_vt;
 
-varying vec4 fragColor;
+varying vec2 v_uv;
 
 void main()
 {
-    gl_Position = mvp * vec4(vPos, 1.0);
-    fragColor = vec4(1.0);
+    gl_Position = u_mvp * vec4(a_v, 1.0);
+    v_uv = a_vt;
 }
