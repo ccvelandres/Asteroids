@@ -2,33 +2,53 @@
 
 #include <utils/logging.hpp>
 
-GLuint createVertexBuffer(const assets::Mesh &mesh)
+static GLuint createVertexBuffer(const assets::Mesh &mesh)
 {
-    std::vector<float> bufferData;
+    L_TAG("OpenGLMesh::createVertexBuffer");
+    GLsizeiptr bufferSize = 0;
+    const void* bufferDataPtr = nullptr;
+
+    // std::vector<float> bufferData;
+    // for (const auto &vertex : mesh.getVertices())
+    // {
+    //     /** Vertex coordinates */
+    //     bufferData.push_back(vertex.position.x);
+    //     bufferData.push_back(vertex.position.y);
+    //     bufferData.push_back(vertex.position.z);
+    //     /** Vertex normals */
+    //     bufferData.push_back(vertex.normals.x);
+    //     bufferData.push_back(vertex.normals.y);
+    //     bufferData.push_back(vertex.normals.z);
+    //     /** Texture Coordinates */
+    //     bufferData.push_back(vertex.texCoords.x);
+    //     bufferData.push_back(vertex.texCoords.y);
+    // }
+    // bufferSize = bufferData.size() * sizeof(float);
+    // bufferDataPtr = bufferData.data();
 
     /** @todo: is it possible to just cast the std::vector<Vertex>? Is it POD? */
-    for (const auto &vertex : mesh.getVertices())
-    {
-        /** Vertex coordinates */
-        bufferData.push_back(vertex.position.x);
-        bufferData.push_back(vertex.position.y);
-        bufferData.push_back(vertex.position.z);
-        /** Texture Coordinates */
-        bufferData.push_back(vertex.texCoords.x);
-        bufferData.push_back(vertex.texCoords.y);
-    }
+    auto &vertice = mesh.getVertices();
+    bufferSize = (vertice.size() * sizeof(Vertex));
+    bufferDataPtr = reinterpret_cast<const void*>(vertice.data());
+
+    L_DEBUG("Loading {} bytes", bufferSize);
 
     GLuint bufferId;
-    glGenBuffers(1, &bufferId);
-    glBindBuffer(GL_ARRAY_BUFFER, bufferId);
-    glBufferData(GL_ARRAY_BUFFER, bufferData.size() * sizeof(float), bufferData.data(), GL_STATIC_DRAW);
+    {
+        PROFILER_BLOCK("OpenGLMesh::createVertexBuffer::glBufferData");
+        glGenBuffers(1, &bufferId);
+        glBindBuffer(GL_ARRAY_BUFFER, bufferId);
+        glBufferData(GL_ARRAY_BUFFER, bufferSize, bufferDataPtr, GL_STATIC_DRAW);
+    }
 
     /** @todo: Error checking */
     return bufferId;
 }
 
-GLuint createIndiceBuffer(const assets::Mesh &mesh)
+static GLuint createIndiceBuffer(const assets::Mesh &mesh)
 {
+    L_TAG("OpenGLMesh::createIndiceBuffer");
+
     GLuint bufferId;
     glGenBuffers(1, &bufferId);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, bufferId);
