@@ -49,8 +49,8 @@ constexpr const char *baseFileName(const char *path)
         L_THROW(std::logic_error, msg, ##__VA_ARGS__); \
     }
 
-#define L_UNIMPLEMENTED()    \
-    {                        \
-        L_TAG(__func__);             \
+#define L_UNIMPLEMENTED(...)                       \
+    {                                              \
+        L_TAG(__func__);                           \
         L_THROW_RUNTIME("Unimplemented function"); \
     }

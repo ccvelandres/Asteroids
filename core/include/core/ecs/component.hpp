@@ -54,10 +54,9 @@ using ComponentList = std::vector<ComponentPtr<T>>; /** Alias for vector of Comp
 class Component
 {
 private:
-    Entity *m_entity; /** Owner entity of this component */
     bool    m_enabled;
-
 protected:
+    Entity *m_entity; /** Owner entity of this component */
     Component();
 public:
     virtual ~Component(){};

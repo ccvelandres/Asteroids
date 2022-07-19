@@ -57,6 +57,7 @@ private:
      */
     void addComponent(ComponentID id, const ComponentPtr<Component> &component);
 protected:
+    /** Protected Constructors (use EntityManager to add components) */
     Entity();
 public:
     ~Entity();
@@ -100,9 +101,10 @@ public:
     template <typename T, typename... TArgs, std::enable_if_t<std::is_base_of<Component, T>::value, bool> = true>
     T &addComponent(TArgs &&...args)
     {
-        L_TAG("Entity::addComponent<T>");
+        L_TAG("Entity::getComponent");
+
         /** @todo: change return type to ComponentPtr<T> */
-        if (hasComponent<T>()) L_THROW_LOGIC("Entity already has component {}", typeid(T).name());
+        L_ASSERT(hasComponent<T>() == false,"Entity already has component {}", typeid(T).name());
 
         T *c = new T(std::forward<TArgs>(args)...);
         L_ASSERT(c != NULL, "Failed to instantiate component of type {}", typeid(T).name());
@@ -126,8 +128,10 @@ public:
     template <typename T, std::enable_if_t<std::is_base_of<Component, T>::value, bool> = true>
     T &getComponent()
     {
+        L_TAG("Entity::getComponent");
+
         /** @todo: change return type to ComponentPtr<T> */
-        assert(hasComponent<T>() == true);
+        L_ASSERT(hasComponent<T>() == true, "Entity has no component", typeid(T).name());
 
         T *c = dynamic_cast<T *>(m_components[getComponentID<T>()].get());
         return *c;
