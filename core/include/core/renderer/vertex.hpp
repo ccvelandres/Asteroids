@@ -5,9 +5,9 @@
 
 struct Vertex
 {
-    glm::vec3 position;
-    glm::vec3 normals;
-    glm::vec2 texCoords;
+    glm::vec3 position; /** Geometry vertex */
+    glm::vec3 normals; /** Vertex normals */
+    glm::vec2 texCoords; /** Texture coordinates */
 
     bool operator==(const Vertex &o) const
     {

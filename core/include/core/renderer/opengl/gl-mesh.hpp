@@ -1,10 +1,25 @@
 #pragma once
 
+/**
+ * @file gl-mesh.hpp
+ * @author Cedric Velandres (ccvelandres@gmail.com)
+ */
+
+/**
+ * @addtogroup OpenGL
+ * @ingroup Renderer
+ * @{
+ */
+
 #include <memory>
 #include "gl-wrapper.hpp"
 
 #include <assets/mesh.hpp>
 
+/**
+ * @brief Allows storing mesh data for rendering
+ * 
+ */
 class OpenGLMesh
 {
 private:
@@ -12,12 +27,18 @@ private:
     std::unique_ptr<Internal> m_internal;
 protected:
 public:
-    OpenGLMesh();
     OpenGLMesh(const assets::Mesh &mesh);
+
+    OpenGLMesh();
+    ~OpenGLMesh();
+    OpenGLMesh(OpenGLMesh &o)            = delete;
+    OpenGLMesh &operator=(OpenGLMesh &o) = delete;
     OpenGLMesh(OpenGLMesh &&o);
     OpenGLMesh &operator=(OpenGLMesh &&o);
-    ~OpenGLMesh();
 
-    GLuint getVertexBufferId() const;
-    GLuint getIndiceBufferId() const;
+    GLuint   getVertexBufferId() const;
+    GLuint   getIndiceBufferId() const;
+    uint32_t getIndiceCount() const;
 };
+
+/** @} endgroup OpenGL */

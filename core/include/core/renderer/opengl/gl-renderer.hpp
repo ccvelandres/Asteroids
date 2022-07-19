@@ -1,5 +1,20 @@
 #pragma once
 
+/**
+ * @file gl-renderer.hpp
+ * @author Cedric Velandres (ccvelandres@gmail.com)
+ */
+
+/**
+ * @defgroup OpenGL
+ * @brief OpenGL implementation for the Rendering System
+ * 
+ * The OpenGLRenderer supports minimum of GLES 1.2 
+ * 
+ * @ingroup Renderer
+ * @{
+ */
+
 #include <memory>
 #include <renderer/asset-manager.hpp>
 #include <renderer/renderer.hpp>
@@ -27,3 +42,5 @@ public:
 
     AssetManager& getAssetManager() override;
 };
+
+/** @} endgroup OpenGL */

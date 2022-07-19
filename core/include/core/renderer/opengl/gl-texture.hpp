@@ -1,5 +1,16 @@
 #pragma once
 
+/**
+ * @file gl-texture.hpp
+ * @author Cedric Velandres (ccvelandres@gmail.com)
+ */
+
+/**
+ * @addtogroup OpenGL
+ * @ingroup Renderer
+ * @{
+ */
+
 #include <memory>
 #include "gl-wrapper.hpp"
 
@@ -12,11 +23,17 @@ private:
     std::unique_ptr<Internal> m_internal;
 protected:
 public:
+    OpenGLTexture();
     OpenGLTexture(const assets::Texture &mesh);
+    ~OpenGLTexture();
+
+    OpenGLTexture(OpenGLTexture &o)            = delete;
+    OpenGLTexture &operator=(OpenGLTexture &o) = delete;
     OpenGLTexture(OpenGLTexture &&o);
     OpenGLTexture &operator=(OpenGLTexture &&o);
-    ~OpenGLTexture();
 
     GLuint getVertexBufferId() const;
     GLuint getIndiceBufferId() const;
 };
+
+/** @} endgroup OpenGL */

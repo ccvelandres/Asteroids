@@ -1,11 +1,26 @@
 #pragma once
 
+/**
+ * @file gl-assetManager.hpp
+ * @author Cedric Velandres (ccvelandres@gmail.com)
+ */
+
+/**
+ * @addtogroup OpenGL
+ * @ingroup Renderer
+ * @{
+ */
+
 #include <renderer/asset-manager.hpp>
 #include "gl-renderer.hpp"
 #include "gl-pipeline.hpp"
 #include "gl-texture.hpp"
 #include "gl-mesh.hpp"
 
+/**
+ * @brief OpenGL implementation of the AssetManager
+ * 
+ */
 class OpenGLAssetManager : public AssetManager
 {
 private:
@@ -26,3 +41,5 @@ public:
     OpenGLPipeline &getPipeline(AssetID id);
     OpenGLTexture  &getTexture(AssetID id);
 };
+
+/** @} endgroup OpenGL */

@@ -1,5 +1,16 @@
 #pragma once
 
+/**
+ * @file gl-pipeline.hpp
+ * @author Cedric Velandres (ccvelandres@gmail.com)
+ */
+
+/**
+ * @addtogroup OpenGL
+ * @ingroup Renderer
+ * @{
+ */
+
 #include <memory>
 #include <vector>
 #include <string>
@@ -9,6 +20,10 @@
 
 #include "gl-mesh.hpp"
 
+/**
+ * @brief OpenGL Rendering pipeline
+ * 
+ */
 class OpenGLPipeline
 {
 private:
@@ -24,18 +39,24 @@ public:
         ShaderStage(GLenum shaderType, std::string shaderSource) : shaderType(shaderType), shaderSource(shaderSource) {}
     };
 
+    OpenGLPipeline();
     OpenGLPipeline(const std::string &name, const std::vector<ShaderStage> &shaderStages);
+    ~OpenGLPipeline();
+    
+    OpenGLPipeline(OpenGLPipeline &o)            = delete;
+    OpenGLPipeline &operator=(OpenGLPipeline &o) = delete;
     OpenGLPipeline(OpenGLPipeline &&o);
     OpenGLPipeline &operator=(OpenGLPipeline &&o);
-    ~OpenGLPipeline();
 
     void render(const OpenGLMesh &mesh, const glm::mat4 &mvp) const;
 
     /**
      * @brief Identify type of shader based from name
-     * 
+     *
      * @param name shader name
      * @return GLenum type of shader
      */
     static GLenum shaderTypeFromName(const std::string &name);
 };
+
+/** @} endgroup OpenGL */

@@ -1,5 +1,17 @@
 #pragma once
 
+/**
+ * @file renderer.hpp
+ * @author Cedric Velandres (ccvelandres@gmail.com)
+ */
+
+/**
+ * @defgroup Renderer
+ * @brief Interface for the rendering system
+ * @ingroup core
+ * @{
+ */
+
 #include "asset-manager.hpp"
 #include "vertex.hpp"
 #include "../assets/mesh.hpp"
@@ -22,3 +34,5 @@ public:
 
     virtual AssetManager &getAssetManager() = 0;
 };
+
+/** @} endgroup OpenGL */
