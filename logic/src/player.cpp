@@ -15,10 +15,10 @@ void Player::init()
 
     m_transform = &this->addComponent<TransformComponent>();
 
-    m_transform->scale = glm::vec3(2);
+    m_transform->setScale(glm::vec3(2));
 
     /** Preallocate bullet objects */
-    m_bullets = Game::entityManager()->addEntities<Bullet>(32, *this);
+    m_bullets = Game::entityManager()->addEntities<Bullet>(32, this);
 
     speed         = 300;
     shootInterval = time_ms(100);
@@ -47,9 +47,7 @@ void Player::update(time_ms delta)
     if (l_inputForce.length())
     {
         glm::vec3 offset = l_inputForce * (delta.count() * (speed / 1000.f));
-        // logging::trace("{},{}: InputForce {}",
-        //     __LINE__, __func__, offset);
-        // m_transform->position += offset;
+        m_transform->translate(offset);
     }
 
     /** Shooting */
@@ -62,7 +60,7 @@ void Player::update(time_ms delta)
         if (it != m_bullets.end())
         {
             Bullet *bullet = (*it);
-            bullet->shoot(m_transform->position + glm::vec3(0, 0, 0), glm::vec3(0, -500, 0));
+            bullet->shoot(m_transform->getPosition() + glm::vec3(0, 0, 0), glm::vec3(0, -500, 0));
             m_lastShoot = Game::time()->unscaledTime();
             logging::trace("{},{}: Shooting bullet object", __LINE__, __func__);
         }

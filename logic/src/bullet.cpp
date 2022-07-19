@@ -2,7 +2,7 @@
 
 #include <core/utils/logging.hpp>
 
-Bullet::Bullet(Entity &parent) : m_parent(&parent), m_isShot(false) {}
+Bullet::Bullet(Entity *parent) : m_parent(parent), m_isShot(false) {}
 
 Bullet::~Bullet() {}
 
@@ -10,7 +10,7 @@ void Bullet::init()
 {
     m_transform = &this->addComponent<TransformComponent>();
 
-    m_transform->scale = glm::vec3(2);
+    m_transform->setScale(glm::vec3(2));
 }
 
 void Bullet::preUpdate() {}
@@ -21,14 +21,18 @@ void Bullet::update(time_ms delta)
 
     if (!m_isShot) return;
 
-    if ((m_transform->position.y < -50) || (m_shootTime + time_ms(5000) < Game::time()->getTime<time_ms>()))
+    glm::vec3 pos = m_transform->getPosition();
+
+    if ((pos.y < -50) || (m_shootTime + time_ms(5000) < Game::time()->getTime<time_ms>()))
     {
         m_isShot = false;
         L_DEBUG("Freeing bullet object");
     }
 
-    m_transform->position += (m_velocity / 1000.f);
-    m_transform->position *= delta.count();
+    pos += (m_velocity / 1000.f);
+    pos *= delta.count();
+
+    m_transform->setPosition(pos);
 }
 
 void Bullet::postUpdate() {}
@@ -41,7 +45,7 @@ void Bullet::shoot(const glm::vec3 &position, const glm::vec3 &velocity)
 
     L_DEBUG("Shooting bullet object");
 
-    m_transform->position = position;
+    m_transform->setPosition(position);
     m_velocity            = velocity;
 
     m_isShot    = true;

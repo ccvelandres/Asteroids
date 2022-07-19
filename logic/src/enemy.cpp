@@ -11,8 +11,7 @@ void Enemy::init()
 
     m_transform = &this->addComponent<TransformComponent>();
 
-    m_transform->scale = glm::vec3(2);
-
+    m_transform->setScale(glm::vec3(2));
     m_isActive = false;
 }
 
@@ -32,5 +31,5 @@ void Enemy::spawn(int type, const glm::vec3 &position)
     L_TAG("Player::spawn");
 
     assert(m_isActive == false);
-    m_transform->position = position;
+    m_transform->setPosition(position);
 }
