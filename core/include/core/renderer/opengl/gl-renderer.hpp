@@ -1,7 +1,7 @@
 #pragma once
 
 /**
- * @file gl-renderer.hpp
+ * @file core/renderer/opengl/gl-renderer.hpp
  * @author Cedric Velandres (ccvelandres@gmail.com)
  */
 

@@ -1,7 +1,7 @@
 #pragma once
 
 /**
- * @file gl-assetManager.hpp
+ * @file core/renderer/opengl/gl-assetManager.hpp
  * @author Cedric Velandres (ccvelandres@gmail.com)
  */
 

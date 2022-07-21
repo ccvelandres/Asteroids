@@ -1,7 +1,7 @@
 #pragma once
 
 /**
- * @file gl-texture.hpp
+ * @file core/renderer/opengl/gl-texture.hpp
  * @author Cedric Velandres (ccvelandres@gmail.com)
  */
 

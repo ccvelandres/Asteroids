@@ -1,7 +1,7 @@
 #pragma once
 
 /**
- * @file gl-pipeline.hpp
+ * @file core/renderer/opengl/gl-pipeline.hpp
  * @author Cedric Velandres (ccvelandres@gmail.com)
  */
 

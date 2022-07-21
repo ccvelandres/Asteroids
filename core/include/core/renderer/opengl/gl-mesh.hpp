@@ -1,7 +1,7 @@
 #pragma once
 
 /**
- * @file gl-mesh.hpp
+ * @file core/renderer/opengl/gl-mesh.hpp
  * @author Cedric Velandres (ccvelandres@gmail.com)
  */
 

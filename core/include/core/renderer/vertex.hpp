@@ -1,8 +1,23 @@
 #pragma once
 
+/**
+ * @file core/renderer/vertex.hpp
+ * @author Cedric Velandres (ccvelandres@gmail.com)
+ */
+
+/**
+ * @addtogroup Renderer
+ * @ingroup Core
+ * @{
+ */
+
 #include <glm/glm.hpp>
 #include <glm/gtx/hash.hpp>
 
+/**
+ * @brief Container for vertices used for 3D mesh
+ * 
+ */
 struct Vertex
 {
     glm::vec3 position; /** Geometry vertex */
@@ -30,3 +45,5 @@ namespace std
         }
     };
 }
+
+/** @} endgroup Renderer */

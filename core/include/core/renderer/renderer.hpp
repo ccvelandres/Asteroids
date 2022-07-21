@@ -1,14 +1,14 @@
 #pragma once
 
 /**
- * @file renderer.hpp
+ * @file core/renderer/renderer.hpp
  * @author Cedric Velandres (ccvelandres@gmail.com)
  */
 
 /**
  * @defgroup Renderer
  * @brief Interface for the rendering system
- * @ingroup core
+ * @ingroup Core
  * @{
  */
 
@@ -17,6 +17,10 @@
 #include "../assets/mesh.hpp"
 #include "../time.hpp"
 
+/**
+ * @brief Base class for renderer implementations
+ * 
+ */
 class Renderer
 {
 private:
@@ -35,4 +39,4 @@ public:
     virtual AssetManager &getAssetManager() = 0;
 };
 
-/** @} endgroup OpenGL */
+/** @} endgroup Renderer */

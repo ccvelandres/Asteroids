@@ -1,9 +1,25 @@
 #pragma once
 
+/**
+ * @file core/renderer/asset-manager.hpp
+ * @author Cedric Velandres (ccvelandres@gmail.com)
+ */
+
+/**
+ * @addtogroup Renderer
+ * @ingroup Core
+ * @{
+ */
+
 #include "../assets/asset-inventory.hpp"
 
 using AssetID = std::size_t;
 
+/**
+ * @brief Base class for Asset Managers responsible for managing game assets
+ * used by renderer implementations
+ * 
+ */
 class AssetManager
 {
 private:
@@ -20,3 +36,5 @@ public:
     virtual AssetID loadMesh(const std::string &name)     = 0;
     virtual AssetID loadTexture(const std::string &name)  = 0;
 };
+
+/** @} endgroup Renderer */
