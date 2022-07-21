@@ -9,6 +9,8 @@
 #include <core/utils/profiler.hpp>
 #include <core/utils/logging.hpp>
 
+#include <core/camera/camera.hpp>
+
 #include <core/renderer/renderer.hpp>
 
 #ifdef CORE_RENDERER_VULKAN
@@ -28,6 +30,7 @@ EventManager     *g_eventManager     = nullptr;
 Renderer         *g_renderer         = nullptr;
 InputManager     *g_inputManager     = nullptr;
 Time             *g_time             = nullptr;
+Camera           *g_camera           = nullptr;
 
 Game::Game(const std::string &windowTitle, const int &windowWidth, const int &windowHeight)
     : m_windowTitle(windowTitle),
@@ -43,36 +46,24 @@ Game::Game(const std::string &windowTitle, const int &windowWidth, const int &wi
     g_game = this;
     g_time = new Time();
 
-    if (SDL_Init(SDL_INIT_EVERYTHING) != 0)
-    {
-        exit(1);
-    }
-    // m_window = SDL_CreateWindow(m_windowTitle.c_str(),
-    //                             SDL_WINDOWPOS_CENTERED,
-    //                             SDL_WINDOWPOS_CENTERED,
-    //                             m_windowWidth,
-    //                             m_windowHeight,
-    //                             SDL_WINDOW_SHOWN | SDL_WINDOW_VULKAN | SDL_WINDOW_RESIZABLE);
+    if (SDL_Init(SDL_INIT_EVERYTHING) != 0) L_THROW_RUNTIME("Could not initialize SDL2");
 
-    // if (m_window == NULL)
-    // {
-    //     L_ERROR("Failed to initialize window");
-    // }
-    // g_renderer = new VulkanRenderer(m_window);
 #ifdef CORE_RENDERER_OPENGL
     L_DEBUG("Initializing Renderer (OpenGL)");
     g_renderer = new OpenGLRenderer(windowTitle, windowWidth, windowHeight);
 #endif
     L_DEBUG("Initializing InputManager");
-    g_inputManager     = new InputManager();
+    g_inputManager = &InputManager::getInstance();
     L_DEBUG("Initializing EventManager");
-    g_eventManager     = new EventManager();
+    g_eventManager = new EventManager();
     L_DEBUG("Initializing ComponentManager");
     g_componentManager = &ComponentManager::getInstance();
     L_DEBUG("Initializing EntityManager");
-    g_entityManager    = &EntityManager::getInstance();
+    g_entityManager = &EntityManager::getInstance();
     L_DEBUG("Initializing AssetInventory");
     AssetInventory::loadInventory();
+    L_DEBUG("Creating default camera");
+    g_camera = new Camera(m_windowWidth, m_windowHeight, Camera::Projection::Perspective);
 
     /** FPS Defaults */
     m_targetDelta = time_ds(time_step::den / 60);
@@ -82,10 +73,12 @@ Game::Game(const std::string &windowTitle, const int &windowWidth, const int &wi
 Game::~Game()
 {
     SDL_DestroyWindow(m_window);
+    delete g_camera;
     delete g_entityManager;
     delete g_componentManager;
     delete g_eventManager;
     delete g_renderer;
+    delete g_inputManager;
     delete g_time;
     g_game = nullptr;
 
@@ -103,21 +96,15 @@ void Game::startGameLoop()
     L_TAG("Game::startGameLoop");
     bool isRunning = true;
 
-    /** Register Event filter for exit @todo: replace this */
+    /** Watch incoming events for exit triggers */
     SDL_AddEventWatch(
         [](void *data, SDL_Event *e) -> int {
             bool *isRunning = static_cast<bool *>(data);
-            switch (e->type)
-            {
-            case SDL_WINDOWEVENT:
-                if (e->window.event != SDL_WINDOWEVENT_CLOSE) break;
-            case SDL_QUIT:
+            if (e->type == SDL_QUIT)
                 *isRunning = false;
-                break;
-            default:
-                break;
-            }
-            return 0; /** ignored */
+            else if (e->type == SDL_WINDOWEVENT && e->window.event == SDL_WINDOWEVENT_CLOSE)
+                *isRunning = false;
+            return 0; /** pass all events */
         },
         &isRunning);
 
@@ -129,34 +116,27 @@ void Game::startGameLoop()
             g_time->preUpdate();
         }
 
-        /** Manager PreUpdates */
-
-        /** Handle SDL Events here */
         {
-            PROFILER_BLOCK("EventManager::handleEvents");
-            g_eventManager->handleEvents();
-        }
-
-        {
-            PROFILER_BLOCK("ECS::preupdate");
+            /**
+             * Manager::preupdate
+             * Managers grab relevant SDL_events from queue here
+             */
+            PROFILER_BLOCK("Manager::preupdate");
+            g_inputManager->preUpdate();
             g_entityManager->preUpdate();
         }
+        SDL_PumpEvents();
 
-        /* Update inputs */
+        /** Manager Updates */
         {
-            PROFILER_BLOCK("InputManager::update");
-            g_inputManager->update();
-        }
-
-        /** Manager Update */
-        {
-            PROFILER_BLOCK("ECS::update");
+            PROFILER_BLOCK("Manager::update");
             time_ms delta = g_time->scaledDeltaTime<time_ms>();
+            g_inputManager->update(delta);
             g_entityManager->update(delta);
         }
 
         {
-            PROFILER_BLOCK("ECS::postupdate");
+            PROFILER_BLOCK("Manager::postUpdate");
             g_entityManager->postUpdate();
             g_inputManager->postUpdate();
         }
@@ -165,9 +145,12 @@ void Game::startGameLoop()
         {
             PROFILER_BLOCK("FrameRender");
             g_renderer->renderBegin();
-            /** @todo: Maybe rework this part to let the scene or renderer handle
-             * the draw calls
+            /**
+             * Call render function from Renderer
+             * This doesn't feel good tho, maybe rework?
+             * @todo: maybe rework how the renderer gets components to be rendered (maybe scenes)
              */
+            g_renderer->render();
             g_renderer->renderEnd();
         }
 
@@ -226,3 +209,4 @@ EventManager     *Game::eventManager() { return g_eventManager; }
 InputManager     *Game::inputManager() { return g_inputManager; }
 Time             *Game::time() { return g_time; }
 Renderer         *Game::renderer() { return g_renderer; }
+Camera           *Game::camera() { return g_camera; }
