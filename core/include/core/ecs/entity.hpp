@@ -50,8 +50,8 @@ private:
     bool isActive = true;
 
     /**
-     * @brief Registers component to the entity 
-     * 
+     * @brief Registers component to the entity
+     *
      * @param id componentID retrieved from getComponentID<T>()
      * @param component component to register
      */
@@ -101,19 +101,24 @@ public:
     template <typename T, typename... TArgs, std::enable_if_t<std::is_base_of<Component, T>::value, bool> = true>
     T &addComponent(TArgs &&...args)
     {
-        L_TAG("Entity::getComponent");
+        L_TAG("Entity::addComponent");
 
         /** @todo: change return type to ComponentPtr<T> */
-        L_ASSERT(hasComponent<T>() == false,"Entity already has component {}", typeid(T).name());
+        L_ASSERT(hasComponent<T>() == false, "Entity already has component {}", typeid(T).name());
 
         T *c = new T(std::forward<TArgs>(args)...);
         L_ASSERT(c != NULL, "Failed to instantiate component of type {}", typeid(T).name());
         ComponentPtr<T> p(c);
-        
+
         addComponent(getComponentID<T>(), p);
         c->m_entity = this;
         c->init();
 
+        L_TRACE("Attached {} @ {} to instance of {} @ {}",
+                L_TYPE_GETSTRING(T),
+                static_cast<void *>(c),
+                typeid(this).name(),
+                static_cast<void *>(this));
         return *c;
     }
 
