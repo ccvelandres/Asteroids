@@ -19,6 +19,7 @@
 #include <glm/glm.hpp>
 
 #include "gl-mesh.hpp"
+#include "gl-texture.hpp"
 
 /**
  * @brief OpenGL Rendering pipeline
@@ -49,6 +50,7 @@ public:
     OpenGLPipeline &operator=(OpenGLPipeline &&o);
 
     void render(const OpenGLMesh &mesh, const glm::mat4 &mvp) const;
+    void render(const OpenGLMesh &mesh, const OpenGLTexture &texture, const glm::mat4 &mvp) const;
 
     /**
      * @brief Identify type of shader based from name

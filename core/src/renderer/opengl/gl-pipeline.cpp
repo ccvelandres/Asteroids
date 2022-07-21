@@ -102,6 +102,8 @@ struct OpenGLPipeline::Internal
 
     void render(const OpenGLMesh &mesh, const glm::mat4 &mvp)
     {
+        L_TAG("OpenGLPipeline::render(OpenGLMesh)");
+
         GLsizei stride   = mesh.getStride();
         GLsizei offsetV  = mesh.getOffsetPosition();
         GLsizei offsetVN = mesh.getOffsetNormals();
@@ -121,11 +123,11 @@ struct OpenGLPipeline::Internal
         /** Configure and pass geometry vertices */
         glEnableVertexAttribArray(sa_vertices);
         glVertexAttribPointer(sa_vertices, 3, GL_FLOAT, GL_FALSE, stride, reinterpret_cast<const void *>(offsetV));
-        
+
         /** Configure and pass vertex normals */
         glEnableVertexAttribArray(sa_vertexNormals);
         glVertexAttribPointer(sa_vertexNormals, 3, GL_FLOAT, GL_FALSE, stride, reinterpret_cast<const void *>(offsetVN));
-        
+
         /** Configure and pass uv coordinates */
         glEnableVertexAttribArray(sa_textureVertice);
         glVertexAttribPointer(sa_textureVertice, 3, GL_FLOAT, GL_FALSE, stride, reinterpret_cast<const void *>(offsetVT));
@@ -134,6 +136,13 @@ struct OpenGLPipeline::Internal
         glDrawElements(GL_TRIANGLES, mesh.getIndiceCount(), GL_UNSIGNED_INT, reinterpret_cast<const GLvoid *>(0));
 
         glDisableVertexAttribArray(sa_vertices);
+        glDisableVertexAttribArray(sa_vertexNormals);
+        glDisableVertexAttribArray(sa_textureVertice);
+    }
+
+    void render(const OpenGLMesh &mesh, const OpenGLTexture &texture, const glm::mat4 &mvp) {
+        L_TAG("OpenGLPipeline::render(OpenGLMesh, OpenGLTexture)");
+
     }
 };
 
@@ -148,6 +157,10 @@ OpenGLPipeline &OpenGLPipeline::operator=(OpenGLPipeline &&o) = default;
 OpenGLPipeline::~OpenGLPipeline()                             = default;
 
 void OpenGLPipeline::render(const OpenGLMesh &mesh, const glm::mat4 &mvp) const { m_internal->render(mesh, mvp); }
+void OpenGLPipeline::render(const OpenGLMesh &mesh, const OpenGLTexture &texture, const glm::mat4 &mvp) const
+{
+    m_internal->render(mesh, texture, mvp);
+}
 
 GLenum OpenGLPipeline::shaderTypeFromName(const std::string &name)
 {
