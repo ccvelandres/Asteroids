@@ -51,6 +51,7 @@ struct OpenGLTexture::Internal
 
 OpenGLTexture::OpenGLTexture(const assets::Texture &texture) : m_internal(std::make_unique<Internal>(texture)) {}
 
+OpenGLTexture::OpenGLTexture()                             = default;
 OpenGLTexture::OpenGLTexture(OpenGLTexture &&o)            = default;
 OpenGLTexture &OpenGLTexture::operator=(OpenGLTexture &&o) = default;
 OpenGLTexture::~OpenGLTexture()                            = default;
