@@ -1,11 +1,12 @@
 #include <core/input/inputManager.hpp>
 #include <core/utils/logging.hpp>
+#include <core/ecs/componentManager.hpp>
 
 #include <SDL2/SDL.h>
 
 #include <unordered_map>
 
-const std::unordered_map<SDL_EventType, bool> inputEventTypes = {
+const std::unordered_map<SDL_EventType, int> inputEventTypes = {
     {SDL_KEYDOWN,                  1},
     {SDL_KEYUP,                    1},
     {SDL_TEXTEDITING,              1},
@@ -49,28 +50,34 @@ InputManager::~InputManager() { m_instance = nullptr; }
 InputManager &InputManager::getInstance()
 {
     /** @todo: use CAS for assignment? */
-    if (m_instance) m_instance = new InputManager();
+    if (!m_instance) m_instance = new InputManager();
     return *m_instance;
 }
 
 void InputManager::init()
 {
+    L_TAG("InputManager::init");
+
     int numKeys = 0;
-    keyState    = SDL_GetKeyboardState(&numKeys);
-    lastFrameKeyState.reserve(numKeys);
+    m_keyState  = SDL_GetKeyboardState(&numKeys);
+    m_lastFrameKeyState.reserve(numKeys);
     /** @todo: do we setup event filters here for input events? */
 }
 
-void InputManager::update()
+void InputManager::preUpdate()
 {
-    L_TAG("InputManager::update");
+    L_TAG("InputManager::preUpdate");
+    
+    /** @todo: add support for controllers
+     * initialize or cleanup when # of joysticks mismatched 
+     */
 
     /** Clear current event queue (hopefully we dont need to reserve since clear doesn't free current memory) */
-    inputEvents.clear();
+    m_inputEvents.clear();
 
     SDL_FilterEvents(
         [](void *userdata, SDL_Event *event) -> int {
-            std::vector<SDL_Event> *inputEvents = static_cast<std::vector<SDL_Event>*>(userdata);
+            std::vector<SDL_Event> *inputEvents = static_cast<std::vector<SDL_Event> *>(userdata);
 
             /** @todo: should we make the map non-const and push non-filtered event types with 0 value ? */
             auto it = inputEventTypes.find(static_cast<SDL_EventType>(event->type));
@@ -82,26 +89,37 @@ void InputManager::update()
             }
             return 1;
         },
-        &inputEvents);
+        &m_inputEvents);
+    if (m_inputEvents.size()) L_TRACE("Queue has {} input events", m_inputEvents.size());
+}
 
+void InputManager::fixedUpdate(const time_ms &delta) {}
+
+void InputManager::update(const time_ms &delta)
+{
+    L_TAG("InputManager::update");
     /** Feed the current input event queue to input components */
     /** @todo: possible threaded optimization for input events */
-    L_TRACE("Queue has {} input events", inputEvents.size());
+    for (auto &ev : m_inputEvents)
+    {
+        ComponentManager::getInstance().foreach<InputComponent>([&ev](InputComponent &c) -> void {
+            auto f = c.m_listeners.find(static_cast<InputEventType>(ev.type));
+            if (f != c.m_listeners.end())
+            f->second(static_cast<InputEventType>(ev.type), &ev);
+        });
+    }
 }
 
-void InputManager::postUpdate() { memcpy(lastFrameKeyState.data(), keyState, lastFrameKeyState.size()); }
-
-bool InputManager::isPressed(const SDL_Scancode &scanCode) { return keyState[scanCode]; }
-
-bool InputManager::isTapped(const SDL_Scancode &scanCode)
+void InputManager::postUpdate()
 {
-    return (!lastFrameKeyState[scanCode] && keyState[scanCode]);
+    L_TAG("InputManager::postUpdate");
+    /** Cache current keyboard state so we can compare for last state change */
+    memcpy(m_lastFrameKeyState.data(), m_keyState, m_lastFrameKeyState.size());
 }
 
-void InputManager::keyDown(const SDL_Scancode &scanCode)
-{ /** @todo Implement buffering of inputs */
-}
+bool InputManager::isPressed(const SDL_Scancode scanCode) { return m_keyState[scanCode]; }
 
-void InputManager::keyUp(const SDL_Scancode &scanCode)
-{ /** @todo Implement buffering of inputs */
+bool InputManager::isTapped(const SDL_Scancode scanCode)
+{
+    return (!m_lastFrameKeyState[scanCode] && m_keyState[scanCode]);
 }
