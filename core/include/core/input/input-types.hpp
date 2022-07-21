@@ -1,0 +1,53 @@
+#pragma once
+
+/**
+ * @file core/input/input-types.hpp
+ * @author Cedric Velandres (ccvelandres@gmail.com)
+ */
+
+/**
+ * @addtogroup Input
+ * @ingroup Core
+ * @{
+ */
+
+#include "SDL2/SDL_events.h"
+
+enum class InputEventType
+{
+    KEYDOWN                  = SDL_KEYDOWN,
+    KEYUP                    = SDL_KEYUP,
+    TEXTEDITING              = SDL_TEXTEDITING,
+    TEXTINPUT                = SDL_TEXTINPUT,
+    KEYMAPCHANGED            = SDL_KEYMAPCHANGED,
+    MOUSEMOTION              = SDL_MOUSEMOTION,
+    MOUSEBUTTONDOWN          = SDL_MOUSEBUTTONDOWN,
+    MOUSEBUTTONUP            = SDL_MOUSEBUTTONUP,
+    MOUSEWHEEL               = SDL_MOUSEWHEEL,
+    JOYAXISMOTION            = SDL_JOYAXISMOTION,
+    JOYBALLMOTION            = SDL_JOYBALLMOTION,
+    JOYHATMOTION             = SDL_JOYHATMOTION,
+    JOYBUTTONDOWN            = SDL_JOYBUTTONDOWN,
+    JOYBUTTONUP              = SDL_JOYBUTTONUP,
+    JOYDEVICEADDED           = SDL_JOYDEVICEADDED,
+    JOYDEVICEREMOVED         = SDL_JOYDEVICEREMOVED,
+    CONTROLLERAXISMOTION     = SDL_CONTROLLERAXISMOTION,
+    CONTROLLERBUTTONDOWN     = SDL_CONTROLLERBUTTONDOWN,
+    CONTROLLERBUTTONUP       = SDL_CONTROLLERBUTTONUP,
+    CONTROLLERDEVICEADDED    = SDL_CONTROLLERDEVICEADDED,
+    CONTROLLERDEVICEREMOVED  = SDL_CONTROLLERDEVICEREMOVED,
+    CONTROLLERDEVICEREMAPPED = SDL_CONTROLLERDEVICEREMAPPED,
+    FINGERDOWN               = SDL_FINGERDOWN,
+    FINGERUP                 = SDL_FINGERUP,
+    FINGERMOTION             = SDL_FINGERMOTION,
+    DOLLARGESTURE            = SDL_DOLLARGESTURE,
+    DOLLARRECORD             = SDL_DOLLARRECORD,
+    MULTIGESTURE             = SDL_MULTIGESTURE,
+    CLIPBOARDUPDATE          = SDL_CLIPBOARDUPDATE,
+    DROPFILE                 = SDL_DROPFILE,
+    DROPTEXT                 = SDL_DROPTEXT,
+    DROPBEGIN                = SDL_DROPBEGIN,
+    DROPCOMPLETE             = SDL_DROPCOMPLETE
+};
+
+/** @} endgroup Input */
