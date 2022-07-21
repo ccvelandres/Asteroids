@@ -11,22 +11,41 @@
 namespace logging
 {
     using namespace spdlog;
-}
 
-/** Retrieves the base filename from __FILE__ */
-constexpr const char *baseFileName(const char *path)
-{
-    const char *base = path;
-    while (*path)
-        (*path == '/' || *path == '\\') ? base = ++path : path++;
-    return base;
-}
+    /** Convert typename to string */
+    template <typename T>
+    struct typename_to_string
+    {
+        static const char *get() { return typeid(T).name(); }
+    };
+
+    /** Retrieves the base filename from __FILE__ */
+    constexpr const char *baseFileName(const char *path)
+    {
+        const char *base = path;
+        while (*path)
+            (*path == '/' || *path == '\\') ? base = ++path : path++;
+        return base;
+    }
+} // namespace logging
+
+/** Helper macros for converting typenames to string */
+#define L_TYPE_SETSTRING(TYPE, NAME)                  \
+    namespace logging                                 \
+    {                                                 \
+        template <>                                   \
+        struct typename_to_string<TYPE>               \
+        {                                             \
+            static const char *get() { return NAME; } \
+        };                                            \
+    }
+#define L_TYPE_GETSTRING(TYPE) (logging::typename_to_string<TYPE>::get())
 
 /** Helper macros for appending the line and function */
 #define L_STRING(STR) #STR
 #define L_TAG(STR)       \
     PROFILER_BLOCK(STR); \
-    static const std::string tag__ { std::string(baseFileName(__FILE__)) + std::string(": " STR) }
+    static const std::string tag__ { std::string(logging::baseFileName(__FILE__)) + std::string(": " STR) }
 
 #if (CORE_LOG_ENABLE_TAG)
 #define L_LOG(level, STR, ...) logging::level("[{}] " STR, tag__, ##__VA_ARGS__)
