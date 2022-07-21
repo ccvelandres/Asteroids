@@ -87,13 +87,7 @@ public:
     template <typename T>
     void foreach (const std::function<void(T &)> &callback)
     {
-        auto &a = m_components[getComponentID<T>()];
-        for (auto &c : a)
-        {
-            /** @todo: maybe build vector of shared_ptrs first */
-            auto p = c.lock();
-            callback(dynamic_cast<T &>(*p.get()));
-        }
+        for (auto &c : getComponents<T>()) callback((*c));
     }
 
     // /** Does initialization outside of the constructor */
