@@ -1,13 +1,14 @@
 #pragma once
 
 /**
- * @addtogroup Components
- * @{
+ * @file core/ecs/components/transformComponent.hpp
+ * @author Cedric Velandres (ccvelandres@gmail.com)
  */
 
 /**
- * @file This file defines Transform Component
- * @todo: parent links with transform and world space resolution
+ * @addtogroup Components
+ * @ingroup ECS
+ * @{
  */
 
 #include "../component.hpp"
@@ -15,8 +16,10 @@
 #include <glm/gtc/quaternion.hpp>
 
 /**
- * @brief
+ * @brief The Transform Component describes the position, scale, orientation of 
+ * attached entities
  *
+ * @todo: parent links with transform and world space resolution
  */
 class TransformComponent : public Component
 {

@@ -1,8 +1,24 @@
 #pragma once
 
+/**
+ * @file core/ecs/components/meshRenderer.hpp
+ * @author Cedric Velandres (ccvelandres@gmail.com)
+ */
+
+/**
+ * @addtogroup Components
+ * @ingroup ECS
+ * @{
+ */
+
 #include "../component.hpp"
 #include "renderComponent.hpp"
+#include "../../renderer/renderer.hpp"
 
+/**
+ * @brief MeshRenderer allows rendering of mesh based render targets
+ * 
+ */
 class MeshRenderer : public RenderComponent
 {
 private:
@@ -22,3 +38,5 @@ public:
     friend EntityManager;
     friend ComponentManager;
 };
+
+/** @} endgroup Components */

@@ -1,7 +1,13 @@
 #pragma once
 
 /**
+ * @file core/ecs/componentManager.hpp
+ * @author Cedric Velandres (ccvelandres@gmail.com)
+ */
+
+/**
  * @addtogroup ECS
+ * @ingroup Core
  * @{
  */
 
