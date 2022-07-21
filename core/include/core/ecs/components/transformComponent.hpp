@@ -21,14 +21,15 @@
 class TransformComponent : public Component
 {
 private:
-    glm::vec3 m_position;    /** the position of attached entity in world space */
-    glm::vec3 m_scale;       /** the scale of attached entity */
-    glm::quat m_orientation; /** the orientation of attached entity */
 protected:
     /** Protected Constructors (use entity to add components) */
     TransformComponent(glm::vec3 position, glm::vec3 scale, glm::vec3 rotation);
     TransformComponent();
 public:
+    glm::vec3 m_position;    /** the position of attached entity in world space */
+    glm::vec3 m_scale;       /** the scale of attached entity */
+    glm::quat m_orientation; /** the orientation of attached entity */
+    
     ~TransformComponent();
     TransformComponent(TransformComponent &o)             = delete;
     TransformComponent &operator=(TransformComponent &o)  = delete;
