@@ -10,6 +10,7 @@
 #include <glm/gtc/quaternion.hpp>
 #include <glm/gtx/transform.hpp>
 #include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtx/string_cast.hpp>
 
 #include <exception>
 #include <stdexcept>
@@ -29,6 +30,7 @@ extern const char *fragmentShaderSource;
 
 constexpr int windowWidth  = 800;
 constexpr int windowHeight = 600;
+const glm::mat4 default_modelMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f)) * glm::rotate(glm::mat4(1.0f), 0.0f ,glm::vec3(0.0f)) * glm::scale(glm::mat4(1.0f), glm::vec3(1.0f));
 
 std::vector<float> g_vertex_buffer_triangle = {-1.0f, -1.0f, 0.0f, 1.0f, -1.0f, 0.0f, 0.0f, 1.0f, 0.0f};
 std::vector<float> g_xworld_lines_data;
@@ -69,6 +71,55 @@ void loadCrateMesh()
     {
         g_indice_buffer_crate.push_back(s);
     }
+}
+
+std::vector<float> generateWorldLines(const int          boundsAxis,
+                                      const int          stepAxis,
+                                      const float        bounds,
+                                      const float        step,
+                                      const unsigned int lineCount)
+{
+    std::string boundAxisName = boundsAxis == 0 ? "X"
+                              : boundsAxis == 1 ? "Y"
+                              : boundsAxis == 2 ? "Z"
+                                                : throw std::logic_error("Invalid boundsAxis");
+    std::string stepAxisName  = stepAxis == 0 ? "X"
+                              : stepAxis == 1 ? "Y"
+                              : stepAxis == 2 ? "Z"
+                                              : throw std::logic_error("Invalid stepAxis");
+    if (boundsAxis == stepAxis) throw std::logic_error("step and bound axis cannot be same");
+
+    std::vector<float> vertice;
+
+    int floatCount   = lineCount * 3;
+    int verticeCount = lineCount >> 1;
+    spdlog::info("Generating {} floats ({} vertices) for world lines for {}{} axis",
+                 floatCount,
+                 verticeCount,
+                 boundAxisName,
+                 stepAxisName);
+
+    float lineBounds = static_cast<float>(lineCount >> 1) * step;
+    for (float i = -lineBounds; i <= lineBounds; i += step)
+    {
+        float x1 = (boundsAxis == 0 ? -bounds : (stepAxis == 0 ? i : 0.0f));
+        float y1 = (boundsAxis == 1 ? -bounds : (stepAxis == 1 ? i : 0.0f));
+        float z1 = (boundsAxis == 2 ? -bounds : (stepAxis == 2 ? i : 0.0f));
+        float x2 = (boundsAxis == 0 ? bounds : (stepAxis == 0 ? i : 0.0f));
+        float y2 = (boundsAxis == 1 ? bounds : (stepAxis == 1 ? i : 0.0f));
+        float z2 = (boundsAxis == 2 ? bounds : (stepAxis == 2 ? i : 0.0f));
+
+        spdlog::trace("L1: {} - {}", glm::to_string(glm::vec3(x1, y1, z1)), glm::to_string(glm::vec3(x2, y2, z2)));
+
+        vertice.push_back(x1);
+        vertice.push_back(y1);
+        vertice.push_back(z1);
+        vertice.push_back(x2);
+        vertice.push_back(y2);
+        vertice.push_back(z2);
+    }
+
+    return vertice;
 }
 
 void build_world_lines()
@@ -187,7 +238,7 @@ GLuint loadShaders(const char *vertexShaderBuffer, const char *fragmentShaderBuf
 }
 
 template <typename T>
-GLuint loadBuffer(GLenum target, GLenum usage, std::vector<T> &buffer)
+GLuint loadBuffer(GLenum target, GLenum usage, const std::vector<T> &buffer)
 {
     GLuint bufferID;
     glGenBuffers(1, &bufferID);
@@ -274,18 +325,10 @@ GLuint loadTextureDDS(const std::string &filename)
     unsigned int format;
     switch (fourCC)
     {
-    case FOURCC_DXT1:
-        format = GL_COMPRESSED_RGBA_S3TC_DXT1_EXT;
-        break;
-    case FOURCC_DXT3:
-        format = GL_COMPRESSED_RGBA_S3TC_DXT3_EXT;
-        break;
-    case FOURCC_DXT5:
-        format = GL_COMPRESSED_RGBA_S3TC_DXT5_EXT;
-        break;
-    default:
-        return 0;
-        break;
+    case FOURCC_DXT1: format = GL_COMPRESSED_RGBA_S3TC_DXT1_EXT; break;
+    case FOURCC_DXT3: format = GL_COMPRESSED_RGBA_S3TC_DXT3_EXT; break;
+    case FOURCC_DXT5: format = GL_COMPRESSED_RGBA_S3TC_DXT5_EXT; break;
+    default: return 0; break;
     }
 
     /** Create GL Texture */
@@ -319,13 +362,32 @@ GLuint loadTextureDDS(const std::string &filename)
     return textureID;
 }
 
+void renderVertexBuffer(GLuint shaderProgramID, GLenum mode, GLuint vertexBufferID, GLsizei count, const glm::mat4 &mvp)
+{
+    glUseProgram(shaderProgramID);
+    GLint mvpLocation = glGetUniformLocation(shaderProgramID, "u_mvp");
+    if (mvpLocation >= 0) glUniformMatrix4fv(mvpLocation, 1, GL_FALSE, &mvp[0][0]);
+
+    GLint vertexLocation = glGetAttribLocation(shaderProgramID, "v_vertexPos");
+    if (vertexLocation >= 0)
+    {
+        glEnableVertexAttribArray(vertexLocation);
+        glBindBuffer(GL_ARRAY_BUFFER, vertexBufferID);
+        glVertexAttribPointer(vertexLocation, 3, GL_FLOAT, GL_FALSE, 0, (void *)0);
+    }
+
+    glDrawArrays(mode, 0, count);
+
+    if (vertexLocation >= 0) glDisableVertexAttribArray(vertexLocation);
+}
+
 void renderVertexBuffer(GLuint     shaderProgramID,
                         GLenum     mode,
                         GLuint     vertexBufferID,
                         GLuint     texCoordBufferID,
                         GLuint     textureID,
                         GLsizei    count,
-                        glm::mat4 &mvp)
+                        const glm::mat4 &mvp)
 {
     glUseProgram(shaderProgramID);
     GLint mvpLocation = glGetUniformLocation(shaderProgramID, "u_mvp");
@@ -350,7 +412,6 @@ void renderVertexBuffer(GLuint     shaderProgramID,
         glEnableVertexAttribArray(texCoordLocation);
         glBindBuffer(GL_ARRAY_BUFFER, texCoordBufferID);
         glVertexAttribPointer(texCoordLocation, 2, GL_FLOAT, GL_FALSE, 0, (void *)0);
-        // glDrawArrays(mode, 0, count);
     }
 
     glDrawArrays(mode, 0, count);
@@ -364,7 +425,7 @@ void renderMesh(GLuint     shaderProgramID,
                 GLuint     vertexBufferID,
                 GLuint     indiceBufferID,
                 GLsizei    count,
-                glm::mat4 &mvp)
+                const glm::mat4 &mvp)
 {
     glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
     glUseProgram(shaderProgramID);
@@ -388,6 +449,8 @@ void renderMesh(GLuint     shaderProgramID,
 int main(int argc, const char *argv[])
 {
     int res;
+
+    spdlog::set_level(spdlog::level::trace);
     /** Initialize SDL2 */
     SDL_Init(SDL_INIT_EVERYTHING);
 
@@ -424,6 +487,13 @@ int main(int argc, const char *argv[])
     GLuint crateVertexBufferID = loadBuffer<float>(GL_ARRAY_BUFFER, GL_STATIC_DRAW, g_vertex_buffer_crate);
     GLuint crateIndiceBufferID = loadBuffer<uint32_t>(GL_ELEMENT_ARRAY_BUFFER, GL_STATIC_DRAW, g_indice_buffer_crate);
 
+    /** World Lines */
+    std::size_t worldLineCount = 100;
+    GLuint      xy_worldBufferID =
+        loadBuffer<float>(GL_ARRAY_BUFFER, GL_STATIC_DRAW, generateWorldLines(0, 1, 1000.0f, 1.0f, worldLineCount));
+    GLuint yx_worldBufferID =
+        loadBuffer<float>(GL_ARRAY_BUFFER, GL_STATIC_DRAW, generateWorldLines(1, 0, 1000.0f, 1.0f, worldLineCount));
+
     /** Load Shaders */
     GLuint mvpShaderID = loadShaders(vertexMVPShaderSource, fragmentShaderSource);
 
@@ -441,6 +511,7 @@ int main(int argc, const char *argv[])
     float     aspectRatio     = 4.0f / 3.0f;
 
     glm::vec3 cameraPosition(0.0f, 0.0f, 5.0f), cameraDirection(0.0f, 0.0f, 5.0f), positionInput(0.0f);
+    glm::quat cameraOrientation = glm::quat(glm::vec3(0.0f, 0.0f, 0.0f));
     glm::vec2 cameraAngle(3.14f, 0.0f), cameraInput(0.0f);
     float     cameraSpeed = 0.1f;
 
@@ -470,11 +541,8 @@ int main(int argc, const char *argv[])
             {
             case SDL_WINDOWEVENT:
                 if (event.window.event != SDL_WINDOWEVENT_CLOSE) break;
-            case SDL_QUIT:
-                isRunning = false;
-                break;
-            default:
-                break;
+            case SDL_QUIT: isRunning = false; break;
+            default: break;
             }
         }
         SDL_PumpEvents();
@@ -494,13 +562,13 @@ int main(int argc, const char *argv[])
         cameraPosition += up * positionInput.y;
 
         /** Route input to model */
-        glm::quat angleAx = glm::angleAxis(glm::radians(1.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+        glm::quat angleAx = glm::angleAxis(glm::radians(1.0f), glm::vec3(0.0f, 0.0f, 1.0f));
         orientation       = angleAx * orientation;
 
         // Model matrix
         glm::mat4 translationMatrix = glm::translate(identity, position);
-        glm::mat4 scaleMatrix       = glm::scale(identity, scale);
         glm::mat4 rotationMatrix    = glm::mat4_cast(orientation);
+        glm::mat4 scaleMatrix       = glm::scale(identity, scale);
 
         spdlog::trace("------------------------------");
         spdlog::trace("cameraInput:      x:       {:16}, y:      {:16}", cameraInput.x, cameraInput.y);
@@ -513,17 +581,20 @@ int main(int argc, const char *argv[])
         spdlog::trace("up:                  x:       {:16}, y:      {:16}, z:      {:16}", up.x, up.y, up.z);
 
         glm::mat4 modelMatrix      = translationMatrix * rotationMatrix * scaleMatrix;
-        glm::mat4 projectionMatrix = glm::perspective(glm::radians(fieldOfView), aspectRatio, 0.1f, 100.0f);
+        glm::mat4 perspectiveMatrix = glm::perspective(glm::radians(fieldOfView), aspectRatio, 0.1f, 100.0f);
+        glm::mat4 orthographicMatrix = glm::ortho(-100.0f, 100.0f, -100.0f, 200.0f, -10.0f, 10.0f);
+
+        glm::mat4 projectionMatrix = perspectiveMatrix;
         glm::mat4 viewMatrix       = glm::lookAt(cameraPosition, cameraPosition + cameraDirection, up);
-        glm::mat4 mvp              = projectionMatrix * viewMatrix * modelMatrix;
 
         if (nextRender < SDL_GetTicks())
         {
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-            // renderVertexBuffer(mvpShaderID, GL_TRIANGLES, cubeVertexBufferID, cubeUVBufferID, cubeTextureID,
-            // g_vertex_buffer_cube.size(), mvp);
-            renderMesh(mvpShaderID, GL_TRIANGLES, crateVertexBufferID, crateIndiceBufferID, g_indice_buffer_crate.size(), mvp);
+            renderVertexBuffer(mvpShaderID, GL_LINES, xy_worldBufferID, worldLineCount * 3, projectionMatrix * viewMatrix * glm::mat4(1.0f));
+            renderVertexBuffer(mvpShaderID, GL_LINES, yx_worldBufferID, worldLineCount * 3, projectionMatrix * viewMatrix * glm::mat4(1.0f));
+            
+            renderMesh(mvpShaderID, GL_TRIANGLES, crateVertexBufferID, crateIndiceBufferID, g_indice_buffer_crate.size(), projectionMatrix * viewMatrix * modelMatrix);
 
             SDL_GL_SwapWindow(window);
             nextRender += targetDelta;
