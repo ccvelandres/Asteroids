@@ -42,16 +42,14 @@ const std::unordered_map<SDL_EventType, int> inputEventTypes = {
     {SDL_DROPCOMPLETE,             1}
 };
 
-InputManager *InputManager::m_instance = nullptr;
-
-InputManager::InputManager() = default;
-InputManager::~InputManager() { m_instance = nullptr; }
+InputManager::InputManager()  = default;
+InputManager::~InputManager() = default;
 
 InputManager &InputManager::getInstance()
 {
-    /** @todo: use CAS for assignment? */
-    if (!m_instance) m_instance = new InputManager();
-    return *m_instance;
+    /** Meyers Singleton (another option is std::call_once) */
+    static InputManager instance = InputManager();
+    return instance;
 }
 
 void InputManager::init()
@@ -67,9 +65,9 @@ void InputManager::init()
 void InputManager::preUpdate()
 {
     L_TAG("InputManager::preUpdate");
-    
+
     /** @todo: add support for controllers
-     * initialize or cleanup when # of joysticks mismatched 
+     * initialize or cleanup when # of joysticks mismatched
      */
 
     /** Clear current event queue (hopefully we dont need to reserve since clear doesn't free current memory) */
@@ -104,8 +102,7 @@ void InputManager::update(const time_ms &delta)
     {
         ComponentManager::getInstance().foreach<InputComponent>([&ev](InputComponent &c) -> void {
             auto f = c.m_listeners.find(static_cast<InputEventType>(ev.type));
-            if (f != c.m_listeners.end())
-            f->second(static_cast<InputEventType>(ev.type), &ev);
+            if (f != c.m_listeners.end()) f->second(static_cast<InputEventType>(ev.type), &ev);
         });
     }
 }

@@ -30,11 +30,11 @@
 class InputManager
 {
 private:
-    static InputManager   *m_instance;
     const uint8_t         *m_keyState;
     std::vector<uint8_t>   m_lastFrameKeyState;
     std::vector<SDL_Event> m_inputEvents;
 
+    /** InputManager is a singleton */
     InputManager();
 protected:
 public:
