@@ -18,6 +18,11 @@ set(CMAKE_CXX_STANDARD 17) # Requires C++20 standard
 ## Core Options
 
 set(CORE_LOG_ENABLE_TAG OFF CACHE BOOL "Sets whether the tags are included in logs")
+set(CORE_UTILS_QUEUE_ENABLE_STDMUTEX ON CACHE BOOL "Sets whether std_mutex queue implementation is enabled")
+set(CORE_UTILS_QUEUE_ENABLE_LOCKFREE OFF CACHE BOOL "Sets whether lockfree queue implementation is enabled")
+set(CORE_UTILS_QUEUE_IMPL "STD" CACHE STRING "Sets underlying implementation for core queue")
+set_property(CACHE CORE_UTILS_QUEUE_IMPL PROPERTY STRINGS STDMUTEX LOCKFREE)
+set(CORE_BUILD_EXAMPLES OFF CACHE BOOL "Build examples")
 set(CORE_BUILD_REFERENCES OFF CACHE BOOL "Build reference binaries")
 set(CORE_BUILD_DOXYGEN OFF CACHE BOOL "Build documentation")
 set(CORE_BUILD_DOXYGEN_HTML ON CACHE BOOL "Generate HTML documentation")
@@ -134,6 +139,9 @@ add_subdirectory(core)
 # Add compile options as definitions
 include(cmake/define_target_option.cmake)
 define_target_option(${CORE_TARGET} ${CORE_LOG_ENABLE_TAG} CORE_LOG_ENABLE_TAG)
+define_target_option(${CORE_TARGET} ${CORE_UTILS_QUEUE_ENABLE_STDMUTEX} CORE_UTILS_QUEUE_ENABLE_STDMUTEX)
+define_target_option(${CORE_TARGET} ${CORE_UTILS_QUEUE_ENABLE_LOCKFREE} CORE_UTILS_QUEUE_ENABLE_LOCKFREE)
+define_target_option(${CORE_TARGET} 1 CORE_UTILS_QUEUE_USE_${CORE_UTILS_QUEUE_IMPL})
 
 #################################################################
 ## Logic
@@ -149,6 +157,12 @@ add_custom_target(Shaders ALL
 # Package assets with binary
 file(COPY assets DESTINATION ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
 
+#################################################################
+## Examples
+
+if(CORE_BUILD_EXAMPLES)
+    add_subdirectory(examples)
+endif()
 
 #################################################################
 ## References

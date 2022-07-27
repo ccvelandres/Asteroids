@@ -7,6 +7,9 @@
             "description": "Debug build",
             "cacheVariables": {
                 "CORE_LOG_ENABLE_TAG": "ON",
+                "CORE_UTILS_QUEUE_ENABLE_LOCKFREE" : "ON",
+                "CORE_UTILS_QUEUE_IMPL": "LOCKFREE",
+                "CORE_BUILD_EXAMPLES": "ON",
                 "CORE_BUILD_REFERENCES": "ON",
                 "CORE_BUILD_DOXYGEN": "ON",
                 "CMAKE_EXPORT_COMPILE_COMMANDS": "ON"
