@@ -1,5 +1,17 @@
 #pragma once
 
+/**
+ * @file core/utils/logging.hpp
+ * @author Cedric Velandres (ccvelandres@gmail.com)
+ */
+
+/**
+ * @defgroup Logging
+ * @brief Wrapper for logging implementation (uses spdlog)
+ * @ingroup Utils
+ * @{
+ */
+
 #include <spdlog/spdlog.h>
 #include <exception>
 
@@ -73,3 +85,5 @@ namespace logging
         L_TAG(__func__);                           \
         L_THROW_RUNTIME("Unimplemented function"); \
     }
+
+/** @} endgroup Logging */
