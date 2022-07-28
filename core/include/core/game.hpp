@@ -4,7 +4,6 @@
 #include <memory>
 #include <string>
 
-#include <SDL2/SDL.h>
 #include "time.hpp"
 
 class EntityManager;
@@ -13,20 +12,17 @@ class EventManager;
 class InputManager;
 class Camera;
 class Renderer;
-
+class AssetManager;
 
 class Game
 {
 private:
-    SDL_Window *m_window;
     std::string m_windowTitle;
     int         m_windowWidth, m_windowHeight;
 
     time_ds m_targetDelta;
     float   m_minfps = std::numeric_limits<float>::max(), m_maxfps;
     float   m_fps;
-
-    friend Renderer;
 protected:
 public:
     Game(const std::string &windowTitle, const int &windowWidth, const int &windowHeight);
@@ -39,12 +35,13 @@ public:
     void setTargetFPS(const float fps);
 
     /** @note Globals for manager objects (probably bad but this saves storing pointers on each object) */
-    static Game             *this_game();        /** Get the current game object */
-    static EntityManager    *entityManager();    /** Get the EntityManager Object */
-    static ComponentManager *componentManager(); /** Get the ComponentManager Object */
-    static EventManager     *eventManager();     /** Get the EventManager Object */
-    static InputManager     *inputManager();     /** Get the InputManager Object */
-    static Time             *time();             /** Get the Time Manager Object */
-    static Renderer         *renderer();         /** Get the Renderer Object */
+    static Game             *this_game();        /** Get the current game instance */
+    static EntityManager    *entityManager();    /** Get the EntityManager instance */
+    static ComponentManager *componentManager(); /** Get the ComponentManager instance */
+    static EventManager     *eventManager();     /** Get the EventManager instance */
+    static InputManager     *inputManager();     /** Get the InputManager instance */
+    static Time             *time();             /** Get the Time Manager instance */
+    static Renderer         *renderer();         /** Get the Renderer instance */
     static Camera           *camera();           /** Get the default Camera object */
+    static AssetManager     *assetManager();     /** Get the Renderer's AssetManager instance */
 };

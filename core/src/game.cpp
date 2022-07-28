@@ -10,7 +10,7 @@
 #include <core/utils/logging.hpp>
 
 #include <core/graphics/camera/camera.hpp>
-
+#include <core/graphics/asset-manager.hpp>
 #include <core/graphics/renderer/renderer.hpp>
 
 #ifdef CORE_RENDERER_VULKAN
@@ -31,6 +31,7 @@ Renderer         *g_renderer         = nullptr;
 InputManager     *g_inputManager     = nullptr;
 Time             *g_time             = nullptr;
 Camera           *g_camera           = nullptr;
+AssetManager     *g_assetManager     = nullptr;
 
 Game::Game(const std::string &windowTitle, const int &windowWidth, const int &windowHeight)
     : m_windowTitle(windowTitle),
@@ -51,6 +52,7 @@ Game::Game(const std::string &windowTitle, const int &windowWidth, const int &wi
 #ifdef CORE_RENDERER_OPENGL
     L_DEBUG("Initializing Renderer (OpenGL)");
     g_renderer = new OpenGLRenderer(windowTitle, windowWidth, windowHeight);
+    g_assetManager = &g_renderer->getAssetManager();
 #endif
     L_DEBUG("Initializing InputManager");
     g_inputManager = &InputManager::getInstance();
@@ -72,7 +74,6 @@ Game::Game(const std::string &windowTitle, const int &windowWidth, const int &wi
 
 Game::~Game()
 {
-    SDL_DestroyWindow(m_window);
     delete g_camera;
     delete g_entityManager;
     delete g_componentManager;
@@ -209,3 +210,4 @@ InputManager     *Game::inputManager() { return g_inputManager; }
 Time             *Game::time() { return g_time; }
 Renderer         *Game::renderer() { return g_renderer; }
 Camera           *Game::camera() { return g_camera; }
+AssetManager     *Game::assetManager() { return g_assetManager; }
