@@ -10,10 +10,9 @@
 
 #include "../component.hpp"
 #include "renderComponent.hpp"
-#include "../../renderer/renderer.hpp"
 
 /**
- * @brief MeshRenderer allows rendering of mesh based render targets
+ * @brief The MeshRenderer allows rendering of mesh based render targets
  * 
  */
 class MeshRenderer : public RenderComponent

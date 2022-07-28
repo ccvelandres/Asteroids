@@ -10,6 +10,7 @@
 
 #include "../component.hpp"
 #include "transformComponent.hpp"
+#include "../../graphics/renderer/renderer.hpp"
 
 /**
  * @brief The RenderComponent allows an entity to be rendered to the screen

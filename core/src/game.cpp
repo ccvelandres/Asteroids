@@ -9,16 +9,16 @@
 #include <core/utils/profiler.hpp>
 #include <core/utils/logging.hpp>
 
-#include <core/camera/camera.hpp>
+#include <core/graphics/camera/camera.hpp>
 
-#include <core/renderer/renderer.hpp>
+#include <core/graphics/renderer/renderer.hpp>
 
 #ifdef CORE_RENDERER_VULKAN
-#include <core/renderer/vulkan/vk-renderer.hpp>
+#include <core/graphics/renderer/vulkan/vk-renderer.hpp>
 #endif
 
 #ifdef CORE_RENDERER_OPENGL
-#include <core/renderer/opengl/gl-renderer.hpp>
+#include <core/graphics/renderer/opengl/gl-renderer.hpp>
 #endif
 
 #include <thread>
