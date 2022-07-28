@@ -13,6 +13,7 @@ class InputManager;
 class Camera;
 class Renderer;
 class AssetManager;
+class AssetInventory;
 
 class Game
 {
@@ -44,4 +45,5 @@ public:
     static Renderer         *renderer();         /** Get the Renderer instance */
     static Camera           *camera();           /** Get the default Camera object */
     static AssetManager     *assetManager();     /** Get the Renderer's AssetManager instance */
+    static AssetInventory   *assetInventory();   /** Get the AssetInventory instance */
 };

@@ -1,32 +1,32 @@
-#include <assets/asset-inventory.hpp>
+#include <core/assets/asset-inventory.hpp>
+#include <core/utils/logging.hpp>
 
-namespace AssetInventory
-{
-    using AssetList  = std::unordered_map<std::string, AssetPaths>;
+#include <filesystem>
+#include <fstream>
 
-    /** @todo: Add thread-protection */
-    struct Inventory
-    {
-        std::unordered_map<AssetType, AssetList> cache;
-    };
+AssetInventory &AssetInventory::getInstance() {
+    static AssetInventory instance;
+    return instance;
+}
 
-    static Inventory inventory;
+AssetInventory::AssetInventory() {
+    L_TAG("AssetInventory()");
 
-    int loadInventory()
-    {
-        /** @todo: create program for creating inventory file */
-        /** @todo: do proper parsing of inventory file */
-        inventory.cache.clear();
+    /** load defaults without inventory file */
+    cache[AssetType::Mesh]["crate"].push_back("assets/models/crate.obj");
+    cache[AssetType::Pipeline]["default"].push_back("shaders/opengl/default.vert");
+    cache[AssetType::Pipeline]["default"].push_back("shaders/opengl/default.frag");
+    cache[AssetType::Texture]["crate"].push_back("assets/textures/crate.png");
 
-        inventory.cache[AssetType::Mesh]["crate"].push_back("assets/models/crate.obj");
-        inventory.cache[AssetType::Pipeline]["default"].push_back("shaders/opengl/default.vert");
-        inventory.cache[AssetType::Pipeline]["default"].push_back("shaders/opengl/default.frag");
-        inventory.cache[AssetType::Texture]["crate"].push_back("assets/textures/crate.png");
+    L_TRACE("Internal resources initialized ({})", static_cast<void *>(this));
+}
 
-        return EXIT_SUCCESS;
-    }
+AssetInventory::~AssetInventory() = default;
 
-    int loadInventory(const std::string &filename){ return EXIT_FAILURE; }
+void AssetInventory::loadInventory(const std::string &inventoryFile) {
+    L_UNIMPLEMENTED("AssetInventory::loadInventory(&filename)");
 
-    AssetPaths resolvePath(const AssetType &type, const std::string &name) { return inventory.cache[type][name]; }
-} // namespace AssetInventory
+    /** load inventory to cache */
+}
+
+AssetPaths AssetInventory::resolvePath(const AssetType &type, const std::string &name) { return cache[type][name]; }

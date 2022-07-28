@@ -9,6 +9,8 @@
 #include <core/utils/profiler.hpp>
 #include <core/utils/logging.hpp>
 
+#include <core/assets/asset-inventory.hpp>
+
 #include <core/graphics/camera/camera.hpp>
 #include <core/graphics/asset-manager.hpp>
 #include <core/graphics/renderer/renderer.hpp>
@@ -32,6 +34,7 @@ InputManager     *g_inputManager     = nullptr;
 Time             *g_time             = nullptr;
 Camera           *g_camera           = nullptr;
 AssetManager     *g_assetManager     = nullptr;
+AssetInventory   *g_assetInventory   = nullptr;
 
 Game::Game(const std::string &windowTitle, const int &windowWidth, const int &windowHeight)
     : m_windowTitle(windowTitle),
@@ -51,7 +54,7 @@ Game::Game(const std::string &windowTitle, const int &windowWidth, const int &wi
 
 #ifdef CORE_RENDERER_OPENGL
     L_DEBUG("Initializing Renderer (OpenGL)");
-    g_renderer = new OpenGLRenderer(windowTitle, windowWidth, windowHeight);
+    g_renderer     = new OpenGLRenderer(windowTitle, windowWidth, windowHeight);
     g_assetManager = &g_renderer->getAssetManager();
 #endif
     L_DEBUG("Initializing InputManager");
@@ -63,7 +66,7 @@ Game::Game(const std::string &windowTitle, const int &windowWidth, const int &wi
     L_DEBUG("Initializing EntityManager");
     g_entityManager = &EntityManager::getInstance();
     L_DEBUG("Initializing AssetInventory");
-    AssetInventory::loadInventory();
+    g_assetInventory = &AssetInventory::getInstance();
     L_DEBUG("Creating default camera");
     g_camera = new Camera(m_windowWidth, m_windowHeight, Camera::Projection::Perspective);
 
@@ -211,3 +214,4 @@ Time             *Game::time() { return g_time; }
 Renderer         *Game::renderer() { return g_renderer; }
 Camera           *Game::camera() { return g_camera; }
 AssetManager     *Game::assetManager() { return g_assetManager; }
+AssetInventory   *Game::assetInventory() { return g_assetInventory; }

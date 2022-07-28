@@ -31,7 +31,7 @@ static AssetID loadPipeline(const std::string &name,std::vector<OpenGLPipeline> 
     AssetID id        = cache.size();
 
     /** Get paths from asset manager */
-    AssetPaths assetPaths = AssetInventory::resolvePath(type, name);
+    AssetPaths assetPaths = AssetInventory::getInstance().resolvePath(type, name);
 
     L_DEBUG("Loading shader pipeline \"{}\" with {} stages", name, assetPaths.size());
     std::vector<OpenGLPipeline::ShaderStage> stages;
@@ -58,7 +58,7 @@ static AssetID loadMesh(const std::string &name, std::vector<OpenGLMesh>     &ca
 
     /** Get paths from asset manager */
     L_DEBUG("Loading mesh from {}", name);
-    AssetPaths assetPaths = AssetInventory::resolvePath(type, name);
+    AssetPaths assetPaths = AssetInventory::getInstance().resolvePath(type, name);
 
     /** Parse mesh file */
     assert(assetPaths.size() == 1);
@@ -76,7 +76,7 @@ static AssetID loadTexture(const std::string &name, std::vector<OpenGLTexture>  
     AssetID id        = cache.size();
 
     /** Get paths from asset manager */
-    AssetPaths assetPaths = AssetInventory::resolvePath(type, name);
+    AssetPaths assetPaths = AssetInventory::getInstance().resolvePath(type, name);
 
     /** Load texture from file */
     assert(assetPaths.size() == 1);
