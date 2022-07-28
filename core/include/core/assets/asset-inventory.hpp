@@ -7,14 +7,19 @@
 #include <vector>
 #include <string>
 
+using AssetName = std::string;
+using AssetPaths = std::vector<std::string>;
+
+enum class AssetType {
+    Mesh,
+    Pipeline,
+    Texture
+};
+
 namespace AssetInventory {
-    using AssetPaths = std::vector<std::string>;
-    using AssetList  = std::unordered_map<std::string, AssetPaths>;
-    
+
     int loadInventory();
     int loadInventory(const std::string &filename);
 
-    AssetPaths resolvePath(const std::string &type, const std::string &name);
-
-
+    AssetPaths resolvePath(const AssetType &type, const std::string &name);
 }

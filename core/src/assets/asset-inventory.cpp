@@ -2,31 +2,31 @@
 
 namespace AssetInventory
 {
+    using AssetList  = std::unordered_map<std::string, AssetPaths>;
+
     /** @todo: Add thread-protection */
     struct Inventory
     {
-        std::unordered_map<std::string, AssetList> cache;
+        std::unordered_map<AssetType, AssetList> cache;
     };
 
-    std::shared_ptr<Inventory> inventory(std::make_shared<Inventory>());
+    static Inventory inventory;
 
     int loadInventory()
     {
         /** @todo: create program for creating inventory file */
         /** @todo: do proper parsing of inventory file */
-        Inventory *ivn = new Inventory();
+        inventory.cache.clear();
 
-        ivn->cache["mesh"]["crate"].push_back("assets/models/crate.obj");
-        ivn->cache["pipeline"]["default"].push_back("shaders/opengl/default.vert");
-        ivn->cache["pipeline"]["default"].push_back("shaders/opengl/default.frag");
-        ivn->cache["texture"]["crate"].push_back("assets/textures/crate.png");
-
-        inventory.reset(ivn);
+        inventory.cache[AssetType::Mesh]["crate"].push_back("assets/models/crate.obj");
+        inventory.cache[AssetType::Pipeline]["default"].push_back("shaders/opengl/default.vert");
+        inventory.cache[AssetType::Pipeline]["default"].push_back("shaders/opengl/default.frag");
+        inventory.cache[AssetType::Texture]["crate"].push_back("assets/textures/crate.png");
 
         return EXIT_SUCCESS;
     }
 
     int loadInventory(const std::string &filename){ return EXIT_FAILURE; }
 
-    AssetPaths resolvePath(const std::string &type, const std::string &name) { return inventory->cache[type][name]; }
+    AssetPaths resolvePath(const AssetType &type, const std::string &name) { return inventory.cache[type][name]; }
 } // namespace AssetInventory
