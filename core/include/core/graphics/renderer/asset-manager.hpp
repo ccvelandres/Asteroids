@@ -29,9 +29,7 @@ public:
     AssetManager &operator=(AssetManager &&o) = default;
     virtual ~AssetManager()                   = default;
 
-    virtual AssetID loadPipeline(const std::string &name) = 0;
-    virtual AssetID loadMesh(const std::string &name)     = 0;
-    virtual AssetID loadTexture(const std::string &name)  = 0;
+    virtual AssetID loadAsset(const AssetType &type, const AssetName &name) = 0;
 };
 
 /** @} endgroup Renderer */

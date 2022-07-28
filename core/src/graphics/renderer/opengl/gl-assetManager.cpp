@@ -23,15 +23,15 @@ struct OpenGLAssetManager::Internal
     }
 };
 
-AssetID OpenGLAssetManager::loadPipeline(const std::string &name)
+static AssetID loadPipeline(const std::string &name,std::vector<OpenGLPipeline> &cache)
 {
     L_TAG("OpenGLAssetManager::loadPipeline");
-    auto   &cache     = m_internal->pipelineCache;
+    constexpr AssetType type = AssetType::Pipeline;
     auto    insertPos = cache.end();
     AssetID id        = cache.size();
 
     /** Get paths from asset manager */
-    AssetInventory::AssetPaths assetPaths = AssetInventory::resolvePath("pipeline", name);
+    AssetPaths assetPaths = AssetInventory::resolvePath(type, name);
 
     L_DEBUG("Loading shader pipeline \"{}\" with {} stages", name, assetPaths.size());
     std::vector<OpenGLPipeline::ShaderStage> stages;
@@ -49,16 +49,16 @@ AssetID OpenGLAssetManager::loadPipeline(const std::string &name)
     return id;
 }
 
-AssetID OpenGLAssetManager::loadMesh(const std::string &name)
+static AssetID loadMesh(const std::string &name, std::vector<OpenGLMesh>     &cache)
 {
     L_TAG("OpenGLAssetManager::loadMesh");
-    auto   &cache     = m_internal->meshCache;
+    constexpr AssetType type = AssetType::Mesh;
     auto    insertPos = cache.end();
     AssetID id        = cache.size();
 
     /** Get paths from asset manager */
     L_DEBUG("Loading mesh from {}", name);
-    AssetInventory::AssetPaths assetPaths = AssetInventory::resolvePath("mesh", name);
+    AssetPaths assetPaths = AssetInventory::resolvePath(type, name);
 
     /** Parse mesh file */
     assert(assetPaths.size() == 1);
@@ -68,15 +68,15 @@ AssetID OpenGLAssetManager::loadMesh(const std::string &name)
     L_DEBUG("Mesh loaded {}: {}", id, name);
     return id;
 }
-AssetID OpenGLAssetManager::loadTexture(const std::string &name)
+static AssetID loadTexture(const std::string &name, std::vector<OpenGLTexture>  &cache)
 {
     L_TAG("OpenGLAssetManager::loadMesh");
-    auto   &cache     = m_internal->textureCache;
+    constexpr AssetType type = AssetType::Texture;
     auto    insertPos = cache.end();
     AssetID id        = cache.size();
 
     /** Get paths from asset manager */
-    AssetInventory::AssetPaths assetPaths = AssetInventory::resolvePath("texture", name);
+    AssetPaths assetPaths = AssetInventory::resolvePath(type, name);
 
     /** Load texture from file */
     assert(assetPaths.size() == 1);
@@ -88,7 +88,27 @@ AssetID OpenGLAssetManager::loadTexture(const std::string &name)
     return id;
 }
 
-OpenGLMesh &OpenGLAssetManager::getMesh(AssetID id)
+AssetID OpenGLAssetManager::loadAsset(const AssetType &type, const AssetName &name)
+{
+    AssetID id = std::numeric_limits<std::size_t>::max();
+    switch (type)
+    {
+    case AssetType::Mesh:
+        id = loadMesh(name, m_internal->meshCache);
+        break;
+    case AssetType::Pipeline:
+        id = loadPipeline(name, m_internal->pipelineCache);
+        break;
+    case AssetType::Texture:
+        id = loadTexture(name, m_internal->textureCache);
+        break;
+    default:
+        break;
+    }
+    return id;
+}
+
+OpenGLMesh &OpenGLAssetManager::getMesh(AssetID id) const
 {
     L_TAG("OpenGLAssetManager::getMesh");
     auto &cache = m_internal->meshCache;
@@ -98,7 +118,7 @@ OpenGLMesh &OpenGLAssetManager::getMesh(AssetID id)
         L_THROW_RUNTIME("Cache empty for AssetID: {}", id);
 }
 
-OpenGLPipeline &OpenGLAssetManager::getPipeline(AssetID id)
+OpenGLPipeline &OpenGLAssetManager::getPipeline(AssetID id) const
 {
     L_TAG("OpenGLAssetManager::getPipeline");
     auto &cache = m_internal->pipelineCache;
@@ -108,7 +128,7 @@ OpenGLPipeline &OpenGLAssetManager::getPipeline(AssetID id)
         L_THROW_RUNTIME("Cache empty for AssetID: {}", id);
 }
 
-OpenGLTexture &OpenGLAssetManager::getTexture(AssetID id)
+OpenGLTexture &OpenGLAssetManager::getTexture(AssetID id) const
 {
     L_TAG("OpenGLAssetManager::getTexture");
     auto &cache = m_internal->textureCache;

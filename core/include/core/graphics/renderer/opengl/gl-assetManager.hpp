@@ -30,13 +30,11 @@ public:
     OpenGLAssetManager &operator=(OpenGLAssetManager &&o);
     ~OpenGLAssetManager();
 
-    AssetID loadPipeline(const std::string &name) override;
-    AssetID loadMesh(const std::string &name) override;
-    AssetID loadTexture(const std::string &name) override;
+    AssetID loadAsset(const AssetType &type, const AssetName &name) override;
 
-    OpenGLMesh     &getMesh(AssetID id);
-    OpenGLPipeline &getPipeline(AssetID id);
-    OpenGLTexture  &getTexture(AssetID id);
+    OpenGLMesh     &getMesh(AssetID id) const;
+    OpenGLPipeline &getPipeline(AssetID id) const;
+    OpenGLTexture  &getTexture(AssetID id) const;
 };
 
 /** @} endgroup OpenGL */
