@@ -1,56 +1,29 @@
 #include <assets/mesh.hpp>
 #include <assets/loaders/obj.hpp>
+#include <assets/asset-inventory.hpp>
 #include <utils/logging.hpp>
 
 #include <glm/gtx/string_cast.hpp>
 
-#include <unordered_map>
-
 namespace assets
 {
-    struct Mesh::Internal
+    static void load_obj(const AssetName &name, Mesh::MeshData &meshData)
     {
-        const std::vector<Vertex>   vertices;
-        const std::vector<uint32_t> indices;
+        L_TAG("Mesh(Obj)");
 
-        Internal(const std::vector<Vertex> &vertices, const std::vector<uint32_t> &indices)
-            : vertices(vertices),
-              indices(indices)
-        {
-            L_TAG("Mesh::Internal");
-            L_TRACE("Internal resources initialized ({})", static_cast<void *>(this));
-        }
-
-        ~Internal()
-        {
-            L_TAG("Mesh::~Internal");
-            L_TRACE("Internal resources freed ({})", static_cast<void *>(this));
-        }
-    };
-
-    Mesh::Mesh(const std::vector<Vertex> &vertices, const std::vector<uint32_t> &indices)
-        : m_internal(std::make_unique<Internal>(vertices, indices))
-    {
-    }
-
-    Mesh::Mesh(const std::string &filename)
-    {
-        L_TAG("Mesh::Mesh(std::string&)");
         assets::loaders::obj::Loader objLoader;
-        std::vector<Vertex> vertices;
-        std::vector<uint32_t> indices;
 
         try
         {
-            bool res = objLoader.loadFile(filename);
-            if (!res) L_THROW_RUNTIME("Failed to load obj: {}", filename);
+            bool res = objLoader.loadFile(name);
+            if (!res) L_THROW_RUNTIME("Failed to load obj: {}", name);
 
             for (auto &obj : objLoader.objects)
             {
                 L_DEBUG("indicesCount: {}", obj.mesh.indices.size() / 3);
 
                 std::unordered_map<Vertex, uint32_t> uniqueVertice;
-                std::size_t duplicateVertice = 0;
+                std::size_t                          duplicateVertice = 0;
 
                 for (auto &index : obj.mesh.indices)
                 {
@@ -62,22 +35,20 @@ namespace assets
                     /** Build vertex with vertices */
 
                     Vertex vertex = {
-                        .position = {
-                            objLoader.vertices[(3 * index.v) + 0],
-                            objLoader.vertices[(3 * index.v) + 1],
-                            objLoader.vertices[(3 * index.v) + 2],
-                        },
-                        .normals = {
-                            objLoader.normals[(3 * index.vn) + 0],
-                            objLoader.normals[(3 * index.vn) + 1],
-                            objLoader.normals[(3 * index.vn) + 2],
-                        },
-                        .texCoords = {
-                            objLoader.texCoords[(2 * index.vt) + 0],
-                            objLoader.texCoords[(2 * index.vt) + 1] 
-                        }
+                        .position =
+                            {
+                                       objLoader.vertices[(3 * index.v) + 0],
+                                       objLoader.vertices[(3 * index.v) + 1],
+                                       objLoader.vertices[(3 * index.v) + 2],
+                                       },
+                        .normals =
+                            {
+                                       objLoader.normals[(3 * index.vn) + 0],
+                                       objLoader.normals[(3 * index.vn) + 1],
+                                       objLoader.normals[(3 * index.vn) + 2],
+                                       },
+                        .texCoords = {objLoader.texCoords[(2 * index.vt) + 0], objLoader.texCoords[(2 * index.vt) + 1]}
                     };
-
 
                     /** Maintain a map of with Vertex as keys and the
                      * indice as value to deduplicate vertexes
@@ -85,38 +56,76 @@ namespace assets
                      * just add the index to indice vector
                      */
                     auto it = uniqueVertice.find(vertex);
-                    if(it == uniqueVertice.end())
+                    if (it == uniqueVertice.end())
                     {
-                        uint32_t index = static_cast<uint32_t>(vertices.size());
-                        it = uniqueVertice.insert(it, std::make_pair(vertex, index));
-                        vertices.push_back(vertex);
+                        uint32_t index = static_cast<uint32_t>(meshData.vertices.size());
+                        it             = uniqueVertice.insert(it, std::make_pair(vertex, index));
+                        meshData.vertices.push_back(vertex);
                     }
-                    else {
+                    else
+                    {
                         duplicateVertice++;
                     }
-                    
-                    indices.push_back(it->second);
+
+                    meshData.indices.push_back(it->second);
                 }
 
-                L_DEBUG("VertexCount: {}", vertices.size());
+                L_DEBUG("VertexCount: {}", meshData.vertices.size());
                 L_TRACE("Deduplicated {} vertice", duplicateVertice);
             }
-
-            // m_internal = std::make_unique<Internal>();
         }
         catch (std::exception &ex)
         {
-            L_THROW_RUNTIME("Failed to load obj: {}", filename);
+            L_THROW_RUNTIME("Failed to load obj: {}", name);
         }
-
-        m_internal = std::make_unique<Internal>(std::move(vertices), std::move(indices));
     }
 
-    Mesh::Mesh()                    = default;
-    Mesh::Mesh(Mesh &&o)            = default;
-    Mesh &Mesh::operator=(Mesh &&o) = default;
-    Mesh::~Mesh()                   = default;
+    static void load_defaults(const AssetName &name, Mesh::MeshData &meshData)
+    {
+        L_TAG("Mesh(Defaults)");
 
-    const std::vector<Vertex>   &Mesh::getVertices() const { return m_internal->vertices; }
-    const std::vector<uint32_t> &Mesh::getIndices() const { return m_internal->indices; }
+        try
+        {
+            /* code */
+        }
+        catch (const std::exception &e)
+        {
+            // std::cerr << e.what() << '\n';
+        }
+    }
+
+    Mesh::MeshData::MeshData(const std::vector<Vertex> &vx, const std::vector<uint32_t> &idx) : vertices(vx), indices(idx) {}
+    Mesh::MeshData::MeshData(std::vector<Vertex> &&vx, std::vector<uint32_t> &&idx) : vertices(vx), indices(idx) {}
+
+    Mesh::Mesh() = default;
+    Mesh::~Mesh()
+    {
+        L_TAG("~Mesh");
+        L_TRACE("Internal resources freed ({})", static_cast<void *>(this));
+    };
+
+    Mesh::Mesh(const std::vector<Vertex> &vx, const std::vector<uint32_t> &idx) : m_meshData(vx, idx)
+    {
+        L_TAG("Mesh(&vertices, &indices)");
+        L_TRACE("Internal resources initialized ({})", static_cast<void *>(this));
+    }
+
+    Mesh::Mesh(const AssetName &name)
+    {
+        L_TAG("Mesh(&filename)");
+
+        // if(name.starts_with("defaults")){
+
+        // }
+        // else {
+        //     if (name.ends_with(".obj")) {
+        //         load_obj(name, this->m_meshData);
+        //     }
+        // }
+
+        L_TRACE("Internal resources initialized ({})", static_cast<void *>(this));
+    }
+
+    const std::vector<Vertex>   &Mesh::getVertices() const noexcept { return m_meshData.vertices; }
+    const std::vector<uint32_t> &Mesh::getIndices() const noexcept { return m_meshData.indices; }
 } // namespace assets
