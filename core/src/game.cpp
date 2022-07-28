@@ -78,7 +78,6 @@ Game::~Game()
     delete g_componentManager;
     delete g_eventManager;
     delete g_renderer;
-    delete g_inputManager;
     delete g_time;
     g_game = nullptr;
 

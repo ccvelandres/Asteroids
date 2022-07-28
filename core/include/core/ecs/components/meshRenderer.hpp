@@ -3,7 +3,7 @@
 /**
  * @file core/ecs/components/meshRenderer.hpp
  * @author Cedric Velandres (ccvelandres@gmail.com)
- * 
+ *
  * @addtogroup Components
  * @{
  */
@@ -13,14 +13,16 @@
 
 /**
  * @brief The MeshRenderer allows rendering of mesh based render targets
- * 
+ *
  */
 class MeshRenderer : public RenderComponent
 {
 private:
-    
 protected:
-    MeshRenderer() {}
+    MeshRenderer(AssetID meshID, AssetID textureID) : RenderComponent(meshID, textureID, 0) {}
+    MeshRenderer(AssetID meshID, AssetID textureID, AssetID pipelineID) : RenderComponent(meshID, textureID, pipelineID)
+    {
+    }
 public:
 
     /** Component overrides */
