@@ -163,7 +163,7 @@ void OpenGLRenderer::render()
         OpenGLMesh         &mesh        = am.getMesh(it->getMeshID());
         OpenGLTexture      &texture     = am.getTexture(it->getTextureID());
         TransformComponent &transform   = it->entity().getComponent<TransformComponent>();
-        glm::mat4           modelMatrix = transform.getModelMatrix();
+        glm::mat4           modelMatrix = it->getModelMatrix();
         glm::mat4           mvp(projectionMatrix * viewMatrix * modelMatrix);
 
         pipeline.render(mesh, mvp);

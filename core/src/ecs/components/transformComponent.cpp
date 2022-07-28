@@ -78,13 +78,3 @@ const glm::vec3 TransformComponent::getOrientationYXZ() const noexcept
     glm::vec3 euler = glm::eulerAngles(m_orientation);
     return glm::vec3(euler.y, euler.x, euler.z);
 }
-
-const glm::mat4 TransformComponent::getModelMatrix() const noexcept
-{
-    /** @todo: minimize model matrix computation by computing only on change */
-    const glm::mat4 identity(1.0f);
-    glm::mat4       translation = glm::translate(identity, this->m_position);
-    glm::mat4       rotation    = glm::mat4_cast(this->m_orientation);
-    glm::mat4       scale       = glm::scale(identity, this->m_scale);
-    return translation * rotation * scale;
-}

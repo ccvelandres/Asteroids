@@ -11,4 +11,6 @@
 #include "components/transformComponent.hpp"
 #include "components/inputComponent.hpp"
 
+/** Rendering Components */
 #include "components/renderComponent.hpp"
+#include "components/meshRenderer.hpp"

@@ -20,11 +20,11 @@ class RenderComponent : public Component
 {
 private:
 protected:
+    glm::mat4 m_modelMatrix;
+
     AssetID m_meshID;
     AssetID m_textureID;
     AssetID m_pipelineID;
-
-    TransformComponent *m_transform;
 
     /** Protected Constructors (use entity to add components) */
     RenderComponent();
@@ -34,7 +34,6 @@ protected:
           m_pipelineID(pipelineID)
     {
     }
-    
 public:
     ~RenderComponent();
     RenderComponent(RenderComponent &o)             = delete;
@@ -44,16 +43,21 @@ public:
 
     /** Component overrides */
     // void awake() override;
-    void init() override;
+    // void init() override;
     // void fixedUpdate(time_ms delta) override;
     // void update(time_ms delta) override;
     // void clean() override;
 
-    AssetID getMeshID() const { return m_meshID; }
-    AssetID getTextureID() const { return m_textureID; }
-    AssetID getPipelineID() const { return m_pipelineID; }
+    void setMeshID(const AssetID id) noexcept { m_meshID = id; }
+    void setTextureID(const AssetID id) noexcept { m_textureID = id; }
+    void setPipelineID(const AssetID id) noexcept { m_pipelineID = id; }
 
-    virtual void getModelMatrix() = 0;
+    AssetID getMeshID() const noexcept { return m_meshID; }
+    AssetID getTextureID() const noexcept { return m_textureID; }
+    AssetID getPipelineID() const noexcept { return m_pipelineID; }
+
+    /** Retrieve the attached entity's model matrix (translation * rotation * scale) */
+    const glm::mat4 getModelMatrix() const noexcept;
 
     friend Entity;
     friend EntityManager;
