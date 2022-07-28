@@ -3,11 +3,8 @@
 /**
  * @file core/renderer/vertex.hpp
  * @author Cedric Velandres (ccvelandres@gmail.com)
- */
-
-/**
+ * 
  * @addtogroup Renderer
- * @ingroup Core
  * @{
  */
 

@@ -3,11 +3,8 @@
 /**
  * @file core/ecs/entity.hpp
  * @author Cedric Velandres (ccvelandres@gmail.com)
- */
-
-/**
+ * 
  * @addtogroup ECS
- * @ingroup Core
  * @{
  */
 

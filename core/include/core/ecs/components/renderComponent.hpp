@@ -3,11 +3,8 @@
 /**
  * @file core/ecs/components/renderComponent.hpp
  * @author Cedric Velandres (ccvelandres@gmail.com)
- */
-
-/**
+ * 
  * @addtogroup Components
- * @ingroup ECS
  * @{
  */
 
@@ -15,7 +12,7 @@
 #include "transformComponent.hpp"
 
 /**
- * @brief The RenderComponents allows an entity to be rendered to the screen
+ * @brief The RenderComponent allows an entity to be rendered to the screen
  * 
  */
 class RenderComponent : public Component
@@ -39,6 +36,8 @@ public:
     // void fixedUpdate(time_ms delta) override;
     // void update(time_ms delta) override;
     // void clean() override;
+
+    virtual void getModelMatrix() = 0;
 
     friend Entity;
     friend EntityManager;

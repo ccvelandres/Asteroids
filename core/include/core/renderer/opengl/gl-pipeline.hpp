@@ -3,11 +3,8 @@
 /**
  * @file core/renderer/opengl/gl-pipeline.hpp
  * @author Cedric Velandres (ccvelandres@gmail.com)
- */
-
-/**
+ * 
  * @addtogroup OpenGL
- * @ingroup Renderer
  * @{
  */
 

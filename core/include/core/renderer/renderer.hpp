@@ -3,12 +3,10 @@
 /**
  * @file core/renderer/renderer.hpp
  * @author Cedric Velandres (ccvelandres@gmail.com)
- */
-
-/**
+ * 
  * @defgroup Renderer
- * @brief Interface for the rendering system
- * @ingroup Core
+ * @brief Common implementation for the Rendering System under the Graphics module
+ * @ingroup Graphics
  * @{
  */
 

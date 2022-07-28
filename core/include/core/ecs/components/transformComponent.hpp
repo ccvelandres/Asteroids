@@ -3,11 +3,8 @@
 /**
  * @file core/ecs/components/transformComponent.hpp
  * @author Cedric Velandres (ccvelandres@gmail.com)
- */
-
-/**
+ * 
  * @addtogroup Components
- * @ingroup ECS
  * @{
  */
 
@@ -15,9 +12,13 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/quaternion.hpp>
 
+#include <bitset>
+
 /**
- * @brief The Transform Component describes the position, scale, orientation of 
- * attached entities
+ * @brief The TransformComponent describes the position, scale, orientation of
+ * attached entities.
+ *
+ * In 2D Rendering mode, XY acts as normal and Z acts as depth buffering
  *
  * @todo: parent links with transform and world space resolution
  */

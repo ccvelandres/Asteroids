@@ -1,16 +1,15 @@
 #pragma once
 
 /**
+ * @file core/camera/camera.hpp
+ * @author Cedric Velandres (ccvelandres@gmail.com)
+ * 
  * @addtogroup Camera
+ * @ingroup Graphics
  * @{
  */
 
 #include <glm/glm.hpp>
-
-/**
- * @file This file defines the base Camera class
- * @todo: maybe change to CRTP? do we need derived classes?
- */
 
 /**
  * @brief Base Class for Camera types

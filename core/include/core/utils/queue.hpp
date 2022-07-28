@@ -1,16 +1,16 @@
 #pragma once
 
 /**
- * @file core/utils/lf-queue.hpp
+ * @file core/utils/queue.hpp
  * @author Cedric Velandres (ccvelandres@gmail.com)
- */
-
-/**
- * @addtogroup Utils
+ * 
+ * @defgroup Queue
+ * @brief Wrapper for thread-safe queue implementations
+ * @ingroup Utils
  * @{
  */
 
-#if (CORE_UTILS_QUEUE_ENABLE_STDMUTEX)
+#if (CORE_UTILS_QUEUE_ENABLE_STDMUTEX || DOXYGEN)
 
 #include <queue>
 #include <mutex>
@@ -19,6 +19,7 @@ namespace core::utils
 {
     /**
      * @brief Wrapper class for thread safe std::queue + mutex
+     * @ingroup Queue
      * @todo: maybe replace with a lock-free queue? is it worth it? check latency
      */
     template <typename _T>
@@ -95,7 +96,7 @@ namespace core::utils
 } // namespace core::utils
 #endif
 
-#if (CORE_UTILS_QUEUE_ENABLE_LOCKFREE)
+#if (CORE_UTILS_QUEUE_ENABLE_LOCKFREE || DOXYGEN)
 
 #include <atomic>
 
@@ -104,9 +105,10 @@ namespace core::utils
 
     /**
      * @brief Atomic queue (not tested thoroughly)
+     * @ingroup Queue
      * @todo: split cache lines, test more, 
      * 
-     * @note: as far as i understand, memory orders / barriers:
+     * As far as i understand, memory orders / barriers:
      *  1. relaxed -> just ensures that the store/load operations are done atomically
      *  2. consume -> no idea lmao
      *  3. acquire -> a load operation locks all operations (not just read/write in 
@@ -132,7 +134,7 @@ namespace core::utils
      *  but it seems to work across the memory? or cache?
      * 
      * Most loads are relaxed so that we don't use RFO operation (since that's slow?)
-     *  and we just need to guarantee that the load is atomic
+     *  and we just need to guarantee that the load is atomic.
      *  See MESI_protocol (is this used by most modern processors?)
      * 
      * @tparam _T type of element
@@ -319,6 +321,6 @@ namespace core::utils
 #error "Missing implementation for core::utils::queue. See CORE_UTILS_QUEUE_* for options"
 #endif
 #endif
-} // namespace core::utils::queue
+} // namespace core::utils
 
-/** @} endgroup Utils */
+/** @} endgroup Queue */

@@ -3,11 +3,9 @@
 /**
  * @file core/utils/logging.hpp
  * @author Cedric Velandres (ccvelandres@gmail.com)
- */
-
-/**
+ * 
  * @defgroup Logging
- * @brief Wrapper for logging implementation (uses spdlog)
+ * @brief Wrapper for logging implementation
  * @ingroup Utils
  * @{
  */

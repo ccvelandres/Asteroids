@@ -3,11 +3,8 @@
 /**
  * @file core/ecs/components/inputComponent.hpp
  * @author Cedric Velandres (ccvelandres@gmail.com)
- */
-
-/**
+ * 
  * @addtogroup Components
- * @ingroup ECS
  * @{
  */
 

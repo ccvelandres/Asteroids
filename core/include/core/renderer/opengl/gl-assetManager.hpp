@@ -3,11 +3,8 @@
 /**
  * @file core/renderer/opengl/gl-assetManager.hpp
  * @author Cedric Velandres (ccvelandres@gmail.com)
- */
-
-/**
+ * 
  * @addtogroup OpenGL
- * @ingroup Renderer
  * @{
  */
 

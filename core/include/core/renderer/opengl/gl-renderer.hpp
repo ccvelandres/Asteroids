@@ -3,9 +3,7 @@
 /**
  * @file core/renderer/opengl/gl-renderer.hpp
  * @author Cedric Velandres (ccvelandres@gmail.com)
- */
-
-/**
+ * 
  * @defgroup OpenGL
  * @brief OpenGL implementation for the Rendering System
  * 

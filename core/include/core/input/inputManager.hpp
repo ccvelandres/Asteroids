@@ -3,12 +3,8 @@
 /**
  * @file core/input/inputManager.hpp
  * @author Cedric Velandres (ccvelandres@gmail.com)
- */
-
-/**
- * @defgroup Input
- * @brief Interface for Input system
- * @ingroup Core
+ * 
+ * @addtogroup Input
  * @{
  */
 

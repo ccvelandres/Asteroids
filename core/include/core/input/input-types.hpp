@@ -3,11 +3,8 @@
 /**
  * @file core/input/input-types.hpp
  * @author Cedric Velandres (ccvelandres@gmail.com)
- */
-
-/**
+ * 
  * @addtogroup Input
- * @ingroup Core
  * @{
  */
 
