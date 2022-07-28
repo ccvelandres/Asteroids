@@ -10,8 +10,8 @@
  * @{
  */
 
-#include "asset-manager.hpp"
 #include "vertex.hpp"
+#include "../asset-manager.hpp"
 #include "../../time.hpp"
 
 /**

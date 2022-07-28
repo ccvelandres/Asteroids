@@ -8,7 +8,7 @@
  * @{
  */
 
-#include "../asset-manager.hpp"
+#include "../../asset-manager.hpp"
 #include "gl-renderer.hpp"
 #include "gl-pipeline.hpp"
 #include "gl-texture.hpp"

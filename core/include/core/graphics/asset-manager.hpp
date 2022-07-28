@@ -4,11 +4,11 @@
  * @file core/renderer/asset-manager.hpp
  * @author Cedric Velandres (ccvelandres@gmail.com)
  * 
- * @addtogroup Renderer
+ * @addtogroup Graphics
  * @{
  */
 
-#include "../../assets/asset-inventory.hpp"
+#include "../assets/asset-inventory.hpp"
 
 using AssetID = std::size_t;
 
