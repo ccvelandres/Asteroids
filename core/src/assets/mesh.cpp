@@ -35,19 +35,19 @@ namespace assets
                     /** Build vertex with vertices */
 
                     Vertex vertex = {
-                        .position =
+                        .v =
                             {
                                        objLoader.vertices[(3 * index.v) + 0],
                                        objLoader.vertices[(3 * index.v) + 1],
                                        objLoader.vertices[(3 * index.v) + 2],
                                        },
-                        .normals =
+                        .vn =
                             {
                                        objLoader.normals[(3 * index.vn) + 0],
                                        objLoader.normals[(3 * index.vn) + 1],
                                        objLoader.normals[(3 * index.vn) + 2],
                                        },
-                        .texCoords = {objLoader.texCoords[(2 * index.vt) + 0], objLoader.texCoords[(2 * index.vt) + 1]}
+                        .uv = {objLoader.texCoords[(2 * index.vt) + 0], objLoader.texCoords[(2 * index.vt) + 1]}
                     };
 
                     /** Maintain a map of with Vertex as keys and the

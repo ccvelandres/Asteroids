@@ -62,9 +62,9 @@ void loadCrateMesh()
     g_vertex_buffer_crate.reserve(mesh.getVertices().size() * 3);
     for (auto &s : mesh.getVertices())
     {
-        g_vertex_buffer_crate.push_back(s.position.x);
-        g_vertex_buffer_crate.push_back(s.position.y);
-        g_vertex_buffer_crate.push_back(s.position.z);
+        g_vertex_buffer_crate.push_back(s.v.x);
+        g_vertex_buffer_crate.push_back(s.v.y);
+        g_vertex_buffer_crate.push_back(s.v.z);
     }
     g_indice_buffer_crate.reserve(mesh.getIndices().size());
     for (auto &s : mesh.getIndices())

@@ -12,16 +12,16 @@ static GLuint createVertexBuffer(const assets::Mesh &mesh)
     // for (const auto &vertex : mesh.getVertices())
     // {
     //     /** Vertex coordinates */
-    //     bufferData.push_back(vertex.position.x);
-    //     bufferData.push_back(vertex.position.y);
-    //     bufferData.push_back(vertex.position.z);
+    //     bufferData.push_back(vertex.v.x);
+    //     bufferData.push_back(vertex.v.y);
+    //     bufferData.push_back(vertex.v.z);
     //     /** Vertex normals */
-    //     bufferData.push_back(vertex.normals.x);
-    //     bufferData.push_back(vertex.normals.y);
-    //     bufferData.push_back(vertex.normals.z);
+    //     bufferData.push_back(vertex.vn.x);
+    //     bufferData.push_back(vertex.vn.y);
+    //     bufferData.push_back(vertex.vn.z);
     //     /** Texture Coordinates */
-    //     bufferData.push_back(vertex.texCoords.x);
-    //     bufferData.push_back(vertex.texCoords.y);
+    //     bufferData.push_back(vertex.uv.x);
+    //     bufferData.push_back(vertex.uv.y);
     // }
     // bufferSize = bufferData.size() * sizeof(float);
     // bufferDataPtr = bufferData.data();
@@ -76,9 +76,9 @@ struct OpenGLMesh::Internal
           indiceBufferId(::createIndiceBuffer(mesh)),
           indiceCount(mesh.getIndices().size()),
           stride(sizeof(Vertex)),
-          offsetPosition(offsetof(Vertex, position)),
-          offsetNormals(offsetof(Vertex, normals)),
-          offsetTexCoords(offsetof(Vertex, texCoords))
+          offsetPosition(offsetof(Vertex, v)),
+          offsetNormals(offsetof(Vertex, vn)),
+          offsetTexCoords(offsetof(Vertex, uv))
     {
         L_TAG("OpenGLMesh::Internal");
         L_TRACE("Internal resources initialized ({})", static_cast<void *>(this));
