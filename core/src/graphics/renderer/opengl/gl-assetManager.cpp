@@ -6,9 +6,10 @@
 struct OpenGLAssetManager::Internal
 {
     /** @todo: probably better to replace this with vector? but need to ensure index-value should not change ever */
-    std::vector<OpenGLMesh>     meshCache;
-    std::vector<OpenGLPipeline> pipelineCache;
-    std::vector<OpenGLTexture>  textureCache;
+    std::unordered_map<AssetType, std::unordered_map<AssetName, AssetID>> assetCache;
+    std::vector<OpenGLMesh>                                               meshCache;
+    std::vector<OpenGLPipeline>                                           pipelineCache;
+    std::vector<OpenGLTexture>                                            textureCache;
 
     Internal()
     {
@@ -23,12 +24,25 @@ struct OpenGLAssetManager::Internal
     }
 };
 
-static AssetID loadPipeline(const std::string &name,std::vector<OpenGLPipeline> &cache)
+static AssetID loadPipeline(const AssetName                        &name,
+                            std::vector<OpenGLPipeline>            &cache,
+                            std::unordered_map<AssetName, AssetID> &assetIDCache)
 {
     L_TAG("OpenGLAssetManager::loadPipeline");
     constexpr AssetType type = AssetType::Pipeline;
-    auto    insertPos = cache.end();
-    AssetID id        = cache.size();
+    auto insertPos = cache.end();
+    AssetID             id   = cache.size();
+
+    /** Check if the asset is in cache */
+    auto idCache = assetIDCache.find(name);
+    if (idCache != assetIDCache.end())
+    {
+        /** Check that asset id is within the cache */
+        if (idCache->second < id) {
+            L_DEBUG("Pipeline ({}) loaded from cache: {}", name, idCache->second);
+            return idCache->second;
+        }
+    }
 
     /** Get paths from asset manager */
     AssetPaths assetPaths = AssetInventory::getInstance().resolvePath(type, name);
@@ -45,16 +59,30 @@ static AssetID loadPipeline(const std::string &name,std::vector<OpenGLPipeline> 
     }
 
     cache.insert(insertPos, OpenGLPipeline(name, stages));
+    assetIDCache[name] = id; // add asset to cache
     L_DEBUG("Pipeline created {}: {}", id, name);
     return id;
 }
 
-static AssetID loadMesh(const std::string &name, std::vector<OpenGLMesh>     &cache)
+static AssetID loadMesh(const AssetName                        &name,
+                        std::vector<OpenGLMesh>                &cache,
+                        std::unordered_map<AssetName, AssetID> &assetIDCache)
 {
     L_TAG("OpenGLAssetManager::loadMesh");
-    constexpr AssetType type = AssetType::Mesh;
-    auto    insertPos = cache.end();
-    AssetID id        = cache.size();
+    constexpr AssetType type      = AssetType::Mesh;
+    auto                insertPos = cache.end();
+    AssetID             id        = cache.size();
+
+    /** Check if the asset is in cache */
+    auto idCache = assetIDCache.find(name);
+    if (idCache != assetIDCache.end())
+    {
+        /** Check that asset id is within the cache */
+        if (idCache->second < id) {
+            L_DEBUG("Mesh ({}) loaded from cache: {}", name, idCache->second);
+            return idCache->second;
+        }
+    }
 
     /** Get paths from asset manager */
     L_DEBUG("Loading mesh from {}", name);
@@ -65,16 +93,30 @@ static AssetID loadMesh(const std::string &name, std::vector<OpenGLMesh>     &ca
     assets::Mesh mesh(assetPaths[0]);
 
     cache.insert(insertPos, OpenGLMesh(mesh));
+    assetIDCache[name] = id; // add asset to cache
     L_DEBUG("Mesh loaded {}: {}", id, name);
     return id;
 }
-static AssetID loadTexture(const std::string &name, std::vector<OpenGLTexture>  &cache)
+static AssetID loadTexture(const AssetName                        &name,
+                           std::vector<OpenGLTexture>             &cache,
+                           std::unordered_map<AssetName, AssetID> &assetIDCache)
 {
     L_TAG("OpenGLAssetManager::loadMesh");
-    constexpr AssetType type = AssetType::Texture;
-    auto    insertPos = cache.end();
-    AssetID id        = cache.size();
+    constexpr AssetType type      = AssetType::Texture;
+    auto                insertPos = cache.end();
+    AssetID             id        = cache.size();
 
+    /** Check if the asset is in cache */
+    auto idCache = assetIDCache.find(name);
+    if (idCache != assetIDCache.end())
+    {
+        /** Check that asset id is within the cache */
+        if (idCache->second < id) {
+            L_DEBUG("Mesh ({}) loaded from cache: {}", name, idCache->second);
+            return idCache->second;
+        }
+    }
+    
     /** Get paths from asset manager */
     AssetPaths assetPaths = AssetInventory::getInstance().resolvePath(type, name);
 
@@ -83,8 +125,8 @@ static AssetID loadTexture(const std::string &name, std::vector<OpenGLTexture>  
     assets::Texture texture(assetPaths[0]);
 
     cache.insert(insertPos, OpenGLTexture(texture));
+    assetIDCache[name] = id; // add asset to cache
     L_DEBUG("Texture loaded {}: {}", id, name);
-
     return id;
 }
 
@@ -93,17 +135,14 @@ AssetID OpenGLAssetManager::loadAsset(const AssetType &type, const AssetName &na
     AssetID id = std::numeric_limits<std::size_t>::max();
     switch (type)
     {
-    case AssetType::Mesh:
-        id = loadMesh(name, m_internal->meshCache);
-        break;
+    case AssetType::Mesh: id = loadMesh(name, m_internal->meshCache, m_internal->assetCache[AssetType::Mesh]); break;
     case AssetType::Pipeline:
-        id = loadPipeline(name, m_internal->pipelineCache);
+        id = loadPipeline(name, m_internal->pipelineCache, m_internal->assetCache[AssetType::Pipeline]);
         break;
     case AssetType::Texture:
-        id = loadTexture(name, m_internal->textureCache);
+        id = loadTexture(name, m_internal->textureCache, m_internal->assetCache[AssetType::Texture]);
         break;
-    default:
-        break;
+    default: break;
     }
     return id;
 }
