@@ -29,10 +29,8 @@ namespace assets
             std::vector<Vertex>   vertices;
             std::vector<uint32_t> indices;
 
-            MeshData()  = default;
-            ~MeshData() = default;
-            MeshData(const std::vector<Vertex> &vx, const std::vector<uint32_t> &idx);
-            MeshData(std::vector<Vertex> &&vx, std::vector<uint32_t> &&idx);
+            MeshData &operator=(MeshData &&)      = default;
+            MeshData &operator=(const MeshData &) = default;
         };
 
     private:
