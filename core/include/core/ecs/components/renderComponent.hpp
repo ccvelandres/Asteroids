@@ -12,6 +12,9 @@
 #include "transformComponent.hpp"
 #include "../../graphics/renderer/renderer.hpp"
 
+constexpr std::size_t maxRenderMaskBits = 32;
+using RenderMask                        = std::bitset<maxRenderMaskBits>;
+
 /**
  * @brief The RenderComponent allows an entity to be rendered to the screen
  *
@@ -20,12 +23,6 @@ class RenderComponent : public Component
 {
 private:
 protected:
-    glm::mat4 m_modelMatrix;
-
-    AssetID m_meshID;
-    AssetID m_textureID;
-    AssetID m_pipelineID;
-
     /** Protected Constructors (use entity to add components) */
     RenderComponent();
     RenderComponent(AssetID meshID, AssetID textureID, AssetID pipelineID)
@@ -35,6 +32,12 @@ protected:
     {
     }
 public:
+    RenderMask m_renderMask;
+    glm::mat4  m_modelMatrix;
+    AssetID    m_meshID;
+    AssetID    m_textureID;
+    AssetID    m_pipelineID;
+
     ~RenderComponent();
     RenderComponent(RenderComponent &o)             = delete;
     RenderComponent &operator=(RenderComponent &o)  = delete;
@@ -47,6 +50,9 @@ public:
     // void fixedUpdate(time_ms delta) override;
     // void update(time_ms delta) override;
     // void clean() override;
+
+    void        setRenderMask(RenderMask renderMask) { m_renderMask = renderMask; }
+    RenderMask &getRenderMask() { return m_renderMask; };
 
     void setMeshID(const AssetID id) noexcept { m_meshID = id; }
     void setTextureID(const AssetID id) noexcept { m_textureID = id; }

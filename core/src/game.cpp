@@ -69,6 +69,7 @@ Game::Game(const std::string &windowTitle, const int &windowWidth, const int &wi
     g_assetInventory = &AssetInventory::getInstance();
     L_DEBUG("Creating default camera");
     g_camera = new Camera(m_windowWidth, m_windowHeight, Camera::Projection::Perspective);
+    g_camera->setRenderMask(0xFFFF); // default camera renders everything
 
     /** FPS Defaults */
     m_targetDelta = time_ds(time_step::den / 60);

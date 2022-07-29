@@ -121,6 +121,12 @@ Camera &Camera::setFarClippingPlane(const float clip) noexcept
     return *this;
 }
 
+Camera &Camera::setRenderMask(const RenderMask renderMask) noexcept
+{
+    m_renderMask = renderMask;
+    return *this;
+}
+
 const glm::mat4         &Camera::getProjectionMatrix() const noexcept { return m_projectionMatrix; }
 const glm::mat4         &Camera::getViewMatrix() const noexcept { return m_viewMatrix; }
 const glm::vec3         &Camera::getPosition() const noexcept { return m_position; }
@@ -132,3 +138,4 @@ const float              Camera::getAspectRatio() const noexcept { return m_aspe
 const float              Camera::getNearClippingPlane() const noexcept { return m_nearClippingPlane; }
 const float              Camera::getFarClippingPlane() const noexcept { return m_farClippingPlane; }
 const glm::vec3         &Camera::getUp() const noexcept { return m_up; }
+const RenderMask        &Camera::getRenderMask() const noexcept { return m_renderMask; }

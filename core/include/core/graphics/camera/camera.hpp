@@ -3,13 +3,15 @@
 /**
  * @file core/camera/camera.hpp
  * @author Cedric Velandres (ccvelandres@gmail.com)
- * 
+ *
  * @addtogroup Camera
  * @ingroup Graphics
  * @{
  */
 
 #include <glm/glm.hpp>
+
+#include "../../ecs/components/renderComponent.hpp"
 
 /**
  * @brief Base Class for Camera types
@@ -28,9 +30,9 @@ private:
     void updatePerspectiveMatrix();
     void updateOrthogonalMatrix();
 
-    glm::mat4  m_projectionMatrix;  /** the projection matrix */
-    glm::mat4  m_viewMatrix;        /** the view matrix */
-    glm::vec3  m_up;                /** the up vector for the camera */
+    glm::mat4 m_projectionMatrix; /** the projection matrix */
+    glm::mat4 m_viewMatrix;       /** the view matrix */
+    glm::vec3 m_up;               /** the up vector for the camera */
 protected:
 public:
     glm::vec3  m_position;          /** the position of the camera */
@@ -41,6 +43,7 @@ public:
     float      m_aspectRatio;       /** aspect ratio in perspective mode */
     float      m_nearClippingPlane; /** near clipping plane in perspective mode */
     float      m_farClippingPlane;  /** far clipping plane in perspective mode */
+    RenderMask m_renderMask;        /** defines which renderComponents can be rendered with this camera */
 
     Camera(const float &width, const float &height, Projection mode);
 
@@ -89,18 +92,21 @@ public:
     Camera &setNearClippingPlane(const float clip) noexcept;
     /** Set near clipping plane */
     Camera &setFarClippingPlane(const float clip) noexcept;
+    /** Set near clipping plane */
+    Camera &setRenderMask(const RenderMask renderMask) noexcept;
 
-    const glm::mat4 &getProjectionMatrix() const noexcept;
-    const glm::mat4 &getViewMatrix() const noexcept;
-    const glm::vec3 &getPosition() const noexcept;
-    const glm::vec3 &getFront() const noexcept;
-    const Projection getProjection() const noexcept;
-    const glm::vec2 &getScreenSize() const noexcept;
-    const float      getFieldOfView() const noexcept;
-    const float      getAspectRatio() const noexcept;
-    const float      getNearClippingPlane() const noexcept;
-    const float      getFarClippingPlane() const noexcept;
-    const glm::vec3 &getUp() const noexcept;
+    const glm::mat4  &getProjectionMatrix() const noexcept;
+    const glm::mat4  &getViewMatrix() const noexcept;
+    const glm::vec3  &getPosition() const noexcept;
+    const glm::vec3  &getFront() const noexcept;
+    const Projection  getProjection() const noexcept;
+    const glm::vec2  &getScreenSize() const noexcept;
+    const float       getFieldOfView() const noexcept;
+    const float       getAspectRatio() const noexcept;
+    const float       getNearClippingPlane() const noexcept;
+    const float       getFarClippingPlane() const noexcept;
+    const glm::vec3  &getUp() const noexcept;
+    const RenderMask &getRenderMask() const noexcept;
 };
 
 /** @} endgroup Camera */
