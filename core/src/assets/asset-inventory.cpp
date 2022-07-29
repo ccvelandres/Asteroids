@@ -14,9 +14,11 @@ AssetInventory::AssetInventory() {
 
     /** load defaults without inventory file */
     cache[AssetType::Mesh]["crate"].push_back("assets/models/crate.obj");
+    cache[AssetType::Mesh]["defaults/quad"].push_back("defaults/mesh/quad");
     cache[AssetType::Pipeline]["default"].push_back("shaders/opengl/default.vert");
     cache[AssetType::Pipeline]["default"].push_back("shaders/opengl/default.frag");
     cache[AssetType::Texture]["crate"].push_back("assets/textures/crate.png");
+    cache[AssetType::Texture]["ship.png"].push_back("assets/textures/ship.png");
 
     L_TRACE("Internal resources initialized ({})", static_cast<void *>(this));
 }
