@@ -15,7 +15,7 @@
 
 /**
  * @brief Base Class for Camera types
- * @todo
+ * @todo: is it a good idea to make the camera an entity?
  */
 class Camera
 {
@@ -32,11 +32,10 @@ private:
 
     glm::mat4 m_projectionMatrix; /** the projection matrix */
     glm::mat4 m_viewMatrix;       /** the view matrix */
-    glm::vec3 m_up;               /** the up vector for the camera */
 protected:
 public:
     glm::vec3  m_position;          /** the position of the camera */
-    glm::vec3  m_front;             /** direction vector where the camera is facing (unit vector) */
+    glm::quat  m_orientation;       /** orientation of the camera */
     Projection m_projection;        /** projection mode of camera */
     glm::vec2  m_screenSize;        /** screen size to use in orthogonal mode */
     float      m_fieldOfView;       /** field of View in perspective mode (radians) */
@@ -59,15 +58,30 @@ public:
      *
      * @param v translation vector
      */
-    void translate(const glm::vec3 &v);
-
+    void translate(const glm::vec3 &v) noexcept;
+    /**
+     * @brief Rotate the camera with the given euler angle
+     *
+     * @param e rotation in euler angles
+     * @param relativeToSelf if true, performs the rotation with respect to local axis, else
+     * performs the rotation with respect to world axis
+     */
+    void rotate(const glm::vec3 &e, bool relativeToSelf = true) noexcept;
     /**
      * @brief Rotates the camera @p angle degrees along the axis
      *
      * @param angle rotation angle in degrees
      * @param ax rotation axis
+     * @param relativeToSelf if true, performs the rotation with respect to local axis, else
+     * performs the rotation with respect to world axis
      */
-    void rotate(float angle, const glm::vec3 &ax);
+    void rotate(float angle, const glm::vec3 &v, bool relativeToSelf = true) noexcept;
+    /**
+     * @brief Rotate the camera with the given euler angle
+     *
+     * @param v euler angles in yaw-pitch-roll (YXZ) (degrees)
+     */
+    void rotateYXZ(const glm::vec3 &v, bool relativeToSelf = true) noexcept;
 
     /**
      * @brief Updates the camera matrices. Should be called after updating components to update the matrices
@@ -76,10 +90,14 @@ public:
 
     /** Set position of camera */
     Camera &setPosition(const glm::vec3 &pos) noexcept;
-    /** Set the direction of camera (unit vector) */
-    Camera &setDirection(const glm::vec3 &dir) noexcept;
-    /** Set the direction of camera (euler angle) */
-    Camera &setDirection(const glm::vec2 &angle) noexcept;
+    /** Set orientation of the camera using quaternions */
+    Camera &setOrientation(const glm::quat &q) noexcept;
+    /** Set orientation of the camera such that the camera is looking to v */
+    Camera &setOrientation(const glm::vec3 &forward, const glm::vec3 &up) noexcept;
+    /** Set orientation of the camera using euler angles (degrees) in pitch-yaw-roll (XYZ) */
+    Camera &setOrientationEuler(const glm::vec3 &v) noexcept;
+    /** Set orientation of the camera using euler angles (degrees) in yaw-pitch-roll (YXZ) */
+    Camera &setOrientationEulerYXZ(const glm::vec3 &v) noexcept;
     /** Set projection mode for the camera */
     Camera &setProjection(const Projection m) noexcept;
     /** Set screensize of the camera */
@@ -98,14 +116,15 @@ public:
     const glm::mat4  &getProjectionMatrix() const noexcept;
     const glm::mat4  &getViewMatrix() const noexcept;
     const glm::vec3  &getPosition() const noexcept;
-    const glm::vec3  &getFront() const noexcept;
+    const glm::quat  &getOrientation() const noexcept;
+    const glm::vec3   getFront() const noexcept;
+    const glm::vec3   getUp() const noexcept;
     const Projection  getProjection() const noexcept;
     const glm::vec2  &getScreenSize() const noexcept;
     const float       getFieldOfView() const noexcept;
     const float       getAspectRatio() const noexcept;
     const float       getNearClippingPlane() const noexcept;
     const float       getFarClippingPlane() const noexcept;
-    const glm::vec3  &getUp() const noexcept;
     const RenderMask &getRenderMask() const noexcept;
 };
 
