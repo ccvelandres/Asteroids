@@ -12,8 +12,6 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/quaternion.hpp>
 
-#include <bitset>
-
 /**
  * @brief The TransformComponent describes the position, scale, orientation of
  * attached entities.

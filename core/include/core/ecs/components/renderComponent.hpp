@@ -12,6 +12,8 @@
 #include "transformComponent.hpp"
 #include "../../graphics/renderer/renderer.hpp"
 
+#include <bitset>
+
 constexpr std::size_t maxRenderMaskBits = 32;
 using RenderMask                        = std::bitset<maxRenderMaskBits>;
 

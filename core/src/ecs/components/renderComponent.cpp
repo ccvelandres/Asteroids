@@ -8,7 +8,7 @@
 RenderComponent::RenderComponent() = default;
 RenderComponent::~RenderComponent() = default;
 
-const glm::mat4 RenderComponent::getModelMatrix() const noexcept
+const glm::mat4 RenderComponent::getModelMatrix() noexcept
 {
     TransformComponent &transform = m_entity->getComponent<TransformComponent>();
 
@@ -17,6 +17,6 @@ const glm::mat4 RenderComponent::getModelMatrix() const noexcept
     glm::mat4       translation = glm::translate(identity, transform.m_position);
     glm::mat4       rotation    = glm::mat4_cast(transform.m_orientation);
     glm::mat4       scale       = glm::scale(identity, transform.m_scale);
-    // m_modelMatrix = translation * rotation * scale;
-    return translation * rotation * scale;
+    m_modelMatrix = translation * rotation * scale;
+    return m_modelMatrix;
 }

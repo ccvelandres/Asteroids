@@ -14,3 +14,4 @@
 /** Rendering Components */
 #include "components/renderComponent.hpp"
 #include "components/meshRenderer.hpp"
+#include "components/spriteRenderer.hpp"
