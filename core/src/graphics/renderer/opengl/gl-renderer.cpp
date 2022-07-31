@@ -53,6 +53,7 @@ SDL_GLContext createContext(SDL_Window *window)
     L_TAG("createContext");
 
     SDL_GLContext context = SDL_GL_CreateContext(window);
+    SDL_GL_MakeCurrent(window, context);
 
     initGL();
 
@@ -80,10 +81,19 @@ SDL_GLContext createContext(SDL_Window *window)
              "Error initializing Modelview Matrix: {}",
              reinterpret_cast<const char *>(glewGetErrorString(error)));
 
+    // Enable Alpha blending
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+    // Enable Depth testing (clear first) with LEQUAL function test
     glClearDepth(1.0f);
     glEnable(GL_DEPTH_TEST);
     glDepthFunc(GL_LEQUAL);
+
+    // Enable face culling, defaults to GL_BACK (back-facing faces)
     glEnable(GL_CULL_FACE);
+
+    // Set viewport size
     glViewport(0, 0, viewportWidth, viewportHeight);
 
     return context;
@@ -94,11 +104,15 @@ struct OpenGLRenderer::Internal
     SDL_Window *const  window;
     SDL_GLContext      context;
     OpenGLAssetManager assetManager;
+    AssetID            defaultPipeline;
+    AssetID            defaultTexture;
 
     Internal(const std::string &windowTitle, const int windowWidth, const int windowHeight)
         : window(::createWindow(windowTitle, windowWidth, windowHeight)),
           context(::createContext(window)),
-          assetManager()
+          assetManager(),
+          defaultPipeline(assetManager.loadAsset(AssetType::Pipeline, "default")),
+          defaultTexture(assetManager.loadAsset(AssetType::Texture, "default"))
     {
         L_TAG("OpenGLRenderer::Internal");
         L_TRACE("Internal resources initialized ({})", static_cast<void *>(this));
@@ -132,7 +146,7 @@ bool OpenGLRenderer::renderBegin()
 {
     // SDL_GL_MakeCurrent(m_internal->window, m_internal->context);
 
-    glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+    glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     return true;
