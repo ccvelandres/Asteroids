@@ -1,12 +1,19 @@
 #include <assets/mesh.hpp>
 #include <assets/loaders/obj.hpp>
 #include <assets/asset-inventory.hpp>
+#include <assets/defaults/mesh-defaults.hpp>
 #include <utils/logging.hpp>
 
 #include <glm/gtx/string_cast.hpp>
 
 namespace assets
 {
+    /**
+     * @brief Constructs @p meshData fron given obj asset file
+     *
+     * @param name path to obj file
+     * @param meshData reference to meshData
+     */
     static void load_obj(const AssetName &name, Mesh::MeshData &meshData)
     {
         L_TAG("Mesh(Obj)");
@@ -37,16 +44,16 @@ namespace assets
                     Vertex vertex = {
                         .v =
                             {
-                                       objLoader.vertices[(3 * index.v) + 0],
-                                       objLoader.vertices[(3 * index.v) + 1],
-                                       objLoader.vertices[(3 * index.v) + 2],
-                                       },
+                                objLoader.vertices[(3 * index.v) + 0],
+                                objLoader.vertices[(3 * index.v) + 1],
+                                objLoader.vertices[(3 * index.v) + 2],
+                                },
                         .vn =
                             {
-                                       objLoader.normals[(3 * index.vn) + 0],
-                                       objLoader.normals[(3 * index.vn) + 1],
-                                       objLoader.normals[(3 * index.vn) + 2],
-                                       },
+                                objLoader.normals[(3 * index.vn) + 0],
+                                objLoader.normals[(3 * index.vn) + 1],
+                                objLoader.normals[(3 * index.vn) + 2],
+                                },
                         .uv = {objLoader.texCoords[(2 * index.vt) + 0], objLoader.texCoords[(2 * index.vt) + 1]}
                     };
 
@@ -80,23 +87,6 @@ namespace assets
         }
     }
 
-    static void load_defaults(const AssetName &name, Mesh::MeshData &meshData)
-    {
-        L_TAG("Mesh(Defaults)");
-
-        try
-        {
-            /* code */
-        }
-        catch (const std::exception &e)
-        {
-            // std::cerr << e.what() << '\n';
-        }
-    }
-
-    Mesh::MeshData::MeshData(const std::vector<Vertex> &vx, const std::vector<uint32_t> &idx) : vertices(vx), indices(idx) {}
-    Mesh::MeshData::MeshData(std::vector<Vertex> &&vx, std::vector<uint32_t> &&idx) : vertices(vx), indices(idx) {}
-
     Mesh::Mesh() = default;
     Mesh::~Mesh()
     {
@@ -104,7 +94,8 @@ namespace assets
         L_TRACE("Internal resources freed ({})", static_cast<void *>(this));
     };
 
-    Mesh::Mesh(const std::vector<Vertex> &vx, const std::vector<uint32_t> &idx) : m_meshData(vx, idx)
+    Mesh::Mesh(const std::vector<Vertex> &vx, const std::vector<uint32_t> &idx)
+        : m_meshData{.vertices = vx, .indices = idx}
     {
         L_TAG("Mesh(&vertices, &indices)");
         L_TRACE("Internal resources initialized ({})", static_cast<void *>(this));
@@ -112,16 +103,28 @@ namespace assets
 
     Mesh::Mesh(const AssetName &name)
     {
-        L_TAG("Mesh(&filename)");
+        L_TAG("Mesh(&name)");
 
-        // if(name.starts_with("defaults")){
+        if (std::strncmp(name.c_str(), "defaults/mesh/", std::strlen("defaults/mesh/")) == 0)
+        {
+            std::string defaultName = name.substr(name.find_last_of('/') + 1);
+            auto it = assets::defaults::mesh::mesh_defaults.find(defaultName);
 
-        // }
-        // else {
-        //     if (name.ends_with(".obj")) {
-        //         load_obj(name, this->m_meshData);
-        //     }
-        // }
+            if (it != assets::defaults::mesh::mesh_defaults.end()){
+                m_meshData = *it->second;
+            }
+            else 
+                L_THROW_LOGIC("Could not find default mesh");
+        }
+        else
+        {
+            if (std::strncmp(name.c_str() + name.find_last_of("."), ".obj", std::strlen(".obj")) == 0)
+            {
+                load_obj(name, this->m_meshData);
+            }
+            else 
+                L_THROW_LOGIC("Could not find parser for mesh file: {}", name);
+        }
 
         L_TRACE("Internal resources initialized ({})", static_cast<void *>(this));
     }
