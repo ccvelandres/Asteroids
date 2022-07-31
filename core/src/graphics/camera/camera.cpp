@@ -31,7 +31,7 @@ void Camera::updatePerspectiveMatrix()
     glm::vec3 up    = m_orientation * worldUp;
 
     m_projectionMatrix = glm::perspective(m_fieldOfView, m_aspectRatio, m_nearClippingPlane, m_farClippingPlane);
-    m_viewMatrix       = glm::lookAt(m_position,front, up);
+    m_viewMatrix       = glm::lookAt(m_position, front, up);
 }
 
 void Camera::updateOrthogonalMatrix()
@@ -39,10 +39,18 @@ void Camera::updateOrthogonalMatrix()
     glm::vec3 front = m_orientation * worldFront;
     glm::vec3 up    = m_orientation * worldUp;
 
+    /** screen size defines the xy of bounding box
+     * while the clipping planes defines the z ranges of the bounding box
+     */
+
     glm::vec2 cameraBounds = glm::vec2(m_position) - (m_screenSize * 0.5f);
-    m_projectionMatrix =
-        glm::ortho(cameraBounds.x, cameraBounds.x + m_screenSize.x, cameraBounds.y, cameraBounds.y + m_screenSize.y);
-    m_viewMatrix = glm::lookAt(m_position, front, up);
+    m_projectionMatrix     = glm::ortho(cameraBounds.x,
+                                    cameraBounds.x + m_screenSize.x,
+                                    cameraBounds.y,
+                                    cameraBounds.y + m_screenSize.y,
+                                    m_nearClippingPlane,
+                                    m_farClippingPlane);
+    m_viewMatrix           = glm::lookAt(m_position, front, up);
 }
 
 void Camera::updateMatrix()
@@ -97,30 +105,30 @@ Camera &Camera::setOrientation(const glm::quat &q) noexcept
 
 Camera &Camera::setOrientation(const glm::vec3 &forward, const glm::vec3 &up) noexcept
 {
-    /** @todo pretty sure this is incorrect. in short we want to be able to 
+    /** @todo pretty sure this is incorrect. in short we want to be able to
      * set the orientation using a direction vector
-     * or set the rotation axis of the quat to the direction vector 
+     * or set the rotation axis of the quat to the direction vector
      * and we can leave the quat's rotation angle as 1 rad?
-     * 
-     * or in shorter terms, we want to set direction such that we are looking 
+     *
+     * or in shorter terms, we want to set direction such that we are looking
      * at the vector
      */
     glm::quat orientation = glm::conjugate(glm::quat(glm::lookAt(this->m_position, forward, up)));
-    this->m_orientation    = orientation;
+    this->m_orientation   = orientation;
     return *this;
 }
 
 Camera &Camera::setOrientationEuler(const glm::vec3 &v) noexcept
 {
     glm::quat orientation = glm::quat(glm::radians(v));
-    this->m_orientation    = orientation;
+    this->m_orientation   = orientation;
     return *this;
 }
 
 Camera &Camera::setOrientationEulerYXZ(const glm::vec3 &v) noexcept
 {
     glm::quat orientation = glm::quat(glm::radians(glm::vec3(v.y, v.x, v.z)));
-    this->m_orientation    = orientation;
+    this->m_orientation   = orientation;
     return *this;
 }
 
