@@ -69,6 +69,21 @@ References: [LearnOpenGL](http://www.opengl-tutorial.org/intermediate-tutorials/
     2. Multiple the inverse of orientation to quaternion (brings world rotation to local space)
     3. Apply this rotation to object
 
+# Face culling
+
+Face culling is an optimization that determines whether a polygon is drawn or not. Back-face culling is usually used where back-facing polygons are not rendered.
+
+In OpenGL culling mode can be either GL_FRONT, GL_BACK or GL_FRONT_AND_BACK. In GL_FRONT_AND_BACK, no faces are drawn but lines and points are still drawn
+
+## Winding order
+
+Winding order is used in order to identify which polygons are front-face and which are not. By default, the winding order are:
+- Front-facing polygons have counter-clockwise winding order (left-side in image below)
+- Back-facing polygons have clockwise winding order (right-side in image below)
+
+![](img/face-culling.png)
+
+References: [LearnOpenGL](https://learnopengl.com/Advanced-OpenGL/Face-culling)
 
 # OpenGL
 
