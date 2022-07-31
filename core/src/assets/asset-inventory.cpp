@@ -19,6 +19,7 @@ AssetInventory::AssetInventory() {
     cache[AssetType::Pipeline]["default"].push_back("shaders/opengl/default.frag");
     cache[AssetType::Texture]["crate"].push_back("assets/textures/crate.png");
     cache[AssetType::Texture]["ship.png"].push_back("assets/textures/ship.png");
+    cache[AssetType::Texture]["default"].push_back("assets/textures/default.png");
 
     L_TRACE("Internal resources initialized ({})", static_cast<void *>(this));
 }
