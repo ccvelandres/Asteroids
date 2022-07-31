@@ -5,12 +5,48 @@
 
 #include <vector>
 
-GLuint createTexture(const assets::Texture &texture)
+/**
+ * @brief Flips the surface vertically. Needed for OpenGL use
+ * 
+ * @param surface surface to flip
+ */
+static void flipv_surface(SDL_Surface *surface) noexcept {
+    L_TAG("createTexture");
+
+    // Lock surface if needed
+    if (SDL_MUSTLOCK(surface)) SDL_LockSurface(surface);
+
+    char *pixels = reinterpret_cast<char*>(surface->pixels);
+    int pitch = surface->pitch; // row size
+    int rows = surface->h;
+    char *rowBuffer = new char[pitch]; // row buffer
+
+    /** basically each loop we swap the equivalent row from top and bottom
+     *  first row becomes the last row, ... till we reach the middle
+     * 
+     */
+    for(int i = 0; i < rows / 2; i++){
+        char *r1 = pixels + (i * pitch); // top row
+        char *r2 = pixels + ((rows - i - 1) * pitch); // bottom row
+
+        memcpy(rowBuffer, r1, pitch);
+        memcpy(r1, r2, pitch);
+        memcpy(r2, rowBuffer, pitch);
+    }
+
+    // Unlock surface if needed
+    if (SDL_MUSTLOCK(surface)) SDL_UnlockSurface(surface);
+}
+
+static GLuint createTexture(const assets::Texture &texture)
 {
     L_TAG("createTexture");
 
     GLuint       textureId;
     SDL_Surface *surface = texture.getSurface();
+
+    // Flip the texture first before loading
+    flipv_surface(surface);
 
     glGenTextures(1, &textureId);
     glBindTexture(GL_TEXTURE_2D, textureId);
