@@ -8,7 +8,7 @@ SpriteRenderer::~SpriteRenderer() = default;
 SpriteRenderer::SpriteRenderer(AssetName texture)  {
     AssetManager &assetManager = *Game::assetManager();
     AssetID textureID = assetManager.loadAsset(AssetType::Texture, texture);
-    AssetID meshID = assetManager.loadAsset(AssetType::Mesh, "crate");//"defaults/quad");
+    AssetID meshID = assetManager.loadAsset(AssetType::Mesh, "defaults/quad");
     AssetID pipelineID = 0;
 
     m_textureID = textureID;
