@@ -15,6 +15,7 @@
 #include <bitset>
 
 constexpr std::size_t maxRenderMaskBits = 32;
+constexpr std::size_t defaultRenderMask = 0x0001;
 using RenderMask                        = std::bitset<maxRenderMaskBits>;
 
 /**
@@ -34,7 +35,7 @@ protected:
     {
     }
 public:
-    RenderMask m_renderMask;
+    RenderMask m_renderMask{defaultRenderMask};
     glm::mat4  m_modelMatrix;
     AssetID    m_meshID;
     AssetID    m_textureID;
@@ -65,7 +66,7 @@ public:
     AssetID getPipelineID() const noexcept { return m_pipelineID; }
 
     /** Retrieve the attached entity's model matrix (translation * rotation * scale) */
-    const glm::mat4 getModelMatrix() const noexcept;
+    const glm::mat4 getModelMatrix() noexcept;
 
     friend Entity;
     friend EntityManager;
