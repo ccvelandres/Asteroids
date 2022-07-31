@@ -52,11 +52,8 @@ Game::Game(const std::string &windowTitle, const int &windowWidth, const int &wi
 
     if (SDL_Init(SDL_INIT_EVERYTHING) != 0) L_THROW_RUNTIME("Could not initialize SDL2");
 
-#ifdef CORE_RENDERER_OPENGL
-    L_DEBUG("Initializing Renderer (OpenGL)");
-    g_renderer     = new OpenGLRenderer(windowTitle, windowWidth, windowHeight);
-    g_assetManager = &g_renderer->getAssetManager();
-#endif
+    L_DEBUG("Initializing AssetInventory");
+    g_assetInventory = &AssetInventory::getInstance();
     L_DEBUG("Initializing InputManager");
     g_inputManager = &InputManager::getInstance();
     L_DEBUG("Initializing EventManager");
@@ -65,11 +62,16 @@ Game::Game(const std::string &windowTitle, const int &windowWidth, const int &wi
     g_componentManager = &ComponentManager::getInstance();
     L_DEBUG("Initializing EntityManager");
     g_entityManager = &EntityManager::getInstance();
-    L_DEBUG("Initializing AssetInventory");
-    g_assetInventory = &AssetInventory::getInstance();
     L_DEBUG("Creating default camera");
     g_camera = new Camera(m_windowWidth, m_windowHeight, Camera::Projection::Perspective);
-    g_camera->setRenderMask(0xFFFF); // default camera renders everything
+    // default camera renders everything, at (0,0,5) looking at (0,0,0)
+    g_camera->setRenderMask(0xFFFF).setPosition(glm::vec3(0.0f, 0.0f, 5.0f)).setOrientation(glm::vec3(0.0f, 0.0f, -1.0f), glm::vec3(0.0f, 1.0f, 0.0f)).updateMatrix();
+    
+#ifdef CORE_RENDERER_OPENGL
+    L_DEBUG("Initializing Renderer (OpenGL)");
+    g_renderer     = new OpenGLRenderer(windowTitle, windowWidth, windowHeight);
+    g_assetManager = &g_renderer->getAssetManager();
+#endif
 
     /** FPS Defaults */
     m_targetDelta = time_ds(time_step::den / 60);
