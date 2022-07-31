@@ -55,3 +55,5 @@ OpenGLTexture::OpenGLTexture()                             = default;
 OpenGLTexture::OpenGLTexture(OpenGLTexture &&o)            = default;
 OpenGLTexture &OpenGLTexture::operator=(OpenGLTexture &&o) = default;
 OpenGLTexture::~OpenGLTexture()                            = default;
+
+GLuint OpenGLTexture::getTextureID() const { return m_internal->textureID; }

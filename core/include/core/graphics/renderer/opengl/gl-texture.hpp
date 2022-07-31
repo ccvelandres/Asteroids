@@ -29,8 +29,7 @@ public:
     OpenGLTexture(OpenGLTexture &&o);
     OpenGLTexture &operator=(OpenGLTexture &&o);
 
-    GLuint getVertexBufferId() const;
-    GLuint getIndiceBufferId() const;
+    GLuint getTextureID() const;
 };
 
 /** @} endgroup OpenGL */
