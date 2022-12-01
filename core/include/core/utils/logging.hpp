@@ -134,12 +134,16 @@ namespace core::utils::logging
     PROFILER_BLOCK(STR); \
     static const std::string tag__ { std::string(core::utils::logging::baseFileName(__FILE__)) + std::string(": " STR) }
 
-#if defined(CONFIG_CORE_LOG_ENABLE_TAG)
+#if defined(CONFIG_CORE_LOG_TAG)
 /** @brief Base macro for logging macros (See CONFIG_CORE_LOG_ENABLE_TAG to disable tags) */
 #define L_LOG(level, STR, ...) core::utils::logging::level(L_LINE_STR "[{}] " STR, L_LINE tag__, ##__VA_ARGS__)
+/** @brief Base macro for throwing exceptions */
+#define L_THROW(EXCEPTION, STR, ...) throw EXCEPTION(fmt::format(L_LINE_STR "[{}] " STR, L_LINE tag__, ##__VA_ARGS__))
 #else
 /** @brief Base macro for logging macros (See CONFIG_CORE_LOG_ENABLE_TAG to enable tags) */
 #define L_LOG(level, STR, ...) core::utils::logging::level(STR, ##__VA_ARGS__)
+/** @brief Base macro for throwing exceptions */
+#define L_THROW(EXCEPTION, STR, ...) throw EXCEPTION(fmt::format("[{}] " STR, tag__, ##__VA_ARGS__))
 #endif
 
 /** @brief Variable for holding rate limit state */
@@ -195,8 +199,6 @@ namespace core::utils::logging
 /** @brief Rate limited log macro for trace level */
 #define L_TRACE_RATE(RATE, STR, ...) L_LOG_RATE(RATE, trace, STR, ##__VA_ARGS__)
 
-/** @brief Base macro for throwing exceptions */
-#define L_THROW(EXCEPTION, STR, ...) throw EXCEPTION(fmt::format(L_LINE_STR "[{}] " STR, L_LINE tag__, ##__VA_ARGS__))
 /** @brief Throw macro for runtime_error exceptions */
 #define L_THROW_RUNTIME(STR, ...) L_THROW(std::runtime_error, STR, ##__VA_ARGS__)
 /** @brief Throw macro for logic_error exceptions */
