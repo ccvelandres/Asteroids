@@ -23,6 +23,7 @@ config CORE_BUILD_DOXYGEN_MAN
     bool "Generate MANPAGE"
     default n
 
+source "audio/Kconfig"
 source "utils/Kconfig"
 source "graphics/Kconfig"
 

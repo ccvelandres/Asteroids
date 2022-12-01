@@ -1,0 +1,4 @@
+
+message(STATUS "Adding Core: Audio Manager")
+file(GLOB SRC_AUDIO_MANAGER ${CMAKE_CURRENT_SOURCE_DIR}/*.cpp ${CMAKE_CURRENT_SOURCE_DIR}/*.c)
+target_sources(${CORE_TARGET} PRIVATE ${SRC_AUDIO_MANAGER})

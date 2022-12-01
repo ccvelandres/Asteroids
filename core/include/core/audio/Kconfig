@@ -1,0 +1,108 @@
+menu "Audio"
+
+config AUDIO_DEFAULT_FREQUENCY
+    int "Default Frequency"
+    default 48000
+
+menu "Default Format"
+
+    choice 
+        prompt "Byte order"
+        default AUDIO_DEFAULT_FORMAT_ENDIAN_NATIVE
+
+        config AUDIO_DEFAULT_FORMAT_ENDIAN_NATIVE
+            bool "Native"
+        config AUDIO_DEFAULT_FORMAT_ENDIAN_BIG
+            bool "Big-endian"
+        config AUDIO_DEFAULT_FORMAT_ENDIAN_LITTLE
+            bool "Little-endian"
+    endchoice
+
+    config AUDIO_DEFAULT_FORMAT_SIGNED
+        bool "Signed"
+        default y
+
+    choice 
+        prompt "Type"
+        default AUDIO_DEFAULT_FORMAT_TYPE_FLOAT
+
+        config AUDIO_DEFAULT_FORMAT_TYPE_FLOAT
+            bool "float"
+        config AUDIO_DEFAULT_FORMAT_TYPE_INT
+            bool "int"
+    endchoice
+
+    config AUDIO_DEFAULT_FORMAT_BITSIZE
+        int "Bitsize"
+        default 32
+endmenu
+
+
+config AUDIO_DEFAULT_CHANNELS
+    int "Default Channels"
+    default 2
+
+config AUDIO_DEFAULT_SAMPLES
+    int "Default Samples"
+    default 4096
+
+config AUDIO_ALLOW_FREQUENCY_CHANGE
+    bool "Allow frequency change"
+    default n
+    help 
+        If set to n, SDL2 will transparently handle frequency changes if the sound
+        device does not support the requested frequency
+
+config AUDIO_ALLOW_FORMAT_CHANGE
+    bool "Allow format change"
+    default n
+    help 
+        If set to n, SDL2 will transparently handle frequency changes if the sound
+        device does not support the requested format
+
+config AUDIO_ALLOW_CHANNEL_CHANGE
+    bool "Allow channel change"
+    default n
+    help 
+        If set to n, SDL2 will transparently handle frequency changes if the sound
+        device does not support the requested channel
+
+config AUDIO_ALLOW_SAMPLE_CHANGE
+    bool "Allow sample change"
+    default n
+    help 
+        If set to n, SDL2 will transparently handle frequency changes if the sound
+        device does not support the requested sample
+
+config AUDIO_ALLOW_ALL_CHANGE
+    bool "Allow all change"
+    default n
+    select AUDIO_ALLOW_FREQUENCY_CHANGE
+    select AUDIO_ALLOW_FORMAT_CHANGE
+    select AUDIO_ALLOW_CHANNEL_CHANGE
+    select AUDIO_ALLOW_SAMPLE_CHANGE
+    help 
+        If set to n, SDL2 will transparently handle frequency changes if the sound
+        device does not support the requested audio spec
+
+menu "Supported Formats"
+
+    config AUDIO_FORMAT_OGG
+        bool "Ogg Vorbis"
+        default y
+
+    config AUDIO_FORMAT_MP3
+        bool "MP3"
+        default y
+
+    config AUDIO_FORMAT_WAV
+        bool "WAV"
+        default y
+
+    config AUDIO_FORMAT_FLAC
+        bool "FLAC"
+        default n
+
+endmenu
+
+endmenu

@@ -1,4 +1,5 @@
 
+add_subdirectory(audio)
 add_subdirectory(assets)
 add_subdirectory(ecs)
 add_subdirectory(input)

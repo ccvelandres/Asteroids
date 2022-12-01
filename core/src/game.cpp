@@ -5,6 +5,7 @@
 #include <core/ecs/components.hpp>
 
 #include <core/event.hpp>
+#include <core/audio/audioManager.hpp>
 #include <core/input/inputManager.hpp>
 #include <core/utils/profiler.hpp>
 #include <core/utils/logging.hpp>
@@ -25,11 +26,13 @@
 
 #include <thread>
 
+/** @todo: replace these with shared ptrs? */
 Game                   *g_game             = nullptr;
 EntityManager          *g_entityManager    = nullptr;
 ComponentManager       *g_componentManager = nullptr;
 EventManager           *g_eventManager     = nullptr;
 Renderer               *g_renderer         = nullptr;
+AudioManager           *g_audioManager     = nullptr;
 InputManager           *g_inputManager     = nullptr;
 Time                   *g_time             = nullptr;
 AssetManager           *g_assetManager   = nullptr;
@@ -53,10 +56,16 @@ Game::Game(const std::string &windowTitle, const int &windowWidth, const int &wi
     g_game = this;
     g_time = new Time();
 
+    SDL_version sdlVersion;
+    SDL_GetVersion(&sdlVersion);
+    L_INFO("Using SDL2 Version: {}.{}.{}", sdlVersion.major, sdlVersion.minor, sdlVersion.patch);
+
     if (SDL_Init(SDL_INIT_EVERYTHING) != 0) L_THROW_RUNTIME("Could not initialize SDL2");
 
     L_DEBUG("Initializing AssetInventory");
     g_assetInventory = &AssetInventory::getInstance();
+    L_DEBUG("Initializing AudioManager");
+    g_audioManager = &AudioManager::getInstance();
     L_DEBUG("Initializing InputManager");
     g_inputManager = &InputManager::getInstance();
     L_DEBUG("Initializing EventManager");
@@ -93,6 +102,7 @@ Game::~Game()
 
 void Game::init()
 {
+    g_audioManager->init();
     g_inputManager->init();
     g_eventManager->init();
 }
@@ -212,6 +222,7 @@ Game                   *Game::this_game() { return g_game; }
 EntityManager          *Game::entityManager() { return g_entityManager; }
 ComponentManager       *Game::componentManager() { return g_componentManager; }
 EventManager           *Game::eventManager() { return g_eventManager; }
+AudioManager           *Game::audioManager() { return g_audioManager; }
 InputManager           *Game::inputManager() { return g_inputManager; }
 Time                   *Game::time() { return g_time; }
 Renderer               *Game::renderer() { return g_renderer; }
