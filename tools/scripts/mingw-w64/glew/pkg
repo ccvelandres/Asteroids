@@ -1,0 +1,35 @@
+
+# Ref: https://aur.archlinux.org/packages/mingw-w64-glew
+arch=("mingw-w64")
+_architectures=("i686-w64-mingw32" "x86_64-w64-mingw32")
+_pkgname="glew"
+_realname="glew"
+pkgname="${arch}-${_pkgname}"
+pkgver="2.2.0"
+
+sources=("https://sourceforge.net/projects/glew/files/glew/${pkgver}/${_realname}-${pkgver}.tgz")
+sha256sums=("d4fc82893cfb00109578d0a1a2337fb8ca335b3ceccf97b97e5cc7f08e4353e1")
+
+prepare() {
+    cd "${SRCDIR}/${_realname}-${pkgver}"
+}
+
+build() {
+    cd "${SRCDIR}/${_realname}-${pkgver}"
+    for _arch in ${_architectures[@]}; do
+        # mkdir -p "build-${_arch}" && pushd "build-${_arch}"
+        ${_arch}-cmake -DBUILD_UTILS=OFF -S "build/cmake" -B "../build-${_arch}"
+        make -C "../build-${_arch}" -j $JOBS
+        # popd
+    done
+}
+
+package() {
+    cd "${SRCDIR}/${_realname}-${pkgver}"
+    for _arch in ${_architectures[@]}; do
+        # cd "${SRCDIR}/glew-${pkgver}/build-${_arch}"
+        make -C "../build-${_arch}" install DESTDIR=${PKGDIR}
+        ${_arch}-strip --strip-unneeded "$PKGDIR"/usr/${_arch}/bin/*.dll
+        ${_arch}-strip -g "$PKGDIR"/usr/${_arch}/lib/*.a
+    done
+}

@@ -1,0 +1,30 @@
+{
+    "configurations": [
+        {
+            "name": "Native",
+            "includePath": [
+                "${workspaceFolder}/**",
+                "${workspaceFolder}/build/native/debug/Kconfig/include/generated",
+                "${workspaceFolder}/lib/**",
+                "${workspaceFolder}/lib/easy_profiler/easy_profiler_core/include",
+                "/usr/include/SDL2/"
+            ],
+            "defines": [
+                "BUILD_WITH_EASY_PROFILER",
+                "CORE_UTILS_QUEUE_ENABLE_STDMUTEX",
+                "CORE_UTILS_QUEUE_ENABLE_LOCKFREE",
+                "CORE_UTILS_QUEUE_IMPL_USE_LOCKFREE"
+            ],
+            "compilerPath": "/usr/bin/g++",
+            "cStandard": "c99",
+            "cppStandard": "c++17",
+            "intelliSenseMode": "linux-gcc-x64",
+            "compileCommands": "${workspaceFolder}/build/native/debug/compile_commands.json",
+            "forcedInclude": [
+                "${workspaceFolder}/build/native/debug//Kconfig/include/generated/config.h"
+            ],
+            "dotConfig": "${workspaceFolder}/build/native/debug/Kconfig/.config"
+        }
+    ],
+    "version": 4
+}

@@ -1,0 +1,3 @@
+Assets are from: https://gvituri.itch.io/space-shooter
+Packed sprite sheet generated with:
+aseprite --sheet-pack --sheet packed.png --data packed.json --format json-array --ignore-empty --split-tags --split-layers --inner-padding 1 --list-layers --list-tags --list-slices --filename-format "({layer})-({tag})-{frame000}" -b *.ase

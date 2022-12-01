@@ -1,0 +1,4 @@
+
+message(STATUS "Adding Core: Utilities")
+file(GLOB SRC_UTILITIES ${CMAKE_CURRENT_SOURCE_DIR}/*.cpp ${CMAKE_CURRENT_SOURCE_DIR}/*.c)
+target_sources(${CORE_TARGET} PRIVATE ${SRC_UTILITIES})

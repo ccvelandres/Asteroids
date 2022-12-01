@@ -1,0 +1,62 @@
+# Maintainer: Patrick Northon <northon_patrick3@yahoo.ca>
+
+arch=("mingw-w64")
+_architectures=('i686-w64-mingw32' 'x86_64-w64-mingw32')
+_pkgname=spdlog
+pkgname="${arch}-${_pkgname}"
+pkgver=1.10.0
+
+sources=(
+    "$_pkgname-$pkgver.tar.gz::https://github.com/gabime/spdlog/archive/refs/tags/v${pkgver}.tar.gz"
+)
+sha256sums=('697f91700237dbae2326b90469be32b876b2b44888302afbc7aceb68bcfe8224')
+
+_srcdir="${_pkgname}-${pkgver}"
+_flags=(-Wno-dev -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_FLAGS_RELEASE='-O2 -DNDEBUG'
+        -DSPDLOG_BUILD_BENCH=OFF 
+        -DSPDLOG_FMT_EXTERNAL=OFF
+        -DSPDLOG_WCHAR_FILENAMES=OFF 
+        -DSPDLOG_WCHAR_SUPPORT=OFF 
+        -DSPDLOG_ENABLE_PCH=ON
+        -DSPDLOG_BUILD_TESTS=OFF
+        -DSPDLOG_BUILD_TESTS_HO=OFF
+        -DSPDLOG_BUILD_EXAMPLE=OFF )
+
+prepare() {
+    cd "${_srcdir}"
+    find . -iname '*.cpp' -type f -exec sed -i 's/<Windows.h>/<windows.h>/' '{}' \;
+}
+
+build() {
+    for _arch in ${_architectures[@]}; do
+    #     cd ${SRCDIR}
+        # ${_arch}-cmake -S "${_srcdir}" -B "build-${_arch}-static" "${_flags[@]}" \
+        #     -DSPDLOG_BUILD_SHARED=OFF \
+        #     -DCMAKE_INSTALL_PREFIX="/usr/${_arch}/static"
+        # make -C "build-${_arch}-static" -j $JOBS
+        
+        ${_arch}-cmake -S "${_srcdir}" -B "build-${_arch}" "${_flags[@]}" \
+            -DSPDLOG_BUILD_SHARED=ON \
+        make -C "build-${_arch}" -j $JOBS
+    done
+}
+
+check() {
+    for _arch in ${_architectures[@]}; do
+        # Only compile-time tests enabled.
+        ${_arch}-cmake -S "${_srcdir}" -B "build-${_arch}" "${_flags[@]}" -DSPDLOG_BUILD_TESTS=OFF -DSPDLOG_BUILD_TESTS_HO=ON
+        cmake --build "build-${_arch}"
+        cmake --build "build-${_arch}" --target test
+    done
+}
+
+package() {
+    for _arch in ${_architectures[@]}; do
+        # DESTDIR="${PKGDIR}" cmake --install "build-${_arch}-static"
+        # ${_arch}-strip -g "$PKGDIR"/usr/${_arch}/static/lib/*.a
+    
+        DESTDIR="${PKGDIR}" cmake --install "build-${_arch}"
+        ${_arch}-strip --strip-unneeded "$PKGDIR"/usr/${_arch}/bin/*.dll
+        ${_arch}-strip -g "$PKGDIR"/usr/${_arch}/lib/*.a
+    done
+}

@@ -1,0 +1,91 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "(lldb) Launch",
+            "type": "lldb",
+            "request": "launch",
+            "program": "${workspaceFolder}/build/native/debug/out/sample",
+            "linux": {
+                "cwd": "${workspaceFolder}/build/native/debug/out",
+                "program": "${workspaceFolder}/build/native/debug/out/sample",
+            },
+            "env": {
+                "__NV_PRIME_RENDER_OFFLOAD": "1",
+                "__GLX_VENDOR_LIBRARY_NAME": "nvidia"
+            },
+            "preLaunchTask": "Rebuild:NativeSample"
+        },
+        {
+            "name": "(lldb) Launch References - OpenGL",
+            "type": "lldb",
+            "request": "launch",
+            "linux": {
+                "cwd": "${workspaceFolder}/build/linux/out/references/opengl",
+                "program": "${workspaceFolder}/build/linux/out/references/opengl/${input:OpenGLTargets}",
+            },
+            "preLaunchTask": "Build:Debug",
+            "env": {
+                "__NV_PRIME_RENDER_OFFLOAD": "1",
+                "__GLX_VENDOR_LIBRARY_NAME": "nvidia"
+            }
+        },
+        {
+            "name": "(lldb) Launch References - GLM",
+            "type": "lldb",
+            "request": "launch",
+            "linux": {
+                "cwd": "${workspaceFolder}/build/linux/out/references/glm",
+                "program": "${workspaceFolder}/build/linux/out/references/glm/${input:GLMTargets}",
+            },
+            "preLaunchTask": "Build:Debug",
+            "env": {
+                "__NV_PRIME_RENDER_OFFLOAD": "1",
+                "__GLX_VENDOR_LIBRARY_NAME": "nvidia"
+            }
+        },
+        {
+            "name": "(lldb) Launch Examples",
+            "type": "lldb",
+            "request": "launch",
+            "linux": {
+                "cwd": "${workspaceFolder}/build/linux/out/examples/${input:Examples}",
+                "program": "${workspaceFolder}/build/linux/out/examples/${input:Examples}/${input:Examples}",
+            },
+            "preLaunchTask": "Build:Debug",
+            "env": {
+                "__NV_PRIME_RENDER_OFFLOAD": "1",
+                "__GLX_VENDOR_LIBRARY_NAME": "nvidia"
+            }
+        }
+    ],
+    "inputs": [
+        {
+            "id": "OpenGLTargets",
+            "description": "Target to run",
+            "type": "pickString",
+            "options": [
+                "rendering"
+            ]
+        },
+        {
+            "id": "GLMTargets",
+            "description": "Target to run",
+            "type": "pickString",
+            "options": [
+                "glm-sample"
+            ]
+        },
+        {
+            "id": "Examples",
+            "description": "Target to run",
+            "type": "pickString",
+            "options": [
+                "lf-queue"
+            ]
+        }
+    ]
+}

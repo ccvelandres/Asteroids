@@ -1,0 +1,8 @@
+menu "Logic"
+
+config EXAMPLE_LOGIC
+    bool "Enable sample logic"
+    help
+        "sample config
+
+endmenu

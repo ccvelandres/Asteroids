@@ -1,0 +1,25 @@
+menu "Graphics"
+
+choice
+    prompt "Default Renderer"
+    help
+        Specifies the default renderer to use
+
+    config CORE_RENDERER_DEFAULT_OPENGL
+        bool "OpenGL"
+        select CORE_RENDERER_OPENGL
+
+    config CORE_RENDERER_DEFAULT_VULKAN
+        bool "Vulkan"
+        select CORE_RENDERER_VULKAN
+endchoice
+
+config CORE_RENDERER_OPENGL
+    bool "Enable support for OpenGL Renderer"
+    default n
+
+config CORE_RENDERER_VULKAN
+    bool "Enable support for Vulkan Renderer"
+    default n
+
+endmenu

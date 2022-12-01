@@ -1,0 +1,19 @@
+
+arch=("mingw-w64")
+_architectures=('i686-w64-mingw32' 'x86_64-w64-mingw32')
+_pkgname="sdl2"
+_realname="SDL2"
+pkgname="${arch}-${_pkgname}"
+pkgver="2.0.22"
+
+sources=("SDL2-devel-${pkgver}-mingw.tar.gz::https://www.libsdl.org/release/SDL2-devel-${pkgver}-mingw.tar.gz")
+sha256sums=('0e91e35973366aa1e6f81ee368924d9b4f93f9da4d2f2a89ec80b06eadcf23d1')
+
+build() {
+    cd "${SRCDIR}/SDL2-${pkgver}"
+
+    for _arch in "${_architectures[@]}"; do
+        mkdir -p "$PKGDIR/usr/${_arch}"
+    done
+    make cross CROSS_PATH="${PKGDIR}/usr"
+}

@@ -1,0 +1,29 @@
+
+menu "Core Configuration"
+
+config CORE_BUILD_EXAMPLE
+    bool "Build example binaries"
+    default y
+
+config CORE_BUILD_REFERENCES
+    bool "Build reference binaries"
+    default n
+
+config CORE_BUILD_DOXYGEN
+    bool "Build doxygen documentation"
+    default n
+
+config CORE_BUILD_DOXYGEN_HTML
+    depends on CORE_BUILD_DOXYGEN
+    bool "Generate HTML documentation"
+    default y
+
+config CORE_BUILD_DOXYGEN_MAN
+    depends on CORE_BUILD_DOXYGEN
+    bool "Generate MANPAGE"
+    default n
+
+source "utils/Kconfig"
+source "graphics/Kconfig"
+
+endmenu

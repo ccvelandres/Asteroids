@@ -1,0 +1,142 @@
+---
+Language:        Cpp
+BasedOnStyle:  LLVM
+AccessModifierOffset: -4
+AlignAfterOpenBracket: Align
+AlignArrayOfStructures: Left
+AlignConsecutiveAssignments : Consecutive
+AlignConsecutiveBitFields : Consecutive
+AlignConsecutiveDeclarations : Consecutive
+AlignConsecutiveMacros: Consecutive
+AlignEscapedNewlines: Left
+AlignOperands: AlignAfterOperator
+AlignTrailingComments: true
+AllowAllArgumentsOnNextLine: false
+AllowAllConstructorInitializersOnNextLine: false
+AllowAllParametersOfDeclarationOnNextLine: false
+# AllowShortBlocksOnASingleLine: true
+# AllowShortCaseLabelsOnASingleLine: true
+AllowShortEnumsOnASingleLine: true
+# AllowShortFunctionsOnASingleLine: InlineOnly
+AllowShortIfStatementsOnASingleLine: WithoutElse
+# AllowShortLambdasOnASingleLine: None
+# AllowShortLoopsOnASingleLine: true
+# AlwaysBreakAfterDefinitionReturnType: None
+AlwaysBreakAfterReturnType: None
+AlwaysBreakBeforeMultilineStrings: false
+AlwaysBreakTemplateDeclarations: Yes
+# AttributeMacros: [ '__unused' ] # used for language extenstions
+BinPackArguments: false
+BinPackParameters: false
+BitFieldColonSpacing: Both
+BraceWrapping:
+  AfterCaseLabel:  false
+  AfterClass:      true
+  AfterControlStatement: Always
+  AfterEnum:       true
+  AfterFunction:   true
+  AfterNamespace:  true
+  AfterObjCDeclaration: true
+  AfterStruct:     true
+  AfterUnion:      true
+  AfterExternBlock : true
+  BeforeLambdaBody: false
+  BeforeWhile : false
+  BeforeCatch:     true
+  BeforeElse:      true
+  IndentBraces:    false
+  SplitEmptyFunction: true
+  SplitEmptyRecord : true
+  SplitEmptyNamespace : true
+# BreakAfterJavaFieldAnnotations: true
+BreakBeforeBinaryOperators: NonAssignment
+BreakBeforeBraces: Custom
+# BreakBeforeTernaryOperators: false
+# BreakConstructorInitializers: AfterColon
+# BreakInheritanceList: AfterColon
+BreakStringLiterals: true
+ColumnLimit:     120
+# CommentPragmas:  '^ IWYU pragma:'
+# CompactNamespaces: false
+ConstructorInitializerAllOnOneLineOrOnePerLine: true
+ConstructorInitializerIndentWidth: 4
+ContinuationIndentWidth: 4
+# Cpp11BracedListStyle: true
+# DerivePointerAlignment: false
+# DisableFormat:   false
+EmptyLineAfterAccessModifier: Leave
+EmptyLineBeforeAccessModifier: Leave
+# FixNamespaceComments: false
+# ExperimentalAutoDetectBinPacking: false
+# ForEachMacros:   [ foreach, FOREACH, Q_FOREACH, BOOST_FOREACH ]
+IncludeBlocks: Preserve
+# IncludeCategories:
+#   - Regex:           '^"(llvm|llvm-c|clang|clang-c)/'
+#     Priority:        2
+#   - Regex:           '^(<|"(gtest|isl|json)/)'
+#     Priority:        3
+#   - Regex:           '.*'
+#     Priority:        1
+# IncludeIsMainRegex: '$'
+# IndentAccessModifiers: false
+IndentCaseLabels: false
+# IndentExternBlock: NoIndent
+# IndentGotoLabels: false
+# IndentPPDirectives: None
+# # IndentRequiresClause: false # Clang 15
+IndentWidth:     4
+# IndentWrappedFunctionNames: true
+# # InsertBraces: false # Clang 15
+# InsertTrailingCommas: None
+# KeepEmptyLinesAtTheStartOfBlocks: false
+# LambdaBodyIndentation: Signature
+# MacroBlockBegin: ''
+# MacroBlockEnd:   ''
+MaxEmptyLinesToKeep: 1
+NamespaceIndentation: All
+# # PackConstructorInitializers: Never # Clang 14
+# PenaltyBreakBeforeFirstCallParameter: 100000000
+# PenaltyBreakComment: 300
+# PenaltyBreakFirstLessLess: 120
+# PenaltyBreakString: 1000
+PenaltyExcessCharacter: 10
+PenaltyReturnTypeOnItsOwnLine: 100000000
+# PointerAlignment: Left
+# # QualifierAlignment: Right # Clang 14
+# # QualifierOrder: ['inline', 'static', 'type', 'const', 'volatile' ] # Clang 14
+# # RawStringFormats:
+# ReferenceAlignment: Right
+# ReflowComments:  true
+# # RequiresClausePosition: WithPreceding # Clang 15
+# # SeparateDefinitionBlocks: Always # Clang 14
+# ShortNamespaceLines: 1
+SortIncludes: Never
+SortUsingDeclarations: false
+# SpaceAfterCStyleCast: true
+# SpaceAfterLogicalNot: false
+# SpaceAfterTemplateKeyword: false
+# SpaceAroundPointerQualifiers: Default
+SpaceBeforeAssignmentOperators: true
+SpaceBeforeCaseColon: false
+SpaceBeforeCpp11BracedList: false
+SpaceBeforeCtorInitializerColon: true
+SpaceBeforeInheritanceColon: true
+SpaceBeforeParens: ControlStatements
+SpaceBeforeRangeBasedForLoopColon: true
+SpaceBeforeSquareBrackets: false
+SpaceInEmptyBlock: false
+SpaceInEmptyParentheses: false
+SpacesBeforeTrailingComments: 1
+SpacesInAngles:  false
+SpacesInCStyleCastParentheses: false
+SpacesInConditionalStatement: false
+SpacesInContainerLiterals: false
+# SpacesInLineCommentPrefix:
+#   Minimum: 1
+#   Maximum: -1
+SpacesInParentheses: false
+SpacesInSquareBrackets: false
+# Standard: Auto
+# TabWidth:        4
+# UseTab:          Never
+...

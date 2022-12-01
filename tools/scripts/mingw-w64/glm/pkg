@@ -1,0 +1,37 @@
+# Ref: https://packages.msys2.org/base/mingw-w64-glm
+
+arch=("mingw-w64")
+_architectures=('i686-w64-mingw32' 'x86_64-w64-mingw32')
+
+_pkgname="glm"
+_realname="glm"
+pkgname="${arch}-${_pkgname}"
+pkgver="0.9.9.8"
+_srcdir="${_realname}-${pkgver}"
+sources=("https://github.com/g-truc/glm/archive/${pkgver}.tar.gz"
+         "https://raw.githubusercontent.com/msys2/MINGW-packages/master/mingw-w64-glm/cmake-install-back.patch"
+         "file://cmake-install.patch")
+sha256sums=('7d508ab72cb5d43227a3711420f06ff99b0a0cb63ee2f93631b162bfe1fe9592'
+            'cc2dff9387d3299b233374c51090713be38412fb8a9464f9dbd64d8edabd45da'
+            'c989c083b365ec90896fd34816de242bb02e4b3f0000c938d9fa3cdc039b0c8b')
+
+prepare() {
+    cd "$SRCDIR/$_srcdir"
+    patch -p1 -i ../cmake-install-back.patch
+    patch -p1 -i ../cmake-install.patch
+}
+
+build() {
+    for _arch in ${_architectures[@]}; do
+        cd ${SRCDIR}
+        ${_arch}-cmake -S "$SRCDIR/${_srcdir}" -B "build-${_arch}" -DGLM_TEST_ENABLE=OFF
+        make -C "build-${_arch}" -j $JOBS
+    done
+}
+
+package() {
+    for _arch in ${_architectures[@]}; do
+        cd ${SRCDIR}
+        make -C "build-${_arch}" install DESTDIR="${pkgdir}"
+    done
+}

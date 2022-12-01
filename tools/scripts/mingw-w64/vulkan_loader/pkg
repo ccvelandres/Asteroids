@@ -1,0 +1,36 @@
+
+# Ref: https://aur.archlinux.org/cgit/aur.git/tree/PKGBUILD?h=mingw-w64-vulkan-icd-loader
+arch=("mingw-w64")
+_architectures=('i686-w64-mingw32' 'x86_64-w64-mingw32')
+_pkgname="vulkan-loader"
+_dirname="Vulkan-Loader"
+pkgver="1.3.217"
+pkgname="${arch}-${_pkgname}"
+_flags=(
+    -Wno-dev -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_FLAGS_RELEASE='-O2 -DNDEBUG'
+    -DUSE_MASM=OFF -DJWASM_FOUND=0 -DENABLE_WERROR=OFF )
+_srcdir="${_dirname}-${pkgver}"
+
+sources=("https://github.com/KhronosGroup/${_dirname}/archive/v${pkgver}.tar.gz")
+sha256sums=("59c0e4934fca328366bbb50b3a8d2dfc3daeab7589fdadd7a29b8a79fe242a7f")
+
+prepare() {
+    cd "${SRCDIR}/${_srcdir}"
+    sed -i 's|NO_CMAKE_FIND_ROOT_PATH||g' 'cmake/FindVulkanHeaders.cmake'
+    # patch
+}
+
+build() {
+    for _arch in "${_architectures[@]}"; do 
+        ${_arch}-cmake -S "${_srcdir}" -B "build-${_arch}" "${_flags[@]}" -DBUILD_TESTS=OFF
+        make -C "build-${_arch}" -j $JOBS
+    done
+}
+
+package() {
+    for _arch in "${_architectures[@]}"; do 
+        make -C "build-${_arch}" install DESTDIR="${PKGDIR}"
+        ${_arch}-strip --strip-unneeded "${PKGDIR}/usr/${_arch}/bin/"*.dll
+        ${_arch}-strip -g "${PKGDIR}/usr/${_arch}/lib/"*.a
+    done
+}

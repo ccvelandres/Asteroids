@@ -1,0 +1,3 @@
+[submodule "cmake/kconfig-cmake"]
+	path = cmake/kconfig-cmake
+	url = git@github.com:ccvelandres/kconfig-cmake.git
