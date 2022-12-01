@@ -16,3 +16,6 @@
 #include "components/renderComponent.hpp"
 #include "components/meshRenderer.hpp"
 #include "components/spriteRenderer.hpp"
+
+/** Audio Components */
+#include "components/audioComponent.hpp"
