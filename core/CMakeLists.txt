@@ -1,4 +1,4 @@
-include(KConfig)
+include(Kconfig)
 
 message(STATUS "-------- CORE ---------")
 kconfig_add_kconfig("${CMAKE_CURRENT_LIST_DIR}/include/core/Kconfig")
@@ -24,11 +24,6 @@ include(FetchContent)
 ###### easy_profiler
 
 message(STATUS "Fetching easy_profiler...")
-if(EXISTS ${PROJECT_LIBRARY_SOURCE_DIR}/easy_profiler)
-    add_subdirectory(${PROJECT_LIBRARY_SOURCE_DIR}/easy_profiler)
-endif()
-
-if(NOT TARGET easy_profiler)
 FetchContent_Declare(
     easy_profiler_project
     GIT_REPOSITORY      https://github.com/yse/easy_profiler.git
@@ -38,7 +33,6 @@ FetchContent_Declare(
     UPDATE_DISCONNECTED ON
 )
 FetchContent_MakeAvailable(easy_profiler_project)
-endif()
 
 add_custom_command(TARGET ${CORE_TARGET} PRE_LINK
     DEPENDS 

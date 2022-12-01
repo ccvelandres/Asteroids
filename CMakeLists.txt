@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.21)
 set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake/kconfig-cmake;${CMAKE_MODULE_PATH}")
-include(KConfig)
+include(Kconfig)
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 SET(CMAKE_SKIP_BUILD_RPATH FALSE)

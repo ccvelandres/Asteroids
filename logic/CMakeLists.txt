@@ -1,4 +1,4 @@
-include(KConfig)
+include(Kconfig)
 
 message(STATUS "-------- LOGIC ---------")
 kconfig_add_kconfig("${CMAKE_CURRENT_LIST_DIR}/Kconfig")
