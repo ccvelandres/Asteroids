@@ -134,17 +134,52 @@ namespace core::utils::logging
     PROFILER_BLOCK(STR); \
     static const std::string tag__ { std::string(core::utils::logging::baseFileName(__FILE__)) + std::string(": " STR) }
 
+#if defined(CONFIG_CORE_LOG_LINENUM)
+/** @brief Macro for adding line numbers to logs (See CONFIG_CORE_LOG_LINENUM to disable line numbers) */
+#define __L_LINE_STR "[{:4}] "
+/** @brief Macro for adding line numbers to logs (See CONFIG_CORE_LOG_LINENUM to disable line numbers) */
+#define __L_LINE ,__LINE__
+#else
+/** @brief Macro for adding line numbers to logs (See CONFIG_CORE_LOG_LINENUM to enable line numbers) */
+#define __L_LINE_STR
+/** @brief Macro for adding line numbers to logs (See CONFIG_CORE_LOG_LINENUM to enable line numbers) */
+#define __L_LINE
+#endif
+
 #if defined(CONFIG_CORE_LOG_TAG)
+/** @brief Macro for adding tags to logs (See CONfiG_CORE_LOG_TAG to disable tags) */
+#define __L_TAG_STR "[{}] "
+/** @brief Macro for adding tags to logs (See CONfiG_CORE_LOG_TAG to disable tags) */
+#define __L_TAG ,tag__
+#else
+/** @brief Macro for adding tags to logs (See CONfiG_CORE_LOG_TAG to enable tags) */
+#define __L_TAG_STR
+/** @brief Macro for adding tags to logs (See CONfiG_CORE_LOG_TAG to enable tags) */
+#define __L_TAG
+#endif
+
+#if defined(CONFIG_CORE_LOG_ENABLE)
 /** @brief Base macro for logging macros (See CONFIG_CORE_LOG_ENABLE_TAG to disable tags) */
-#define L_LOG(level, STR, ...) core::utils::logging::level(L_LINE_STR "[{}] " STR, L_LINE tag__, ##__VA_ARGS__)
+#define L_LOG(level, STR, ...) core::utils::logging::level(__L_LINE_STR __L_TAG_STR STR __L_LINE __L_TAG, ##__VA_ARGS__)
 /** @brief Base macro for throwing exceptions */
-#define L_THROW(EXCEPTION, STR, ...) throw EXCEPTION(fmt::format(L_LINE_STR "[{}] " STR, L_LINE tag__, ##__VA_ARGS__))
+#define L_THROW(EXCEPTION, STR, ...) throw EXCEPTION(fmt::format(__L_LINE_STR __L_TAG_STR STR __L_LINE __L_TAG, ##__VA_ARGS__))
 #else
 /** @brief Base macro for logging macros (See CONFIG_CORE_LOG_ENABLE_TAG to enable tags) */
-#define L_LOG(level, STR, ...) core::utils::logging::level(STR, ##__VA_ARGS__)
+#define L_LOG(level, STR, ...)
 /** @brief Base macro for throwing exceptions */
-#define L_THROW(EXCEPTION, STR, ...) throw EXCEPTION(fmt::format("[{}] " STR, tag__, ##__VA_ARGS__))
+#define L_THROW(EXCEPTION, STR, ...) throw EXCEPTION(fmt::format(STR, ##__VA_ARGS__))
 #endif
+
+/** @brief Log macro for error level */
+#define L_ERROR(STR, ...) L_LOG(error, STR, ##__VA_ARGS__)
+/** @brief Log macro for warn level */
+#define L_WARN(STR, ...) L_LOG(warn, STR, ##__VA_ARGS__)
+/** @brief Log macro for info level */
+#define L_INFO(STR, ...) L_LOG(info, STR, ##__VA_ARGS__)
+/** @brief Log macro for debug level */
+#define L_DEBUG(STR, ...) L_LOG(debug, STR, ##__VA_ARGS__)
+/** @brief Log macro for trace level */
+#define L_TRACE(STR, ...) L_LOG(trace, STR, ##__VA_ARGS__)
 
 /** @brief Variable for holding rate limit state */
 #define L_LOG_RATE_VAR __log_rate_limit##__func__
@@ -164,29 +199,6 @@ namespace core::utils::logging
     L_LOG_RATE_START(RATE);               \
     L_LOG(level, STR, ##__VA_ARGS__);     \
     L_LOG_RATE_END
-
-#if defined(CONFIG_CORE_LOG_LINENUM)
-/** @brief Macro for adding line numbers to logs (See CORE_LOG_ENABLE_LINENUM to disable tags) */
-#define L_LINE_STR "[{:4}] "
-/** @brief Macro for adding line numbers to logs (See CORE_LOG_ENABLE_LINENUM to disable tags) */
-#define L_LINE __LINE__,
-#else
-/** @brief Macro for adding line numbers to logs (See CORE_LOG_ENABLE_LINENUM to enable tags) */
-#define L_LINE_STR
-/** @brief Macro for adding line numbers to logs (See CORE_LOG_ENABLE_LINENUM to enable tags) */
-#define L_LINE
-#endif
-
-/** @brief Log macro for error level */
-#define L_ERROR(STR, ...) L_LOG(error, STR, ##__VA_ARGS__)
-/** @brief Log macro for warn level */
-#define L_WARN(STR, ...) L_LOG(warn, STR, ##__VA_ARGS__)
-/** @brief Log macro for info level */
-#define L_INFO(STR, ...) L_LOG(info, STR, ##__VA_ARGS__)
-/** @brief Log macro for debug level */
-#define L_DEBUG(STR, ...) L_LOG(debug, STR, ##__VA_ARGS__)
-/** @brief Log macro for trace level */
-#define L_TRACE(STR, ...) L_LOG(trace, STR, ##__VA_ARGS__)
 
 /** @brief Rate limited log macro for error level */
 #define L_ERROR_RATE(RATE, STR, ...) L_LOG_RATE(RATE, error, STR, ##__VA_ARGS__)
