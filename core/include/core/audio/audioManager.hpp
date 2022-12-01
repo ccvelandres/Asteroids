@@ -36,6 +36,8 @@ public:
      */
     static AudioManager &getInstance();
 
+    void setAudioListener();
+
     void init();
     void preUpdate();
     void fixedUpdate(const time_ms &delta);

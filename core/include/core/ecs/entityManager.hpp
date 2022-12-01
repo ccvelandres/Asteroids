@@ -129,6 +129,8 @@ public:
 
     /** Deletes inactive entities */
     void refresh();
+
+    friend Entity;
 };
 
 /** @} endgroup ECS */

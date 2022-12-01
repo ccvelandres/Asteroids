@@ -49,7 +49,7 @@ add_subdirectory(logic)
 # ################################################################
 # # Shaders
 
-list(APPEND PROJECT_ASSET_FOLDERS env models spritesheets textures)
+list(APPEND PROJECT_ASSET_FOLDERS audio env models spritesheets textures)
 file(MAKE_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/assets)
 
 # Copy each asset subdirectory

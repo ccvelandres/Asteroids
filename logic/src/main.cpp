@@ -22,31 +22,31 @@ constexpr int originY      = windowHeight / 2;
 
 class Crate : public Entity
 {
-    ComponentPtr<TransformComponent> transform;
-    ComponentPtr<MeshRenderer>       mesh;
+    TransformComponent *transform;
+    MeshRenderer       *mesh;
 public:
     Crate(const glm::vec3 &pos)
     {
-        transform = this->addComponent<TransformComponent>();
+        transform = &this->addComponent<TransformComponent>();
         transform->setPosition(pos);
 
         AssetID crateMesh    = Game::assetManager()->loadAsset(AssetType::Mesh, "crate.obj");
         AssetID crateTexture = Game::assetManager()->loadAsset(AssetType::Texture, "crate.png");
-        mesh                 = this->addComponent<MeshRenderer>(crateMesh, crateTexture);
+        mesh                 = &this->addComponent<MeshRenderer>(crateMesh, crateTexture);
     }
 };
 
 class CameraObject : public Entity
 {
 public:
-    ComponentPtr<TransformComponent> transform;
-    ComponentPtr<CameraComponent>    camera;
+    TransformComponent *transform;
+    CameraComponent    *camera;
 
     CameraObject()
     {
-        transform = this->addComponent<TransformComponent>();
+        transform = &this->addComponent<TransformComponent>();
         camera =
-            this->addComponent<CameraComponent>(glm::vec2(1280.0f, 720.0f), CameraComponent::Projection::Perspective);
+            &this->addComponent<CameraComponent>(glm::vec2(1280.0f, 720.0f), CameraComponent::Projection::Perspective);
     }
 };
 
@@ -77,11 +77,11 @@ int main(int arc, char **argv)
         .setOrientation(TransformComponent::worldFront, TransformComponent::worldUp);
     camObject.camera->updateMatrix();
 
-    ComponentPtr<InputComponent> inputComponent = camObject.addComponent<InputComponent>();
+    InputComponent *inputComponent = &camObject.addComponent<InputComponent>();
     inputComponent->setListener(InputEventType::KeyDown, [&camObject](const InputEventType type, SDL_Event *ev) -> void {
         L_INFO_RATE(32, "cameraInput KeyDown Event: {}", ev->key.keysym.sym);
-        ComponentPtr<CameraComponent>    cam       = camObject.getComponent<CameraComponent>();
-        ComponentPtr<TransformComponent> transform = camObject.getComponent<TransformComponent>();
+        CameraComponent    *cam       = &camObject.getComponent<CameraComponent>();
+        TransformComponent *transform = &camObject.getComponent<TransformComponent>();
         switch (ev->key.keysym.sym)
         {
         case SDLK_w:
