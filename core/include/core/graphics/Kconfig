@@ -2,6 +2,7 @@ menu "Graphics"
 
 choice
     prompt "Default Renderer"
+    default CORE_RENDERER_DEFAULT_OPENGL
     help
         Specifies the default renderer to use
 
