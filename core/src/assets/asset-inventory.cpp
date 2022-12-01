@@ -21,9 +21,10 @@ AssetInventory::AssetInventory()
 
     // Set asset directory
     fs::path projectDirectory = core::utils::platform::getProjectPath();
-    assetsDirectory = fs::path(projectDirectory).append("assets").string();
+    assetsDirectory           = fs::path(projectDirectory).append("assets").string();
 
     const std::unordered_map<std::string, std::pair<bool, AssetType>> assetTypeMap = {
+        {"audio",        {false, AssetType::Audio}      }, // no strip extension
         {"models",       {false, AssetType::Mesh}       }, // no strip extension
         {"shaders",      {true, AssetType::Pipeline}    }, // strip extension
         {"textures",     {false, AssetType::Texture}    }, // no strip extension
@@ -70,7 +71,7 @@ void AssetInventory::loadInventory(const std::string &inventoryFile)
     /** load inventory to cache */
 }
 
-const AssetPaths& AssetInventory::resolvePath(const AssetType &type, const std::string &name)
+const AssetPaths &AssetInventory::resolvePath(const AssetType &type, const std::string &name)
 {
     L_TAG("AssetInventory::resolvePath()");
 
@@ -78,7 +79,7 @@ const AssetPaths& AssetInventory::resolvePath(const AssetType &type, const std::
     if (assetList != cache.end())
     {
         auto assetPath = assetList->second.find(name);
-        if(assetPath != assetList->second.end())
+        if (assetPath != assetList->second.end())
         {
             return assetPath->second;
         }

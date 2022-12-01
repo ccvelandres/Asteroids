@@ -17,7 +17,7 @@
  *      and no copying whole file to mem
  *  - maybe implement Asset class with streams? then have protected constructors for
  *      memory access and file access (with streambufs)
- * 
+ *
  * @addtogroup Assets
  * @{
  */
@@ -38,6 +38,7 @@ class AssetInventory; /** Forward declaration for AssetInventory */
  */
 enum class AssetType
 {
+    Audio,
     Mesh,
     Pipeline,
     Texture,
@@ -49,7 +50,7 @@ class AssetInventory
 private:
     using AssetList = std::unordered_map<std::string, AssetPaths>;
     std::unordered_map<AssetType, AssetList> cache;
-    std::string assetsDirectory;
+    std::string                              assetsDirectory;
 
     AssetInventory();
 public:
@@ -63,7 +64,7 @@ public:
 
     void loadInventory(const std::string &inventoryFile);
 
-    const AssetPaths& resolvePath(const AssetType &type, const AssetName &name);
+    const AssetPaths &resolvePath(const AssetType &type, const AssetName &name);
 };
 
 /** @} endgroup Assets */
