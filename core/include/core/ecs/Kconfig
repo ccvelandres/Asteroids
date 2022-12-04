@@ -1,36 +1,36 @@
 menu "ECS"
 
-config ECS_COMPONENT_TRANSFORM
+config CORE_ECS_COMPONENT_TRANSFORM
     bool "Transform Component"
     default y
 
-config ECS_COMPONENT_AUDIO
+config CORE_ECS_COMPONENT_AUDIO
     bool "Audio Component"
-    depends on ECS_COMPONENT_TRANSFORM
+    depends on CORE_ECS_COMPONENT_TRANSFORM
     default y
 
-config ECS_COMPONENT_CAMERA
+config CORE_ECS_COMPONENT_CAMERA
     bool "Camera Component"
-    depends on ECS_COMPONENT_TRANSFORM
+    depends on CORE_ECS_COMPONENT_TRANSFORM
     default y
 
-config ECS_COMPONENT_INPUT
+config CORE_ECS_COMPONENT_INPUT
     bool "Input Component"
     default y
 
-config ECS_COMPONENT_RENDER
+config CORE_ECS_COMPONENT_RENDER
     bool "Render Component"
-    depends on ECS_COMPONENT_TRANSFORM
+    depends on CORE_ECS_COMPONENT_TRANSFORM
     default y
 
-config ECS_COMPONENT_MESH
+config CORE_ECS_COMPONENT_MESH
     bool "Mesh Component"
-    depends on ECS_COMPONENT_RENDER
+    depends on CORE_ECS_COMPONENT_RENDER
     default y
 
-config ECS_COMPONENT_SPRITE
+config CORE_ECS_COMPONENT_SPRITE
     bool "Sprite Component"
-    depends on ECS_COMPONENT_RENDER
+    depends on CORE_ECS_COMPONENT_RENDER
     default y
 
 

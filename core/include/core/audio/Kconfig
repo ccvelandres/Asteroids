@@ -1,59 +1,59 @@
 menu "Audio"
 
-config AUDIO_ALLOW_FREQUENCY_CHANGE
+config CORE_AUDIO_ALLOW_FREQUENCY_CHANGE
     bool "Allow frequency change"
     default n
     help 
         If set to n, SDL2 will transparently handle frequency changes if the sound
         device does not support the requested frequency
 
-config AUDIO_ALLOW_FORMAT_CHANGE
+config CORE_AUDIO_ALLOW_FORMAT_CHANGE
     bool "Allow format change"
     default n
     help 
         If set to n, SDL2 will transparently handle frequency changes if the sound
         device does not support the requested format
 
-config AUDIO_ALLOW_CHANNEL_CHANGE
+config CORE_AUDIO_ALLOW_CHANNEL_CHANGE
     bool "Allow channel change"
     default n
     help 
         If set to n, SDL2 will transparently handle frequency changes if the sound
         device does not support the requested channel
 
-config AUDIO_ALLOW_SAMPLE_CHANGE
+config CORE_AUDIO_ALLOW_SAMPLE_CHANGE
     bool "Allow sample change"
     default n
     help 
         If set to n, SDL2 will transparently handle frequency changes if the sound
         device does not support the requested sample
 
-config AUDIO_ALLOW_ALL_CHANGE
+config CORE_AUDIO_ALLOW_ALL_CHANGE
     bool "Allow all change"
     default n
-    select AUDIO_ALLOW_FREQUENCY_CHANGE
-    select AUDIO_ALLOW_FORMAT_CHANGE
-    select AUDIO_ALLOW_CHANNEL_CHANGE
-    select AUDIO_ALLOW_SAMPLE_CHANGE
+    select CORE_AUDIO_ALLOW_FREQUENCY_CHANGE
+    select CORE_AUDIO_ALLOW_FORMAT_CHANGE
+    select CORE_AUDIO_ALLOW_CHANNEL_CHANGE
+    select CORE_AUDIO_ALLOW_SAMPLE_CHANGE
     help 
         If set to n, SDL2 will transparently handle frequency changes if the sound
         device does not support the requested audio spec
 
 menu "Supported Formats"
 
-    config AUDIO_FORMAT_OGG
+    config CORE_AUDIO_FORMAT_OGG
         bool "Ogg Vorbis"
         default y
 
-    config AUDIO_FORMAT_MP3
+    config CORE_AUDIO_FORMAT_MP3
         bool "MP3"
         default y
 
-    config AUDIO_FORMAT_WAV
+    config CORE_AUDIO_FORMAT_WAV
         bool "WAV"
         default y
 
-    config AUDIO_FORMAT_FLAC
+    config CORE_AUDIO_FORMAT_FLAC
         bool "FLAC"
         default n
 
