@@ -45,7 +45,29 @@ AudioManager &AudioManager::getInstance()
     return instance;
 }
 
-static void audioCallback(void *userdata, Uint8 *stream, int len) {}
+static void audioCallback(void *userdata, Uint8 *stream, int len)
+{
+    AudioManager *manager = static_cast<AudioManager *>(userdata);
+    manager->populateAudioBuffer(stream, len);
+}
+
+void AudioManager::populateAudioBuffer(uint8_t *stream, int len)
+{
+    std::vector<std::shared_ptr<AudioClip>> clips;
+    // Build shared_ptr vector for active clips
+    std::for_each(audioClips.begin(), audioClips.end(), [&clips](std::weak_ptr<AudioClip> &c) {
+        auto p = c.lock();
+        if (p && p->m_playing) clips.push_back(p);
+    });
+
+    // Clear stream buffer
+    memset(stream, 0, len);
+
+    for (auto &clip : clips)
+    {
+        /** @todo: mix active waveforms then submit to sdl2 */
+    }
+}
 
 std::shared_ptr<AudioClip::Internal> AudioManager::loadAudioFile(const AssetName &assetName)
 {
@@ -54,17 +76,18 @@ std::shared_ptr<AudioClip::Internal> AudioManager::loadAudioFile(const AssetName
 
     // Check if asset was loaded already
     auto idCache = audioClipCache.find(assetName);
-    if(idCache != audioClipCache.end())
+    if (idCache != audioClipCache.end())
     {
         internal = idCache->second.lock();
-        if(internal) {
+        if (internal)
+        {
             L_DEBUG("Audio loaded from cache: {}", assetName);
             return internal;
         }
     }
 
     // Load asset to memory
-    internal = std::make_shared<AudioClip::Internal>(AudioClip::Internal());
+    internal       = std::make_shared<AudioClip::Internal>(AudioClip::Internal());
     auto assetPath = AssetInventory::getInstance().resolvePath(AssetType::Audio, assetName);
     L_ASSERT(assetPath.size() == 1, "Found multiple asset paths for: {}", assetName);
 
@@ -96,8 +119,8 @@ void AudioManager::init()
     want.channels = defaultAudioChannel;
     want.samples  = defaultAudioSamples;
     want.format   = defaultAudioFormat;
-    want.callback = audioCallback;
-    want.userdata = &audioDevice;
+    want.callback = ::audioCallback;
+    want.userdata = this;
 
     // Open default audio device
     SDL_AudioDeviceID devId = SDL_OpenAudioDevice(NULL, 0, &want, &have, audioDeviceAllowedChanges);

@@ -21,7 +21,6 @@ constexpr uint8_t maxVolume = 0xFF;
 class AudioManager
 {
 private:
-
     /** AudioManager is a singleton */
     AudioManager();
 protected:
@@ -38,6 +37,8 @@ public:
      * @return AudioManager& reference to AudioManager
      */
     static AudioManager &getInstance();
+
+    void populateAudioBuffer(uint8_t *stream, int len);
 
     void setAudioListener();
 

@@ -35,6 +35,7 @@ private:
     AudioType       m_type;
     AudioComponent &m_component;
 
+    bool        m_playing;
     uint8_t     m_volume;
     uint8_t     m_fade;
     bool        m_loop;
@@ -134,7 +135,7 @@ public:
      * @brief Attaches an audio clip to this component. The AudioClip lifespan is the same as the
      * audioComponent that owns it.
      * @todo: add an audioClip class? to handle audio data and audio controls
-     * 
+     *
      * @return AudioClip& reference to created audio clip
      */
     AudioClip &addAudioClip(const AssetName &audioName, const AudioType &audioType);
