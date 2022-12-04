@@ -1,10 +1,19 @@
 #include <core/audio/audioManager.hpp>
 #include <core/utils/logging.hpp>
+#include <core/utils/memory.hpp>
+#include <core/ecs/components/audioComponent.hpp>
 
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_audio.h>
 
 #include <vector>
+#include <algorithm>
+
+/**
+ * @file: Audio manager
+ * @todo: possibly extend audio mixing with OpenAL
+ * @todo: this file needs cleaning up
+ */
 
 /** @todo: control defaults depending on config */
 constexpr int             audioDeviceAllowedChanges = 0;
@@ -19,7 +28,23 @@ struct AudioDevice
     SDL_AudioSpec     spec;
 };
 
-static AudioDevice audioDevice;
+struct AudioClip::Internal
+{
+    uint32_t                 audioLength;
+    uint32_t                 playbackOffset;
+    std::unique_ptr<uint8_t> audioBuffer;
+    SDL_AudioSpec            audioSpec;
+};
+
+static AudioDevice                           audioDevice;
+static ComponentPtr<AudioComponent>          defaultAudioListener;
+static std::vector<std::weak_ptr<AudioClip>> audioClips;
+
+AudioClip::AudioClip(const AssetName &assetName, AudioComponent &component)
+    : m_assetName(assetName),
+      m_component(component)
+{
+}
 
 AudioManager::AudioManager()  = default;
 AudioManager::~AudioManager() = default;
@@ -32,6 +57,30 @@ AudioManager &AudioManager::getInstance()
 }
 
 static void audioCallback(void *userdata, Uint8 *stream, int len) {}
+
+std::shared_ptr<AudioClip> AudioManager::createAudioClip(const AssetName &assetName, AudioComponent &component)
+{
+    L_TAG("AudioManager::createAudioClip");
+    std::shared_ptr<AudioClip> clip = std::make_shared<AudioClip>(AudioClip(assetName, component));
+    clip->m_internal.reset(new AudioClip::Internal());
+
+    auto     audioPath = AssetInventory::getInstance().resolvePath(AssetType::Audio, assetName);
+    uint8_t *audioBuffer;
+
+    if (SDL_LoadWAV(audioPath[0].c_str(), &clip->m_internal->audioSpec, &audioBuffer, &clip->m_internal->audioLength)
+        == NULL)
+    {
+        L_ERROR("Could not load audio file: {}", assetName);
+    }
+
+    // Commit audio buffer
+    clip->m_internal->playbackOffset = 0;
+    clip->m_internal->audioBuffer.reset(audioBuffer);
+    L_DEBUG("Audio file loaded: {}", assetName);
+
+    audioClips.push_back(clip);
+    return clip;
+}
 
 void AudioManager::init()
 {
@@ -60,7 +109,7 @@ void AudioManager::init()
         L_INFO("\t Format:    0x{:x}", have.format);
 
         audioDevice.deviceId = devId;
-        audioDevice.spec = have;
+        audioDevice.spec     = have;
     }
     else
     {

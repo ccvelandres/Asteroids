@@ -10,6 +10,9 @@
 
 #include "../time.hpp"
 #include "../ecs/component.hpp"
+#include "../ecs/components/audioComponent.hpp"
+
+constexpr uint8_t maxVolume = 0xFF;
 
 /**
  * @brief Manager for all audio related system
@@ -37,6 +40,8 @@ public:
     static AudioManager &getInstance();
 
     void setAudioListener();
+
+    std::shared_ptr<AudioClip> createAudioClip(const AssetName &assetName, AudioComponent &component);
 
     void init();
     void preUpdate();
