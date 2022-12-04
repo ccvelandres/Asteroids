@@ -41,13 +41,21 @@ public:
 
     void setAudioListener();
 
-    std::shared_ptr<AudioClip> createAudioClip(const AssetName &assetName, AudioComponent &component);
+    // std::shared_ptr<AudioClip> createAudioClip(const AssetName &assetName, AudioComponent &component);
+    std::shared_ptr<AudioClip::Internal> loadAudioFile(const AssetName &assetName);
 
+    /** Initialize Manager */
     void init();
+    /** @todo: add threading for update methods? */
+    /** Preupdate step for manager */
     void preUpdate();
+    /** Fixed interval update for manager */
     void fixedUpdate(const time_ms &delta);
+    /** Scaled time update for manager */
     void update(const time_ms &delta);
+    /** Post update for manager */
     void postUpdate();
+    /** Refresh manager (usually clean unused resources) */
     void refresh();
 };
 

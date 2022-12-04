@@ -2,13 +2,14 @@
 #include <core/utils/logging.hpp>
 #include <core/utils/memory.hpp>
 #include <core/ecs/components/audioComponent.hpp>
-#include <audio/audioManager_p.hpp>
+#include <audio/audioClip_p.hpp>
 
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_audio.h>
 
 #include <vector>
 #include <algorithm>
+#include <unordered_map>
 
 /**
  * @file: Audio manager
@@ -32,6 +33,8 @@ static AudioDevice                           audioDevice;
 static ComponentPtr<AudioComponent>          defaultAudioListener;
 static std::vector<std::weak_ptr<AudioClip>> audioClips;
 
+static std::unordered_map<AssetName, std::weak_ptr<AudioClip::Internal>> audioClipCache;
+
 AudioManager::AudioManager()  = default;
 AudioManager::~AudioManager() = default;
 
@@ -44,12 +47,40 @@ AudioManager &AudioManager::getInstance()
 
 static void audioCallback(void *userdata, Uint8 *stream, int len) {}
 
-std::shared_ptr<AudioClip> AudioManager::createAudioClip(const AssetName &assetName, AudioComponent &component)
+std::shared_ptr<AudioClip::Internal> AudioManager::loadAudioFile(const AssetName &assetName)
 {
-    L_TAG("AudioManager::createAudioClip");
-    std::shared_ptr<AudioClip> clip = std::make_shared<AudioClip>(AudioClip(assetName, component));
-    audioClips.push_back(clip);
-    return clip;
+    L_TAG("AudioManager::loadAudioFile");
+    std::shared_ptr<AudioClip::Internal> internal;
+
+    // Check if asset was loaded already
+    auto idCache = audioClipCache.find(assetName);
+    if(idCache != audioClipCache.end())
+    {
+        internal = idCache->second.lock();
+        if(internal) {
+            L_DEBUG("Audio loaded from cache: {}", assetName);
+            return internal;
+        }
+    }
+
+    // Load asset to memory
+    internal = std::make_shared<AudioClip::Internal>(AudioClip::Internal());
+    auto assetPath = AssetInventory::getInstance().resolvePath(AssetType::Audio, assetName);
+    L_ASSERT(assetPath.size() == 1, "Found multiple asset paths for: {}", assetName);
+
+    uint8_t *audioBuffer;
+    if (SDL_LoadWAV(assetPath[0].c_str(), &internal->audioSpec, &audioBuffer, &internal->audioLength) == NULL)
+    {
+        L_ERROR("Could not load audio file: {}", assetName);
+    }
+
+    // Commit audio buffer
+    internal->audioBuffer.reset(audioBuffer);
+
+    /** @todo: make sure map insert is atomic */
+    audioClipCache.insert(std::make_pair(assetName, internal));
+    L_DEBUG("Audio loaded from file: {}", assetName);
+    return internal;
 }
 
 void AudioManager::init()
@@ -92,3 +123,7 @@ void AudioManager::preUpdate() { L_TAG("AudioManager::preUpdate"); }
 void AudioManager::fixedUpdate(const time_ms &delta) { L_TAG("AudioManager::fixedUpdate"); }
 
 void AudioManager::update(const time_ms &delta) { L_TAG("AudioManager::update"); }
+
+void AudioManager::postUpdate() { L_TAG("AudioManager::postUpdate"); }
+
+void AudioManager::refresh() { L_TAG("AudioManager::refresh"); }

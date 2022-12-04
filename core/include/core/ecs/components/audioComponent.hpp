@@ -28,6 +28,8 @@ enum class AudioType
 
 class AudioClip
 {
+public:
+    struct Internal;
 private:
     const AssetName m_assetName;
     AudioType       m_type;
@@ -37,13 +39,14 @@ private:
     uint8_t     m_fade;
     bool        m_loop;
     std::size_t m_length;
+    std::size_t m_offset;
 
-    struct Internal;
-    std::unique_ptr<Internal> m_internal;
+    std::shared_ptr<Internal> m_internal;
 protected:
     // Use AudioComponent to create AudioClip
-    AudioClip(const AssetName &assetName, AudioComponent &component);
 public:
+
+    AudioClip(const AssetName &assetName, AudioComponent &component);
     ~AudioClip()                        = default;
     AudioClip(AudioClip &o)             = delete;
     AudioClip &operator=(AudioClip &o)  = delete;
@@ -54,11 +57,13 @@ public:
     AudioClip &setFade(const uint8_t &fade) noexcept;
     AudioClip &setLoop(const bool &loop) noexcept;
     AudioClip &setLength(const std::size_t &length) noexcept;
+    AudioClip &setOffset(const std::size_t &offset) noexcept;
 
     uint8_t     getVolume() const noexcept;
     uint8_t     getFade() const noexcept;
     bool        getLoop() const noexcept;
     std::size_t getLength() const noexcept;
+    std::size_t getOffset() const noexcept;
 
     /**
      * @brief Retrieve the audioComponent this clip is attached to
@@ -99,7 +104,7 @@ public:
 class AudioComponent : public Component
 {
 private:
-    std::vector<std::shared_ptr<AudioClip>> m_audioClips;
+    std::vector<std::unique_ptr<AudioClip>> m_audioClips;
 protected:
     /** Protected Constructors (use entity to add components) */
     AudioComponent();
@@ -129,8 +134,10 @@ public:
      * @brief Attaches an audio clip to this component. The AudioClip lifespan is the same as the
      * audioComponent that owns it.
      * @todo: add an audioClip class? to handle audio data and audio controls
+     * 
+     * @return AudioClip& reference to created audio clip
      */
-    AudioClip *addAudioClip(const AssetName &audioName, const AudioType &audioType);
+    AudioClip &addAudioClip(const AssetName &audioName, const AudioType &audioType);
 
     /**
      * @brief Retrieves a pointer array to all audio clips attached to this component
