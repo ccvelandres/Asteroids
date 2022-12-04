@@ -2,6 +2,7 @@
 #include <core/utils/logging.hpp>
 #include <core/utils/memory.hpp>
 #include <core/ecs/components/audioComponent.hpp>
+#include <audio/audioManager_p.hpp>
 
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_audio.h>
@@ -27,24 +28,9 @@ struct AudioDevice
     SDL_AudioDeviceID deviceId;
     SDL_AudioSpec     spec;
 };
-
-struct AudioClip::Internal
-{
-    uint32_t                 audioLength;
-    uint32_t                 playbackOffset;
-    std::unique_ptr<uint8_t> audioBuffer;
-    SDL_AudioSpec            audioSpec;
-};
-
 static AudioDevice                           audioDevice;
 static ComponentPtr<AudioComponent>          defaultAudioListener;
 static std::vector<std::weak_ptr<AudioClip>> audioClips;
-
-AudioClip::AudioClip(const AssetName &assetName, AudioComponent &component)
-    : m_assetName(assetName),
-      m_component(component)
-{
-}
 
 AudioManager::AudioManager()  = default;
 AudioManager::~AudioManager() = default;
@@ -62,22 +48,6 @@ std::shared_ptr<AudioClip> AudioManager::createAudioClip(const AssetName &assetN
 {
     L_TAG("AudioManager::createAudioClip");
     std::shared_ptr<AudioClip> clip = std::make_shared<AudioClip>(AudioClip(assetName, component));
-    clip->m_internal.reset(new AudioClip::Internal());
-
-    auto     audioPath = AssetInventory::getInstance().resolvePath(AssetType::Audio, assetName);
-    uint8_t *audioBuffer;
-
-    if (SDL_LoadWAV(audioPath[0].c_str(), &clip->m_internal->audioSpec, &audioBuffer, &clip->m_internal->audioLength)
-        == NULL)
-    {
-        L_ERROR("Could not load audio file: {}", assetName);
-    }
-
-    // Commit audio buffer
-    clip->m_internal->playbackOffset = 0;
-    clip->m_internal->audioBuffer.reset(audioBuffer);
-    L_DEBUG("Audio file loaded: {}", assetName);
-
     audioClips.push_back(clip);
     return clip;
 }

@@ -44,31 +44,52 @@ protected:
     // Use AudioComponent to create AudioClip
     AudioClip(const AssetName &assetName, AudioComponent &component);
 public:
-    ~AudioClip() = default;
+    ~AudioClip()                        = default;
     AudioClip(AudioClip &o)             = delete;
     AudioClip &operator=(AudioClip &o)  = delete;
     AudioClip(AudioClip &&o)            = default;
     AudioClip &operator=(AudioClip &&o) = default;
 
-    AudioClip &setVolume(const uint8_t &volume);
-    AudioClip &setFade(const uint8_t &fade);
-    AudioClip &setLoop(const bool &loop);
-    AudioClip &setLength(const std::size_t &length);
+    AudioClip &setVolume(const uint8_t &volume) noexcept;
+    AudioClip &setFade(const uint8_t &fade) noexcept;
+    AudioClip &setLoop(const bool &loop) noexcept;
+    AudioClip &setLength(const std::size_t &length) noexcept;
 
-    uint8_t     getVolume();
-    uint8_t     getFade();
-    bool        getLoop();
-    std::size_t getLength();
+    uint8_t     getVolume() const noexcept;
+    uint8_t     getFade() const noexcept;
+    bool        getLoop() const noexcept;
+    std::size_t getLength() const noexcept;
 
     /**
      * @brief Retrieve the audioComponent this clip is attached to
-     *
      * @return AudioComponent& audioComponent
      */
-    AudioComponent &getComponent();
+    AudioComponent &getComponent() const noexcept;
+
+    /**
+     * @brief Play the current audio clip from offset
+     * @param offset offset to start
+     */
+
+    void play(const std::size_t &offset = 0);
+
+    /**
+     * @brief Stop the current audio clip
+     */
+    void stop();
+    /**
+     * @brief Pause the current audio clip
+     */
+    void pause();
+
+    /**
+     * @brief Free the resources for this audio clip. After this call, the audio clip object is no longer valid.
+     * @note The audio clip may be cached and referenced by multiple audio clip objects. In this case, the shared
+     * resource is only freed when the last object is freed
+     */
+    void free();
 
     friend AudioManager;
-    friend AudioComponent;
 };
 
 /**
