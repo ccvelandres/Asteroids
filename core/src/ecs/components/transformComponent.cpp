@@ -24,7 +24,7 @@ TransformComponent &TransformComponent::translate(const glm::vec3 &v, bool local
          * however, the z axis is inversed. WHY?
          * this works the same -> v` = quat * v; BUT WHY?
          */
-        glm::vec3 tV = m_orientation * v;
+        glm::vec3 tV = glm::inverse(m_orientation) * v;
         this->m_position += tV;
     }
     else
