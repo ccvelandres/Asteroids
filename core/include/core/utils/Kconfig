@@ -10,58 +10,9 @@ config CORE_LOG_ENABLE
     help
         Enables logging
         Depends on third-party library - spdlog
+        
+source "Kconfig.logging"
 
-config CORE_LOG_LINENUM
-    bool "Print line number in logs"
-    depends on CORE_LOG_ENABLE
-
-config CORE_LOG_TAG
-    bool "Print tags in logs"
-    depends on CORE_LOG_ENABLE
-
-config CORE_LOG_LEVEL
-    depends on CORE_LOG_ENABLE
-    int "Logging level"
-    range 0 6
-    default 6
-    help
-        Logging level
-        0 - NONE
-        1 - ERROR
-        2 - CRITICAL
-        3 - WARN
-        4 - INFO
-        5 - DEBUG
-        6 - TRACE
-
-menu "Queue"
-
-choice
-    prompt "Queue Implementation"
-    default CORE_QUEUE_DEFAULT_STDMUTEX
-    help
-        This option selects the underlying implementation for thread-safe queues
-        used within the core library
-
-        When in doubt, use STDMUTEX
-
-config CORE_QUEUE_DEFAULT_STDMUTEX
-    select CORE_QUEUE_STDMUTEX_ENABLE
-    bool "std::mutex"
-
-config CORE_QUEUE_DEFAULT_LOCKFREE
-    select CORE_QUEUE_LOCKFREE_ENABLE
-    bool "lockfree"
-
-endchoice
-
-config CORE_QUEUE_STDMUTEX_ENABLE
-    bool "Enable queues using std::mutex"
-
-config CORE_QUEUE_LOCKFREE_ENABLE
-    bool "Enable queues using lockfree atomics"
-
-endmenu
-
+source "Kconfig.queue"
 
 endmenu

@@ -1,0 +1,27 @@
+menu "Logging"
+    depends on CORE_LOG_ENABLE
+
+config CORE_LOG_LINENUM
+    bool "Print line number in logs"
+    depends on CORE_LOG_ENABLE
+
+config CORE_LOG_TAG
+    bool "Print tags in logs"
+    depends on CORE_LOG_ENABLE
+
+config CORE_LOG_LEVEL
+    depends on CORE_LOG_ENABLE
+    int "Logging level"
+    range 0 6
+    default 6
+    help
+        Logging level
+        0 - NONE
+        1 - ERROR
+        2 - CRITICAL
+        3 - WARN
+        4 - INFO
+        5 - DEBUG
+        6 - TRACE
+
+endmenu
