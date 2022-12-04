@@ -68,19 +68,19 @@ execute_process(COMMAND ${PROJECT_ROOT}/tools/scripts/compile_shaders.sh INPUTDI
 
 # ################################################################
 # # Examples
-if(CORE_BUILD_EXAMPLES)
+if(CONFIG_CORE_BUILD_EXAMPLES)
     add_subdirectory(examples)
 endif()
 
 # ################################################################
 # # References
-if(CORE_BUILD_REFERENCES)
+if(CONFIG_CORE_BUILD_REFERENCES)
     add_subdirectory(references)
 endif()
 
 # ################################################################
 # # Documentation
-if(CORE_BUILD_DOXYGEN)
+if(CONFIG_CORE_BUILD_DOXYGEN)
     find_package(Doxygen
         REQUIRED dot
         OPTIONAL_COMPONENTS mscgen dia)
