@@ -9,6 +9,8 @@ set(SRC_CORE
     ${CMAKE_CURRENT_SOURCE_DIR}/src/time.cpp)
 
 add_library(${CORE_TARGET} ${SRC_CORE})
+set_target_properties(${CORE_TARGET} PROPERTIES VERSION 0.1.0)
+
 kconfig_add_target(${CORE_TARGET})
 add_subdirectory(src)
 
