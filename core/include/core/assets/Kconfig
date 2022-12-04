@@ -1,0 +1,37 @@
+menu "Asset Management"
+
+config ASSET_STARTUP_SCAN
+    bool "Scan assets on startup"
+    default y
+
+config ASSET_SCAN_AUDIO_ENABLE
+    depends on ASSET_STARTUP_SCAN
+    bool "Scan for audio assets"
+    default y
+
+config ASSET_SCAN_MODELS_ENABLE
+    depends on ASSET_STARTUP_SCAN
+    bool "Scan for model assets"
+    default y
+
+config ASSET_SCAN_TEXTURE_ENABLE
+    depends on ASSET_STARTUP_SCAN
+    bool "Scan for texture assets"
+    default y
+
+config ASSET_SCAN_SPRITESHEET_ENABLE
+    depends on ASSET_STARTUP_SCAN
+    bool "Scan for spritesheet assets"
+    default y
+
+config ASSET_SCAN_SHADERS_OPENGL
+    depends on ASSET_STARTUP_SCAN
+    bool "Scan for OpenGL Shaders"
+    default y if CORE_RENDERER_OPENGL
+
+config ASSET_SCAN_SHADERS_VULKAN
+    depends on ASSET_STARTUP_SCAN
+    bool "Scan for Vulkan Shaders"
+    default y if CORE_RENDERER_VULKAN
+
+endmenu
