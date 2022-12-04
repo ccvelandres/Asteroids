@@ -24,6 +24,7 @@ config CORE_BUILD_DOXYGEN_MAN
     default n
 
 source "assets/Kconfig"
+source "ecs/Kconfig"
 source "audio/Kconfig"
 source "utils/Kconfig"
 source "graphics/Kconfig"
