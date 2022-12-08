@@ -38,6 +38,7 @@ namespace core::audio::manager
 
     static void audioCallback(void *userdata, Uint8 *stream, int len)
     {
+        L_TAG("core::audio::manager::audioCallback");
         std::vector<std::shared_ptr<AudioClip>> clips;
         // Build shared_ptr vector for active clips
         std::for_each(audioClips.begin(), audioClips.end(), [&clips](std::weak_ptr<AudioClip> &c) {
@@ -56,7 +57,7 @@ namespace core::audio::manager
 
     std::shared_ptr<AudioData> loadAudioFile(const AssetName &assetName)
     {
-        L_TAG("core::audiomanager::loadAudioFile");
+        L_TAG("core::audio::manager::loadAudioFile");
         std::shared_ptr<AudioData> internal;
 
         // Check if asset was loaded already
@@ -91,11 +92,23 @@ namespace core::audio::manager
         return internal;
     }
 
-    bool init()    {
+    bool init()
+    {
         L_TAG("AudioManager::init");
 
         // Verify SDL Audio was initialized
         if (!(SDL_WasInit(SDL_INIT_AUDIO) & SDL_INIT_AUDIO)) L_THROW_RUNTIME("SDL_INIT_AUDIO was not initialized");
+
+        /** @todo: in SDL 2.24.0, use SDL_GetDefaultAudioInfo to query default audio device */
+
+        // List audio devices
+        int audioDeviceCount = SDL_GetNumAudioDevices(0);
+        L_INFO("Found {} audio device(s)", audioDeviceCount);
+        for (int i = 0; i < audioDeviceCount; ++i)
+        {
+            const char *deviceName = SDL_GetAudioDeviceName(i, 0);
+            L_INFO("\t{}", deviceName);
+        }
 
         SDL_AudioSpec want, have;
         SDL_memset(&want, 0, sizeof(want));
@@ -103,26 +116,29 @@ namespace core::audio::manager
         want.channels = defaultAudioChannel;
         want.samples  = defaultAudioSamples;
         want.format   = defaultAudioFormat;
-        // want.callback = ::audioCallback;
+        want.callback = audioCallback;
         // want.userdata = this;
 
         // Open default audio device
         SDL_AudioDeviceID devId = SDL_OpenAudioDevice(NULL, 0, &want, &have, audioDeviceAllowedChanges);
         if (devId)
         {
-            L_INFO("Using default audio device");
+            audioDevice.deviceId   = devId;
+            audioDevice.spec       = have;
+
             L_INFO("\t Frequency: {}Hz", have.freq);
             L_INFO("\t Channels:  {}", have.channels);
             L_INFO("\t Samples:   {}", have.samples);
             L_INFO("\t Format:    0x{:x}", have.format);
-
-            audioDevice.deviceId = devId;
-            audioDevice.spec     = have;
         }
         else
         {
             L_ERROR("Could not open default audio device");
         }
+
+        // Start audio device playback
+        SDL_PauseAudioDevice(audioDevice.deviceId, 0);
+
         return true;
     }
 
@@ -136,4 +152,4 @@ namespace core::audio::manager
     void postUpdate() {}
 
     void refresh() {}
-}; // namespace core::audiomanager
+}; // namespace core::audio::manager
