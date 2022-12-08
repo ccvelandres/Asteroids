@@ -6,7 +6,6 @@
 
 #include "time.hpp"
 
-class AudioManager;
 class EntityManager;
 class ComponentManager;
 class EventManager;
@@ -40,7 +39,6 @@ public:
     static EntityManager    *entityManager();    /** Get the EntityManager instance */
     static ComponentManager *componentManager(); /** Get the ComponentManager instance */
     static EventManager     *eventManager();     /** Get the EventManager instance */
-    static AudioManager     *audioManager();     /** Get the AudioManager instance */
     static InputManager     *inputManager();     /** Get the InputManager instance */
     static Time             *time();             /** Get the Time Manager instance */
     static Renderer         *renderer();         /** Get the Renderer instance */

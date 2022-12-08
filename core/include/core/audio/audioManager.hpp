@@ -12,51 +12,48 @@
 #include "../ecs/component.hpp"
 #include "../ecs/components/audioComponent.hpp"
 
-constexpr uint8_t maxVolume = 0xFF;
-
-/**
- * @brief Manager for all audio related system
- *
- */
-class AudioManager
+namespace core::audio::manager
 {
-private:
-    /** AudioManager is a singleton */
-    AudioManager();
-protected:
-public:
-    ~AudioManager();
-    AudioManager(AudioManager &o)             = delete;
-    AudioManager(AudioManager &&o)            = delete;
-    AudioManager &operator=(AudioManager &o)  = delete;
-    AudioManager &operator=(AudioManager &&o) = delete;
+    /** Initialize Manager */
 
     /**
-     * @brief Get the Instance object
-     *
-     * @return AudioManager& reference to AudioManager
+     * @brief Initialize Audio Manager
+     * 
+     * @return true on success
+     * @return false on failure
      */
-    static AudioManager &getInstance();
+    bool init();
 
-    void populateAudioBuffer(uint8_t *stream, int len);
-
-    void setAudioListener();
-
-    // std::shared_ptr<AudioClip> createAudioClip(const AssetName &assetName, AudioComponent &component);
-    std::shared_ptr<AudioClip::Internal> loadAudioFile(const AssetName &assetName);
-
-    /** Initialize Manager */
-    void init();
-    /** @todo: add threading for update methods? */
-    /** Preupdate step for manager */
+    /**
+     * @brief Preupdate step for manager
+     * 
+     */
     void preUpdate();
-    /** Fixed interval update for manager */
+
+    /**
+     * @brief Fixed interval update for manager
+     * 
+     * @param delta time in ms
+     */
     void fixedUpdate(const time_ms &delta);
-    /** Scaled time update for manager */
+
+    /**
+     * @brief Scaled time update for manager
+     * 
+     * @param delta time in ms
+     */
     void update(const time_ms &delta);
-    /** Post update for manager */
+
+    /**
+     * @brief Post update step for manager
+     * 
+     */
     void postUpdate();
-    /** Refresh manager (usually clean unused resources) */
+
+    /**
+     * @brief Refresh step for manager. Cleans unused resources
+     * 
+     */
     void refresh();
 };
 

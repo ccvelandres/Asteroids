@@ -16,8 +16,11 @@ AudioClip::AudioClip(const AssetName &assetName, AudioComponent &component)
       m_component(component)
 {
     L_TAG("AudioClip::AudioClip");
-    this->m_internal = AudioManager::getInstance().loadAudioFile(assetName);
+    this->m_internal            = std::make_unique<Internal>(Internal());
+    this->m_internal->audioData = core::audio::manager::loadAudioFile(assetName);
 }
+
+AudioClip::~AudioClip() = default;
 
 AudioClip &AudioClip::setVolume(const uint8_t &volume) noexcept
 {

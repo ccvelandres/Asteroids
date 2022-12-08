@@ -8,16 +8,14 @@
  * @{
  */
 
-#include <core/audio/audioManager.hpp>
-#include <core/ecs/components/audioComponent.hpp>
-
-#include <SDL2/SDL_audio.h>
+#include <audio/audioManager_p.hpp>
 
 struct AudioClip::Internal
 {
-    uint32_t                 audioLength;
-    std::unique_ptr<uint8_t> audioBuffer;
-    SDL_AudioSpec            audioSpec;
+    /** Audio clip object that owns this internal data */
+    const AudioClip* clip;
+    /** Shared pointer to audio data */
+    std::shared_ptr<core::audio::manager::AudioData> audioData;
 };
 
 /** @} endgroup Audio */
