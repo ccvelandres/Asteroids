@@ -16,7 +16,7 @@ AudioClip::AudioClip(const AssetName &assetName, AudioComponent &component)
       m_component(component)
 {
     L_TAG("AudioClip::AudioClip");
-    this->m_internal            = std::make_unique<Internal>(Internal());
+    this->m_internal            = std::make_unique<Internal>(Internal{.clip = this});
     this->m_internal->audioData = core::audio::manager::loadAudioFile(assetName);
 }
 
@@ -51,6 +51,8 @@ AudioClip &AudioClip::setOffset(const std::size_t &offset) noexcept
     this->m_offset = offset;
     return *this;
 }
+
+bool AudioClip::isPlaying() const noexcept { return this->m_playing; }
 
 uint8_t AudioClip::getVolume() const noexcept { return this->m_volume; }
 

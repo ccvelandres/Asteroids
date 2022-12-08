@@ -50,6 +50,9 @@ protected:
     AudioClip(const AssetName &assetName, AudioComponent &component);
 public:
 
+    static constexpr uint8_t MAX_VOLUME = 0xFF;
+    static constexpr uint8_t MAX_FADE   = 0xFF;
+
     ~AudioClip();
     AudioClip(AudioClip &o)             = delete;
     AudioClip &operator=(AudioClip &o)  = delete;

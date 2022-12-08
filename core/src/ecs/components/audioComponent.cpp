@@ -2,6 +2,8 @@
 #include <core/audio/audioManager.hpp>
 #include <core/utils/logging.hpp>
 
+#include <audio/audioClip_p.hpp>
+
 AudioComponent::AudioComponent() {}
 AudioComponent::~AudioComponent() = default;
 
