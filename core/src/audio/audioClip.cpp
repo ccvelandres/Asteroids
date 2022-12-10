@@ -11,57 +11,64 @@
 #include <vector>
 #include <algorithm>
 
-AudioClip::AudioClip(const AssetName &assetName, AudioComponent &component)
-    : m_assetName(assetName),
-      m_component(component)
+namespace core::audio
 {
-    L_TAG("AudioClip::AudioClip");
-    this->m_internal            = std::make_unique<Internal>(Internal{.clip = this});
-    this->m_internal->audioData = core::audio::AudioManager::Instance().loadAudioFile(assetName);
-}
 
-AudioClip::~AudioClip() = default;
+    AudioClip::AudioClip(const AssetName &assetName, AudioComponent &component)
+        : m_assetName(assetName),
+          m_component(component)
+    {
+        L_TAG("AudioClip::AudioClip");
+        this->m_internal            = std::make_unique<Internal>(Internal{.clip = this});
+        this->m_internal->audioData = AudioManager::Instance().loadAudioFile(assetName);
+    }
 
-AudioClip &AudioClip::setVolume(const uint8_t &volume) noexcept
-{
-    this->m_volume = volume;
-    return *this;
-}
+    AudioClip::~AudioClip() = default;
 
-AudioClip &AudioClip::setFade(const uint8_t &fade) noexcept
-{
-    this->m_fade = fade;
-    return *this;
-}
+    AudioClip &AudioClip::setVolume(const uint8_t &volume) noexcept
+    {
+        this->m_volume = volume;
+        return *this;
+    }
 
-AudioClip &AudioClip::setLoop(const bool &loop) noexcept
-{
-    this->m_loop = loop;
-    return *this;
-}
+    AudioClip &AudioClip::setFade(const uint8_t &fade) noexcept
+    {
+        this->m_fade = fade;
+        return *this;
+    }
 
-AudioClip &AudioClip::setLength(const std::size_t &length) noexcept
-{
-    this->m_length = length;
-    return *this;
-}
+    AudioClip &AudioClip::setLoop(const bool &loop) noexcept
+    {
+        this->m_loop = loop;
+        return *this;
+    }
 
-AudioClip &AudioClip::setOffset(const std::size_t &offset) noexcept
-{
-    this->m_offset = offset;
-    return *this;
-}
+    AudioClip &AudioClip::setLength(const std::size_t &length) noexcept
+    {
+        this->m_length = length;
+        return *this;
+    }
 
-bool AudioClip::isPlaying() const noexcept { return this->m_playing; }
+    AudioClip &AudioClip::setOffset(const std::size_t &offset) noexcept
+    {
+        this->m_offset = offset;
+        return *this;
+    }
 
-uint8_t AudioClip::getVolume() const noexcept { return this->m_volume; }
+    bool AudioClip::isPlaying() const noexcept { return this->m_playing; }
 
-uint8_t AudioClip::getFade() const noexcept { return this->m_fade; }
+    uint8_t AudioClip::getVolume() const noexcept { return this->m_volume; }
 
-bool AudioClip::getLoop() const noexcept { return this->m_loop; }
+    uint8_t AudioClip::getFade() const noexcept { return this->m_fade; }
 
-std::size_t AudioClip::getLength() const noexcept { return this->m_length; }
+    bool AudioClip::getLoop() const noexcept { return this->m_loop; }
 
-std::size_t AudioClip::getOffset() const noexcept { return this->m_offset; }
+    std::size_t AudioClip::getLength() const noexcept { return this->m_length; }
 
-AudioComponent &AudioClip::getComponent() const noexcept { return this->m_component; }
+    std::size_t AudioClip::getOffset() const noexcept { return this->m_offset; }
+
+    const AssetName &AudioClip::getAssetName() const noexcept { return this->m_assetName; }
+
+    AudioComponent &AudioClip::getComponent() const noexcept { return this->m_component; }
+
+} // namespace core::audio

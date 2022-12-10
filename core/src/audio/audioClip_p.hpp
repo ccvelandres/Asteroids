@@ -10,12 +10,15 @@
 
 #include <audio/audioManager_p.hpp>
 
-struct AudioClip::Internal
+namespace core::audio
 {
-    /** Audio clip object that owns this internal data */
-    const AudioClip* clip;
-    /** Shared pointer to audio data */
-    std::shared_ptr<core::audio::AudioData> audioData;
-};
+    struct AudioClip::Internal
+    {
+        /** Audio clip object that owns this internal data */
+        const AudioClip *clip;
+        /** Shared pointer to audio data */
+        std::shared_ptr<core::audio::AudioData> audioData;
+    };
+} // namespace core::audio
 
 /** @} endgroup Audio */
