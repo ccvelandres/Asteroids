@@ -15,7 +15,7 @@ struct AudioClip::Internal
     /** Audio clip object that owns this internal data */
     const AudioClip* clip;
     /** Shared pointer to audio data */
-    std::shared_ptr<core::audio::manager::AudioData> audioData;
+    std::shared_ptr<core::audio::AudioData> audioData;
 };
 
 /** @} endgroup Audio */

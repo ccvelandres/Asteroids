@@ -17,7 +17,7 @@ AudioClip::AudioClip(const AssetName &assetName, AudioComponent &component)
 {
     L_TAG("AudioClip::AudioClip");
     this->m_internal            = std::make_unique<Internal>(Internal{.clip = this});
-    this->m_internal->audioData = core::audio::manager::loadAudioFile(assetName);
+    this->m_internal->audioData = core::audio::AudioManager::Instance().loadAudioFile(assetName);
 }
 
 AudioClip::~AudioClip() = default;

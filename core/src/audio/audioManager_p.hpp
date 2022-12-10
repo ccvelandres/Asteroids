@@ -13,7 +13,7 @@
 
 #include <SDL2/SDL_audio.h>
 
-namespace core::audio::manager
+namespace core::audio
 {
     struct AudioData
     {
@@ -22,8 +22,6 @@ namespace core::audio::manager
         SDL_AudioSpec            audioSpec;
     };
 
-    std::shared_ptr<AudioData> loadAudioFile(const AssetName &AssetName);
-
-}; // namespace core::audio::manager
+};
 
 /** @} endgroup Audio */

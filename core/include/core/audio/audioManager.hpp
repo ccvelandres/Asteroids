@@ -3,58 +3,43 @@
 /**
  * @file core/audio/audioManager.hpp
  * @author Cedric Velandres (ccvelandres@gmail.com)
- * 
+ *
  * @addtogroup Audio
  * @{
  */
 
+#include "../manager.hpp"
 #include "../time.hpp"
 #include "../ecs/component.hpp"
 #include "../ecs/components/audioComponent.hpp"
 
-namespace core::audio::manager
+namespace core::audio
 {
-    /** Initialize Manager */
+    /** @brief Container for audio data */
+    struct AudioData;
 
-    /**
-     * @brief Initialize Audio Manager
-     * 
-     * @return true on success
-     * @return false on failure
-     */
-    bool init();
+    class AudioManager : public core::Manager<AudioManager>
+    {
+    private:
+        static void driverCallback(void *userdata, uint8_t *stream, int len);
+        void buildStream(uint8_t *stream, std::size_t streamSize);
 
-    /**
-     * @brief Preupdate step for manager
-     * 
-     */
-    void preUpdate();
+    protected:
+        AudioManager();
+    public:
+        ~AudioManager();
 
-    /**
-     * @brief Fixed interval update for manager
-     * 
-     * @param delta time in ms
-     */
-    void fixedUpdate(const time_ms &delta);
+        bool init();
+        void preUpdate();
+        void fixedUpdate(const time_ms &delta);
+        void update(const time_ms &delta);
+        void postUpdate();
+        void refresh();
 
-    /**
-     * @brief Scaled time update for manager
-     * 
-     * @param delta time in ms
-     */
-    void update(const time_ms &delta);
+        std::shared_ptr<AudioData> loadAudioFile(const AssetName &assetName);
 
-    /**
-     * @brief Post update step for manager
-     * 
-     */
-    void postUpdate();
-
-    /**
-     * @brief Refresh step for manager. Cleans unused resources
-     * 
-     */
-    void refresh();
-};
+        friend class core::Manager<AudioManager>;
+    };
+}; // namespace core::audio
 
 /** @} endgroup Audio */

@@ -28,6 +28,7 @@
 
 /** @todo: replace these with shared ptrs? */
 Game                   *g_game             = nullptr;
+core::audio::AudioManager *g_audioManager = nullptr;
 EntityManager          *g_entityManager    = nullptr;
 ComponentManager       *g_componentManager = nullptr;
 EventManager           *g_eventManager     = nullptr;
@@ -63,8 +64,8 @@ Game::Game(const std::string &windowTitle, const int &windowWidth, const int &wi
 
     L_DEBUG("Initializing AssetInventory");
     g_assetInventory = &AssetInventory::getInstance();
-    L_DEBUG("Initializing AudioManager");
-    core::audio::manager::init();
+    L_DEBUG("Allocating AudioManager");
+    g_audioManager = &core::audio::AudioManager::Instance();
     L_DEBUG("Initializing InputManager");
     g_inputManager = &InputManager::getInstance();
     L_DEBUG("Initializing EventManager");
@@ -103,6 +104,7 @@ void Game::init()
 {
     g_inputManager->init();
     g_eventManager->init();
+    g_audioManager->init();
 }
 
 void Game::startGameLoop()
