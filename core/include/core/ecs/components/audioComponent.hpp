@@ -21,7 +21,7 @@ class AudioManager;
 class AudioComponent : public Component
 {
 private:
-    std::vector<std::unique_ptr<AudioClip>> m_audioClips;
+    std::vector<std::shared_ptr<core::audio::AudioClip>> m_audioClips;
 protected:
     /** Protected Constructors (use entity to add components) */
     AudioComponent();
@@ -54,16 +54,16 @@ public:
      *
      * @return AudioClip& reference to created audio clip
      */
-    AudioClip &addAudioClip(const AssetName &audioName, const AudioType &audioType);
+    core::audio::AudioClip &addAudioClip(const AssetName &audioName, const core::audio::AudioType &audioType);
 
     /**
      * @brief Retrieves a pointer array to all audio clips attached to this component
      *
      * @return std::vector<AudioClip*>
      */
-    std::vector<AudioClip *> getAudioClips();
+    std::vector<core::audio::AudioClip *> getAudioClips();
 
-    AudioClip &operator[](std::size_t id);
+    core::audio::AudioClip &operator[](std::size_t id);
 
     friend Entity;
     friend EntityManager;

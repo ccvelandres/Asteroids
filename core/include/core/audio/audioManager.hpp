@@ -37,6 +37,7 @@ namespace core::audio
         void refresh();
 
         std::shared_ptr<AudioData> loadAudioFile(const AssetName &assetName);
+        void registerAudio(std::shared_ptr<AudioClip> &audio);
 
         friend class core::Manager<AudioManager>;
     };

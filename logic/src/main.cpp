@@ -142,7 +142,7 @@ int main(int arc, char **argv)
 
     AudioComponent *audioComponent = &camObject.addComponent<AudioComponent>();
 
-    AudioClip &music = audioComponent->addAudioClip("menu.wav", AudioType::Global);
+    core::audio::AudioClip &music = audioComponent->addAudioClip("menu.wav", core::audio::AudioType::Global);
 
     game->startGameLoop();
 

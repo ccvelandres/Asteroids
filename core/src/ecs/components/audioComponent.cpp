@@ -9,11 +9,14 @@ AudioComponent::~AudioComponent() = default;
 
 void AudioComponent::addListener() {}
 
-AudioClip &AudioComponent::addAudioClip(const AssetName &audioName, const AudioType &audioType) {
+core::audio::AudioClip &AudioComponent::addAudioClip(const AssetName &audioName, const core::audio::AudioType &audioType) {
     L_TAG("AudioComponent::addAudioClip");
-    std::unique_ptr<AudioClip> clip = std::make_unique<AudioClip>(AudioClip(audioName, *this));
+    std::shared_ptr<core::audio::AudioClip> clip = std::make_unique<core::audio::AudioClip>(core::audio::AudioClip(audioName, *this));
 
-    AudioClip *p = clip.get();
+    // Register to audio manager
+    core::audio::AudioManager::Instance().registerAudio(clip);
+
+    core::audio::AudioClip *p = clip.get();
     this->m_audioClips.push_back(std::move(clip));
     return *p;
 }
