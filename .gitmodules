@@ -1,3 +1,9 @@
 [submodule "cmake/kconfig-cmake"]
 	path = cmake/kconfig-cmake
 	url = git@github.com:ccvelandres/kconfig-cmake.git
+[submodule "core/lib/openal-soft"]
+	path = core/lib/openal-soft
+	url = https://github.com/kcat/openal-soft
+[submodule "core/lib/SDL_sound"]
+	path = core/lib/SDL_sound
+	url = https://github.com/icculus/SDL_sound
