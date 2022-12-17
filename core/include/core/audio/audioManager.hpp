@@ -30,6 +30,7 @@ namespace core::audio
         ~AudioManager();
 
         bool init();
+        void cleanup();
         void preUpdate();
         void fixedUpdate(const time_ms &delta);
         void update(const time_ms &delta);

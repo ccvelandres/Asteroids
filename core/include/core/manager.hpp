@@ -53,6 +53,17 @@ namespace core
         }
 
         /**
+         * @brief Cleanup the manager
+         *
+         * @return true on success
+         * @return false on failure
+         */
+        void cleanup()
+        {
+            return static_cast<T&>(*this).cleanup();
+        }
+
+        /**
          * @brief Preupdate step for manager
          *
          */

@@ -117,6 +117,10 @@ namespace core::audio
 
         return true;
     }
+    void AudioManager::cleanup() {
+        L_TAG("AudioManager::cleanup");
+        
+        }
     void AudioManager::preUpdate() {}
     void AudioManager::fixedUpdate(const time_ms &delta) {}
     void AudioManager::update(const time_ms &delta) {}
