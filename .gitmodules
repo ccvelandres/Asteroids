@@ -7,3 +7,6 @@
 [submodule "core/lib/SDL_sound"]
 	path = core/lib/SDL_sound
 	url = https://github.com/icculus/SDL_sound
+[submodule "core/lib/SDL_mixer"]
+	path = core/lib/SDL_mixer
+	url = https://github.com/libsdl-org/SDL_mixer
