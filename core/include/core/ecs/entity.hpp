@@ -47,6 +47,7 @@ using EntityList = std::vector<T *>;
 class Entity
 {
 private:
+    /** @todo: wrap componentptr with atomic (C++20) */
     std::array<ComponentPtr<Component>, maxComponents> m_components;
     std::bitset<maxComponents>                         m_componentBitset;
 
@@ -58,7 +59,7 @@ private:
      * @param id componentID retrieved from getComponentID<T>()
      * @param component component to register
      */
-    void addComponent(ComponentID id, const ComponentPtr<Component> &component);
+    void addComponent(ComponentID id, ComponentPtr<Component> &component);
 protected:
     /** Protected Constructors (use EntityManager to add components) */
     Entity();
@@ -109,20 +110,19 @@ public:
         /** @todo: change return type to ComponentPtr<T> */
         L_ASSERT(hasComponent<T>() == false, "Entity already has component {}", typeid(T).name());
 
-        T *c = new T(std::forward<TArgs>(args)...);
-        L_ASSERT(c != NULL, "Failed to instantiate component of type {}", typeid(T).name());
-        ComponentPtr<T> p(c);
-
+        ComponentPtr<Component> p = std::make_shared<T>(T(std::forward<TArgs>(args)...));
+        L_ASSERT(p, "Failed to instantiate component of type {}", typeid(T).name());
+    
         addComponent(getComponentID<T>(), p);
-        c->m_entity = this;
-        c->init();
+        p->m_entity = this;
+        p->init();
 
         L_TRACE("Attached {} @ {} to instance of {} @ {}",
                 L_TYPE_GETSTRING(T),
-                static_cast<void *>(c),
+                static_cast<void *>(p.get()),
                 typeid(this).name(),
                 static_cast<void *>(this));
-        return *c;
+        return static_cast<T&>(*p);
     }
 
     /**
@@ -132,18 +132,24 @@ public:
      * @return T& reference to component
      *
      * @throw std::logic_error if entity has no component of type @p T
+     * @{
      */
     template <typename T, std::enable_if_t<std::is_base_of<Component, T>::value, bool> = true>
-    T &getComponent()
+    ComponentPtr<T> getComponentPtr()
     {
         L_TAG("Entity::getComponent");
 
         /** @todo: change return type to ComponentPtr<T> */
         L_ASSERT(hasComponent<T>() == true, "Entity has no component", typeid(T).name());
 
-        T *c = dynamic_cast<T *>(m_components[getComponentID<T>()].get());
-        return *c;
+        return std::static_pointer_cast<T>(m_components[getComponentID<T>()]);
     }
+    template <typename T, std::enable_if_t<std::is_base_of<Component, T>::value, bool> = true>
+    T &getComponent()
+    {
+        return *(getComponentPtr<T>().get());
+    }
+    /** @} */
 
     /** Called once on allocation of entity */
     virtual void init() {}
