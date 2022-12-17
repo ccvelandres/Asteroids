@@ -125,7 +125,12 @@ namespace core::audio
     void AudioManager::fixedUpdate(const time_ms &delta) {}
     void AudioManager::update(const time_ms &delta) {}
     void AudioManager::postUpdate() {}
-    void AudioManager::refresh() {}
+
+    void AudioManager::setListener(const ComponentPtr<AudioListener> &audioListener)
+    {
+        L_TAG("AudioManager::setListener");
+        m_audioListener = audioListener;
+    }
 
     std::shared_ptr<AudioData> AudioManager::loadAudioFile(const AssetName &assetName)
     {

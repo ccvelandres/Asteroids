@@ -12,6 +12,7 @@
 #include "../time.hpp"
 #include "../ecs/component.hpp"
 #include "../ecs/components/audioComponent.hpp"
+#include "../ecs/components/audioListener.hpp"
 
 namespace core::audio
 {
@@ -36,6 +37,8 @@ namespace core::audio
         void update(const time_ms &delta);
         void postUpdate();
         void refresh();
+
+        void setListener(const ComponentPtr<AudioListener> &audioListener);
 
         std::shared_ptr<AudioData> loadAudioFile(const AssetName &assetName);
         void registerAudio(std::shared_ptr<AudioClip> &audio);

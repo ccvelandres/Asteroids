@@ -19,3 +19,4 @@
 
 /** Audio Components */
 #include "components/audioComponent.hpp"
+#include "components/audioListener.hpp"
