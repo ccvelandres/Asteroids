@@ -76,6 +76,8 @@ int main(int arc, char **argv)
                                      &entityManager->addEntity<Crate>(glm::vec3(0.0f, 7.5f, 0.0f))};
 
     CameraObject &camObject = entityManager->addEntity<CameraObject>();
+    AudioListener &listener = camObject.addComponent<AudioListener>();
+    listener.listen();
     // reset position
     camObject.transform->setPosition(glm::vec3(0.0f, 0.0f, 0.0f))
         .setOrientation(TransformComponent::worldFront, TransformComponent::worldUp);
@@ -142,7 +144,7 @@ int main(int arc, char **argv)
 
     AudioComponent *audioComponent = &camObject.addComponent<AudioComponent>();
 
-    core::audio::AudioClip &music = audioComponent->addAudioClip("menu.wav", core::audio::AudioType::Global);
+    core::audio::Audio &music = audioComponent->addAudioClip("ImperialMarch60.wav", false);
 
     game->startGameLoop();
 

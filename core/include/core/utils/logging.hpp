@@ -124,7 +124,8 @@ namespace core::utils::logging
 
 /** @brief Stringify @p STR */
 #define L_STRING(STR) #STR
-#define L_CAT(A, B)   A #B
+#define _L_CAT(A, B) A##B
+#define L_CAT(A, B) _L_CAT(A,B)
 
 /**
  * @brief Add tags log calls in this scope (required for logging).
