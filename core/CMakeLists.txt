@@ -1,4 +1,5 @@
 include(Kconfig)
+include(ExternalProject)
 
 message(STATUS "-------- CORE ---------")
 kconfig_add_kconfig("${CMAKE_CURRENT_LIST_DIR}/include/core/Kconfig")
@@ -18,6 +19,8 @@ target_include_directories(${CORE_TARGET} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/sr
 target_include_directories(${CORE_TARGET} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include/core)
 target_include_directories(${CORE_TARGET} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
 
+set(CORE_LIBRARY_INSTALL_DIR ${CMAKE_CURRENT_BINARY_DIR}/install)
+message(STATUS "CORE_LIBRARY_INSTALL_DIR: ${CORE_LIBRARY_INSTALL_DIR}")
 ######################################################
 # Link Libraries
 include(FetchContent)
@@ -25,25 +28,25 @@ include(FetchContent)
 #######################################################
 ###### easy_profiler
 
-message(STATUS "Fetching easy_profiler...")
-FetchContent_Declare(
-    easy_profiler_project
-    GIT_REPOSITORY      https://github.com/yse/easy_profiler.git
-    GIT_TAG             v2.1.0
-    GIT_SHALLOW         TRUE
-    SOURCE_DIR          ${PROJECT_LIBRARY_SOURCE_DIR}/easy_profiler
-    UPDATE_DISCONNECTED ON
-)
-FetchContent_MakeAvailable(easy_profiler_project)
+# message(STATUS "Fetching easy_profiler...")
+# FetchContent_Declare(
+#     easy_profiler_project
+#     GIT_REPOSITORY      https://github.com/yse/easy_profiler.git
+#     GIT_TAG             v2.1.0
+#     GIT_SHALLOW         TRUE
+#     SOURCE_DIR          ${PROJECT_LIBRARY_SOURCE_DIR}/easy_profiler
+#     UPDATE_DISCONNECTED ON
+# )
+# FetchContent_MakeAvailable(easy_profiler_project)
 
-add_custom_command(TARGET ${CORE_TARGET} PRE_LINK
-    DEPENDS 
-    $<$<BOOL:$<TARGET_PROPERTY:CONFIG_CORE_PROFILER_ENABLE>>:easy_profiler>
-    COMMAND ${CMAKE_COMMAND} -E 
-    $<IF:$<BOOL:$<TARGET_PROPERTY:CONFIG_CORE_PROFILER_ENABLE>>,copy_directory,echo>
-    $<$<BOOL:$<TARGET_PROPERTY:CONFIG_CORE_PROFILER_ENABLE>>:${easy_profiler_project_BINARY_DIR}/bin>
-    $<$<BOOL:$<TARGET_PROPERTY:CONFIG_CORE_PROFILER_ENABLE>>:${CMAKE_RUNTIME_OUTPUT_DIRECTORY}>)
-target_link_libraries(${CORE_TARGET} PUBLIC $<$<BOOL:$<TARGET_PROPERTY:CONFIG_CORE_PROFILER_ENABLE>>:easy_profiler>)
+# add_custom_command(TARGET ${CORE_TARGET} PRE_LINK
+#     DEPENDS 
+#     $<$<BOOL:$<TARGET_PROPERTY:CONFIG_CORE_PROFILER_ENABLE>>:easy_profiler>
+#     COMMAND ${CMAKE_COMMAND} -E 
+#     $<IF:$<BOOL:$<TARGET_PROPERTY:CONFIG_CORE_PROFILER_ENABLE>>,copy_directory,echo>
+#     $<$<BOOL:$<TARGET_PROPERTY:CONFIG_CORE_PROFILER_ENABLE>>:${easy_profiler_project_BINARY_DIR}/bin>
+#     $<$<BOOL:$<TARGET_PROPERTY:CONFIG_CORE_PROFILER_ENABLE>>:${CMAKE_RUNTIME_OUTPUT_DIRECTORY}>)
+# target_link_libraries(${CORE_TARGET} PUBLIC $<$<BOOL:$<TARGET_PROPERTY:CONFIG_CORE_PROFILER_ENABLE>>:easy_profiler>)
 
 #######################################################
 ###### JSON
@@ -140,6 +143,81 @@ else()
     message(FATAL_ERROR "Could not find SDL2_image")
 endif()
 target_link_libraries(${CORE_TARGET} PUBLIC SDL2_image)
+
+#######################################################
+###### SDL2_mixer
+
+# ExternalProject_Add(SDL2_mixer_project
+#     DOWNLOAD_COMMAND ""
+#     UPDATE_COMMAND ""
+#     SOURCE_DIR ${CMAKE_CURRENT_LIST_DIR}/lib/SDL_mixer
+#     INSTALL_DIR ${CORE_LIBRARY_INSTALL_DIR}
+#     CMAKE_ARGS
+#         -DSDL2MIXER_SAMPLES=OFF
+#         -DSDL2MIXER_FLAC=OFF
+#         -DSDL2MIXER_MOD=OFF
+#         -DSDL2MIXER_MP3=OFF
+#         -DSDL2MIXER_MIDI=OFF
+#         -DSDL2MIXER_OPUS=OFF
+#         -DSDL2MIXER_WAVE=OFF
+#         -DBUILD_SHARED_LIBS=${BUILD_SHARED_LIBS}
+#         -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
+#         -DCMAKE_INSTALL_PREFIX:PATH=${CORE_LIBRARY_INSTALL_DIR})
+# ExternalProject_Get_Property(SDL2_mixer_project INSTALL_DIR)
+
+# add_library(SDL2_mixer SHARED IMPORTED)
+# add_dependencies(SDL2_mixer SDL2_mixer_project)
+# set_target_properties(SDL2_mixer PROPERTIES IMPORTED_LOCATION ${INSTALL_DIR}/lib/libSDL2_mixer.so)
+# file(MAKE_DIRECTORY ${INSTALL_DIR}/include/SDL2 ${INSTALL_DIR}/include)
+# target_include_directories(SDL2_mixer INTERFACE ${INSTALL_DIR}/include/SDL2 ${INSTALL_DIR}/include)
+# target_link_libraries(${CORE_TARGET} PUBLIC SDL2_mixer)
+
+#######################################################
+###### SDL2_sound
+
+ExternalProject_Add(SDL2_sound_project
+    DOWNLOAD_COMMAND ""
+    UPDATE_COMMAND ""
+    SOURCE_DIR ${CMAKE_CURRENT_LIST_DIR}/lib/SDL_sound
+    INSTALL_DIR ${CORE_LIBRARY_INSTALL_DIR}
+    CMAKE_ARGS
+        -DSDLSOUND_BUILD_TEST=OFF
+        -DBUILD_SHARED_LIBS=${BUILD_SHARED_LIBS}
+        -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
+        -DCMAKE_INSTALL_PREFIX:PATH=${CORE_LIBRARY_INSTALL_DIR})
+ExternalProject_Get_Property(SDL2_sound_project INSTALL_DIR)
+
+add_library(SDL2_sound SHARED IMPORTED)
+add_dependencies(SDL2_sound SDL2_sound_project)
+set_target_properties(SDL2_sound PROPERTIES IMPORTED_LOCATION ${INSTALL_DIR}/lib/libSDL2_sound.so)
+file(MAKE_DIRECTORY ${INSTALL_DIR}/include/SDL2 ${INSTALL_DIR}/include)
+target_include_directories(SDL2_sound INTERFACE ${INSTALL_DIR}/include/SDL2 ${INSTALL_DIR}/include)
+target_link_libraries(${CORE_TARGET} PUBLIC SDL2_sound)
+
+#######################################################
+###### OpenAL-soft
+
+ExternalProject_Add(OpenAL_soft_project
+    DOWNLOAD_COMMAND ""
+    UPDATE_COMMAND ""
+    SOURCE_DIR ${CMAKE_CURRENT_LIST_DIR}/lib/openal-soft
+    INSTALL_DIR ${CORE_LIBRARY_INSTALL_DIR}
+    CMAKE_ARGS
+        -DALSOFT_EXAMPLES=OFF
+        -DALSOFT_UTILS=OFF
+        -DALSOFT_INSTALL_EXAMPLES=OFF
+        -DALSOFT_INSTALL_UTILS=OFF
+        -DBUILD_SHARED_LIBS=${BUILD_SHARED_LIBS}
+        -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
+        -DCMAKE_INSTALL_PREFIX:PATH=${CORE_LIBRARY_INSTALL_DIR})
+ExternalProject_Get_Property(OpenAL_soft_project INSTALL_DIR)
+
+add_library(OpenAL_soft SHARED IMPORTED)
+add_dependencies(OpenAL_soft OpenAL_soft_project)
+set_target_properties(OpenAL_soft PROPERTIES IMPORTED_LOCATION ${INSTALL_DIR}/lib/libopenal.so)
+file(MAKE_DIRECTORY ${INSTALL_DIR}/include/AL ${INSTALL_DIR}/include)
+target_include_directories(OpenAL_soft INTERFACE ${INSTALL_DIR}/include/AL ${INSTALL_DIR}/include)
+target_link_libraries(${CORE_TARGET} PUBLIC $<$<BOOL:$<TARGET_PROPERTY:CONFIG_CORE_AUDIO_USE_OPENAL>>:OpenAL_soft>)
 
 #######################################################
 ###### Vulkan

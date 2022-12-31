@@ -22,9 +22,6 @@ namespace core::audio
     class AudioManager : public core::Manager<AudioManager>
     {
     private:
-        static void driverCallback(void *userdata, uint8_t *stream, int len);
-        void buildStream(uint8_t *stream, std::size_t streamSize);
-
     protected:
         AudioManager();
     public:
@@ -41,7 +38,12 @@ namespace core::audio
         void setListener(const ComponentPtr<AudioListener> &audioListener);
 
         std::shared_ptr<AudioData> loadAudioFile(const AssetName &assetName);
-        void registerAudio(std::shared_ptr<AudioClip> &audio);
+        void createSource(Audio::Internal &audio);
+        void registerAudio(std::shared_ptr<Audio> &audio);
+
+        void playAudio(Audio &clip);
+        void pauseAudio(Audio &clip);
+        void stopAudio(Audio &clip);
 
         friend class core::Manager<AudioManager>;
     };

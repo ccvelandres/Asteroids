@@ -41,22 +41,41 @@ config CORE_AUDIO_ALLOW_ALL_CHANGE
 
 menu "Supported Formats"
 
-    config CORE_AUDIO_FORMAT_OGG
-        bool "Ogg Vorbis"
+    config CORE_AUDIO_FORMAT_FLAC
+        bool "FLAC"
+        default n
+
+    config CORE_AUDIO_FORMAT_MOD
+        bool "MP3"
         default y
 
     config CORE_AUDIO_FORMAT_MP3
         bool "MP3"
         default y
 
-    config CORE_AUDIO_FORMAT_WAV
-        bool "WAV"
+    config CORE_AUDIO_FORMAT_OGG
+        bool "Ogg Vorbis"
         default y
 
-    config CORE_AUDIO_FORMAT_FLAC
-        bool "FLAC"
-        default n
+    config CORE_AUDIO_FORMAT_MID
+        bool "MP3"
+        default y
+
+    config CORE_AUDIO_FORMAT_OPUS
+        bool "Ogg Opus"
+        default y
 
 endmenu
+
+config CORE_AUDIO_MIX_CHANNELS
+    int "Mix Channel Count"
+    default 8
+    help
+        Defines how many mixing channels are allocated. If you need more than 8 sounds
+        playing at the same time, try increasing this number
+
+config CORE_AUDIO_USE_OPENAL
+    bool "Use OpenAL as mixer"
+    default n
 
 endmenu

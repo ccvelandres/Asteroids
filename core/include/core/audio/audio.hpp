@@ -1,7 +1,7 @@
 #pragma once
 
 /**
- * @file core/audio/audioClip.hpp
+ * @file core/audio/audio.hpp
  * @author Cedric Velandres (ccvelandres@gmail.com)
  *
  * @addtogroup Audio
@@ -28,37 +28,25 @@ namespace core::audio
         Spatial
     };
 
-    class AudioClip
+    class Audio
     {
     public:
     private:
-        const AssetName m_assetName;
-        AudioType       m_type;
-        AudioComponent &m_component;
-
-        bool        m_playing;
-        uint8_t     m_volume;
-        uint8_t     m_fade;
-        bool        m_loop;
-        std::size_t m_length;
-        std::size_t m_offset;
-
         struct Internal;
         std::unique_ptr<Internal> m_internal;
-
     protected:
         // Use AudioComponent to create AudioClip
-        AudioClip(const AssetName &assetName, AudioComponent &component);
+        Audio(const AssetName &assetName, AudioComponent &audioComponent);
     public:
 
         static constexpr uint8_t MAX_VOLUME = 0xFF;
         static constexpr uint8_t MAX_FADE   = 0xFF;
 
-        ~AudioClip();
-        AudioClip(AudioClip &o)             = delete;
-        AudioClip &operator=(AudioClip &o)  = delete;
-        AudioClip(AudioClip &&o)            = default;
-        AudioClip &operator=(AudioClip &&o) = default;
+        ~Audio();
+        Audio(Audio &o)             = delete;
+        Audio &operator=(Audio &o)  = delete;
+        Audio(Audio &&o)            = default;
+        Audio &operator=(Audio &&o) = default;
 
         /**
          * @brief Play the current audio clip from offset
@@ -77,15 +65,7 @@ namespace core::audio
          * @param volume volume (max = 255)
          * @return AudioClip& reference to this object
          */
-        AudioClip &setVolume(const uint8_t &volume) noexcept;
-
-        /**
-         * @brief Set audio fade rate
-         *
-         * @param fade fade
-         * @return AudioClip& reference to this object
-         */
-        AudioClip &setFade(const uint8_t &fade) noexcept;
+        Audio &setVolume(const uint8_t &volume) noexcept;
 
         /**
          * @brief Set to loop the audio clip
@@ -93,7 +73,7 @@ namespace core::audio
          * @param loop loop
          * @return AudioClip& reference to this object
          */
-        AudioClip &setLoop(const bool &loop) noexcept;
+        Audio &setLoop(const bool &loop) noexcept;
 
         /**
          * @brief Set the playback length
@@ -101,7 +81,7 @@ namespace core::audio
          * @param length length (bytes)
          * @return AudioClip&
          */
-        AudioClip &setLength(const std::size_t &length) noexcept;
+        Audio &setLength(const std::size_t &length) noexcept;
 
         /**
          * @brief Set the playback offset
@@ -109,14 +89,12 @@ namespace core::audio
          * @param offset offset to play (bytes)
          * @return AudioClip& reference to this object
          */
-        AudioClip &setOffset(const std::size_t &offset) noexcept;
+        Audio &setOffset(const std::size_t &offset) noexcept;
 
         /** @brief Check if the audio clip is playing */
         bool isPlaying() const noexcept;
         /** @brief Get the current volume of audio clip */
         uint8_t getVolume() const noexcept;
-        /** @brief Get the fade rate of audio clip */
-        uint8_t getFade() const noexcept;
         /** @brief Check if the audio clip is looped */
         bool getLoop() const noexcept;
         /** @brief Get the length of audio data in bytes */

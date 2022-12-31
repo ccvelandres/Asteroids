@@ -1,7 +1,7 @@
 #pragma once
 
 /**
- * @file core/audio/audioClip_p.hpp
+ * @file core/audio/audio_p.hpp
  * @author Cedric Velandres (ccvelandres@gmail.com)
  * @brief Private header for the audioClip class
  * @addtogroup Audio
@@ -12,10 +12,17 @@
 
 namespace core::audio
 {
-    struct AudioClip::Internal
+    struct Audio::Internal
     {
-        /** Audio clip object that owns this internal data */
-        const AudioClip *clip;
+        AssetName       assetName;
+        AudioType       type;
+        AudioComponent &audioComponent;
+        std::size_t offset;
+
+        ALuint              sourceId;
+        bool                isPlaying;
+        TransformComponent *transform;
+
         /** Shared pointer to audio data */
         std::shared_ptr<core::audio::AudioData> audioData;
     };

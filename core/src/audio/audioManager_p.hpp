@@ -11,17 +11,30 @@
 #include <core/audio/audioManager.hpp>
 #include <core/ecs/components/audioComponent.hpp>
 
-#include <SDL2/SDL_audio.h>
+#include <AL/al.h>
+#include <AL/alc.h>
+#include <SDL2/SDL_sound.h>
 
 namespace core::audio
 {
-    struct AudioData
+    struct SoundDeleter
     {
-        uint32_t                 audioLength;
-        std::unique_ptr<uint8_t> audioBuffer;
-        SDL_AudioSpec            audioSpec;
+        void operator()(Sound_Sample *s) { Sound_FreeSample(s); }
     };
 
-};
+    typedef std::unique_ptr<Sound_Sample, SoundDeleter> UniqueSoundSample;
+
+    struct AudioData
+    {
+        ALuint   bufferId;
+        ALint    frequency;
+        ALint    bitDepth;
+        ALint    channels;
+        ALsizei  size;
+        ALenum   format;
+        uint32_t duration;
+    };
+
+}; // namespace core::audio
 
 /** @} endgroup Audio */
