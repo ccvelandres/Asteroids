@@ -7,7 +7,7 @@
 
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_sound.h>
-// #include <SDL2/SDL_mixer.h>
+#include <SDL2/SDL_mixer.h>
 
 #include <AL/al.h>
 #include <AL/alc.h>
@@ -39,6 +39,7 @@ namespace core::audio
         SDL_AudioSpec     spec;
     };
 
+    static const char* m_alDeviceSpecifier;
     static ALCdevice  *m_alDevice;
     static ALCcontext *m_alContext;
     static uint32_t    m_alAudioFrequency;
@@ -46,7 +47,7 @@ namespace core::audio
     static AudioDevice     m_audioDevice;
     static SDL_AudioFormat m_audioFormat    = AUDIO_S16LSB;
     static uint8_t         m_audioChannels  = 2;
-    static uint32_t        m_audioFrequency = 48000;
+    static uint32_t        m_audioFrequency = 44100;
 
     static Sound_AudioInfo                                           m_decodeInfo;
     static std::weak_ptr<AudioListener>                              m_audioListener;
@@ -81,18 +82,7 @@ namespace core::audio
 
         /** @todo: in SDL 2.24.0, use SDL_GetDefaultAudioInfo to query default audio device */
 
-        m_alDevice = alcOpenDevice(NULL);
-        if (!m_alDevice)
-        {
-            L_THROW_RUNTIME("Could not open audio playback device");
-        }
-
-        m_alContext = alcCreateContext(m_alDevice, NULL);
-        if (!alcMakeContextCurrent(m_alContext))
-        {
-            L_THROW_RUNTIME("Failed to switch context current");
-        }
-
+        // Enumerate audio devices
         ALboolean enumPresent = alcIsExtensionPresent(NULL, "ALC_ENUMERATION_EXT");
         if (enumPresent)
         {
@@ -113,6 +103,28 @@ namespace core::audio
         else
         {
             L_INFO("Could not enumerate audio devices.");
+        }
+
+        // Open dfault audio device
+        m_alDevice = alcOpenDevice(NULL);
+        if (!m_alDevice)
+        {
+            L_THROW_RUNTIME("Could not open audio playback device");
+        }
+
+        // Query audio device specifier
+        m_alDeviceSpecifier = alcGetString(m_alDevice, ALC_DEVICE_SPECIFIER);
+        if((err = alGetError()) != AL_NO_ERROR)
+        {
+            L_ERROR("Could not query audio device specifier");
+        }
+        L_INFO("Default audio device: {}", m_alDeviceSpecifier);
+
+        // Create al context
+        m_alContext = alcCreateContext(m_alDevice, NULL);
+        if (!alcMakeContextCurrent(m_alContext))
+        {
+            L_THROW_RUNTIME("Failed to switch context current");
         }
 
         // Query context attributes
@@ -152,7 +164,7 @@ namespace core::audio
             L_INFO("Found decoder: {}", (*decoders)->description);
         }
 
-        // Setup requested raw audio stream format
+        // // Setup requested raw audio stream format
         m_decodeInfo = {.format = m_audioFormat, .channels = m_audioChannels, .rate = m_audioFrequency};
 
         return true;
@@ -200,7 +212,7 @@ namespace core::audio
         L_ASSERT(assetPath.size() == 1, "Found multiple asset paths for: {}", assetName);
 
         // Open audio stream
-        UniqueSoundSample sample(Sound_NewSampleFromFile(assetPath[0].c_str(), &m_decodeInfo, 32768));
+        UniqueSoundSample sample(Sound_NewSampleFromFile(assetPath[0].c_str(), &m_decodeInfo, 131136));
         if (!sample) L_THROW_RUNTIME("Failed to open audio file");
 
         // Decode audio stream
@@ -209,10 +221,11 @@ namespace core::audio
         if (sample->actual.format != m_decodeInfo.format)
             L_THROW_RUNTIME("Decoded format does not match desired format");
 
+        // Conversion handled by Sound_DecodeAll (SDL_ConvertAudio underneath)
         audioData->format    = AL_FORMAT_STEREO16;
-        audioData->bitDepth  = SDL_AUDIO_BITSIZE(sample->actual.format);
-        audioData->channels  = sample->actual.channels;
-        audioData->frequency = sample->actual.rate;
+        audioData->bitDepth  = SDL_AUDIO_BITSIZE(m_decodeInfo.format);
+        audioData->channels  = m_decodeInfo.channels;
+        audioData->frequency = m_decodeInfo.rate;
         audioData->size      = soundSize;
         audioData->duration  = Sound_GetDuration(sample.get());
 
@@ -222,6 +235,12 @@ namespace core::audio
         if (err = alGetError() != AL_NO_ERROR) L_THROW_RUNTIME("Could not create buffer object");
         alBufferData(audioData->bufferId, audioData->format, sample->buffer, audioData->size, audioData->frequency);
         if (err = alGetError() != AL_NO_ERROR) L_THROW_RUNTIME("Could not copy buffer data");
+
+        ALint frequency, bits, channels, size;
+        alGetBufferi(audioData->bufferId, AL_FREQUENCY, &frequency);
+        alGetBufferi(audioData->bufferId, AL_BITS, &bits);
+        alGetBufferi(audioData->bufferId, AL_CHANNELS, &channels);
+        alGetBufferi(audioData->bufferId, AL_SIZE, &size);
 
         float duration = (audioData->size * 8) / (audioData->channels * audioData->bitDepth);
 

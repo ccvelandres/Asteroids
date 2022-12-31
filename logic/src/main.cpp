@@ -75,8 +75,8 @@ int main(int arc, char **argv)
                                      &entityManager->addEntity<Crate>(glm::vec3(0.0f, 5.0f, 0.0f)),
                                      &entityManager->addEntity<Crate>(glm::vec3(0.0f, 7.5f, 0.0f))};
 
-    CameraObject &camObject = entityManager->addEntity<CameraObject>();
-    AudioListener &listener = camObject.addComponent<AudioListener>();
+    CameraObject  &camObject = entityManager->addEntity<CameraObject>();
+    AudioListener &listener  = camObject.addComponent<AudioListener>();
     listener.listen();
     // reset position
     camObject.transform->setPosition(glm::vec3(0.0f, 0.0f, 0.0f))
@@ -144,8 +144,8 @@ int main(int arc, char **argv)
 
     AudioComponent *audioComponent = &camObject.addComponent<AudioComponent>();
 
-    core::audio::Audio &music = audioComponent->addAudioClip("ImperialMarch60.wav", false);
-
+    core::audio::Audio &music0 = audioComponent->addAudioClip("ImperialMarch60.wav", false);
+    music0.play();
     game->startGameLoop();
 
     delete game;

@@ -39,7 +39,7 @@ namespace core::audio
         Audio(const AssetName &assetName, AudioComponent &audioComponent);
     public:
 
-        static constexpr uint8_t MAX_VOLUME = 0xFF;
+        static constexpr uint8_t MAX_VOLUME = 1.0f;
         static constexpr uint8_t MAX_FADE   = 0xFF;
 
         ~Audio();
@@ -50,9 +50,9 @@ namespace core::audio
 
         /**
          * @brief Play the current audio clip from offset
-         * @param offset offset to start
+         * @param offset offset to start (expressed in seconds)
          */
-        void play(const std::size_t &offset = 0);
+        void play(const float &offset = 0);
 
         /** @brief Stop the current audio clip */
         void stop();
@@ -62,10 +62,10 @@ namespace core::audio
         /**
          * @brief Set the Volume of current audio clip
          *
-         * @param volume volume (max = 255)
+         * @param volume volume (max = 1.0f)
          * @return AudioClip& reference to this object
          */
-        Audio &setVolume(const uint8_t &volume) noexcept;
+        Audio &setVolume(const float &volume) noexcept;
 
         /**
          * @brief Set to loop the audio clip
@@ -89,18 +89,18 @@ namespace core::audio
          * @param offset offset to play (bytes)
          * @return AudioClip& reference to this object
          */
-        Audio &setOffset(const std::size_t &offset) noexcept;
+        Audio &setOffset(const float &offset) noexcept;
 
         /** @brief Check if the audio clip is playing */
         bool isPlaying() const noexcept;
         /** @brief Get the current volume of audio clip */
-        uint8_t getVolume() const noexcept;
+        float getVolume() const noexcept;
         /** @brief Check if the audio clip is looped */
         bool getLoop() const noexcept;
         /** @brief Get the length of audio data in bytes */
         std::size_t getLength() const noexcept;
         /** @brief Get the current playback offset */
-        std::size_t getOffset() const noexcept;
+        float getOffset() const noexcept;
 
         /**
          * @brief Retrieve the asset name for this audio clip

@@ -27,7 +27,7 @@ namespace core::audio
     struct AudioData
     {
         ALuint   bufferId;
-        ALint    frequency;
+        ALsizei  frequency;
         ALint    bitDepth;
         ALint    channels;
         ALsizei  size;

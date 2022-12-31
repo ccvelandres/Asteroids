@@ -47,37 +47,91 @@ namespace core::audio
 
     Audio::~Audio() = default;
 
-    void Audio::play(const std::size_t &offset)
+    void Audio::play(const float &offset)
     {
-        // this->m_offset = offset;
-        core::audio::AudioManager::Instance().playAudio(*this);
+        L_TAG("Audio::play");
+        ALenum err;
+        alGetError();
+
+        alSourcef(this->m_internal->sourceId, AL_SEC_OFFSET, offset);
+        if ((err = alGetError()) != AL_NO_ERROR)
+        {
+            L_ERROR("Could not set playback offset: {}", this->m_internal->assetName);
+        }
+
+        alSourcePlay(this->m_internal->sourceId);
+        if ((err = alGetError()) != AL_NO_ERROR)
+        {
+            L_ERROR("Could not start playback: {}", this->m_internal->assetName);
+        }
     }
 
-    void Audio::stop() {}
-
-    void Audio::pause() {}
-
-    Audio &Audio::setVolume(const uint8_t &volume) noexcept
+    void Audio::stop()
     {
-        // this->m_volume = volume;
+        L_TAG("Audio::stop");
+        ALenum err;
+        alGetError();
+
+        alSourceStop(this->m_internal->sourceId);
+        if ((err = alGetError()) != AL_NO_ERROR)
+        {
+            L_ERROR("Could not stop playback: {}", this->m_internal->assetName);
+        }
+    }
+
+    void Audio::pause()
+    {
+        L_TAG("Audio::pause");
+        ALenum err;
+        alGetError();
+
+        alSourcePause(this->m_internal->sourceId);
+        if ((err = alGetError()) != AL_NO_ERROR)
+        {
+            L_ERROR("Could not pause playback: {}", this->m_internal->assetName);
+        }
+    }
+
+    Audio &Audio::setVolume(const float &volume) noexcept
+    {
+        L_TAG("Audio::setVolume");
+        ALenum err;
+        alGetError();
+        
+        alSourcef(this->m_internal->sourceId, AL_GAIN, volume);
+        if ((err = alGetError()) != AL_NO_ERROR)
+        {
+            L_ERROR("Could not set volume: {}", this->m_internal->assetName);
+        }
         return *this;
     }
 
     Audio &Audio::setLoop(const bool &loop) noexcept
     {
-        // this->m_internal->sourceData.loop = loop;
+        L_TAG("Audio::setLoop");
+        ALenum err;
+        ALint value = loop ? AL_TRUE : AL_FALSE;
+        alGetError();
+
+        alSourcei(this->m_internal->sourceId, AL_LOOPING, value);
+        if ((err = alGetError()) != AL_NO_ERROR)
+        {
+            L_ERROR("Could not set volume: {}", this->m_internal->assetName);
+        }
         return *this;
     }
 
-    Audio &Audio::setLength(const std::size_t &length) noexcept
+    Audio &Audio::setOffset(const float &offset) noexcept
     {
-        // this->m_length = length;
-        return *this;
-    }
+        L_TAG("Audio::setOffset");
+        ALenum err;
+        alGetError();
 
-    Audio &Audio::setOffset(const std::size_t &offset) noexcept
-    {
-        // this->m_offset = offset;
+        alSourcef(this->m_internal->sourceId, AL_SEC_OFFSET, offset);
+        if ((err = alGetError()) != AL_NO_ERROR)
+        {
+            L_ERROR("Could not set playback offset: {}", this->m_internal->assetName);
+        }
         return *this;
     }
 
@@ -97,7 +151,7 @@ namespace core::audio
         return value == AL_PLAYING ? true : false;
     }
 
-    uint8_t Audio::getVolume() const noexcept
+    float Audio::getVolume() const noexcept
     {
         L_TAG("Audio::getVolume");
 
@@ -135,7 +189,7 @@ namespace core::audio
         return this->m_internal->audioData->duration;
     }
 
-    std::size_t Audio::getOffset() const noexcept
+    float Audio::getOffset() const noexcept
     {
         L_TAG("Audio::getOffset");
 
@@ -143,7 +197,7 @@ namespace core::audio
         ALenum  err;
         ALfloat value;
         alGetError();
-        alGetSourcef(this->m_internal->sourceId, AL_GAIN, &value);
+        alGetSourcef(this->m_internal->sourceId, AL_SEC_OFFSET, &value);
         if (err = alGetError() != AL_NO_ERROR)
         {
             L_ERROR("Error during query: {}", alGetString(err));
