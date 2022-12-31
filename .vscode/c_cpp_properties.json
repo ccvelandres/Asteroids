@@ -7,6 +7,9 @@
                 "${workspaceFolder}/build/native/debug/Kconfig/include/generated",
                 "${workspaceFolder}/lib/**",
                 "${workspaceFolder}/lib/easy_profiler/easy_profiler_core/include",
+                "${workspaceFolder}/core/lib/SDL_sound/src",
+                "${workspaceFolder}/core/lib/openal-soft/al",
+                "${workspaceFolder}/core/lib/openal-soft/alc",
                 "/usr/include/SDL2/"
             ],
             "defines": [
