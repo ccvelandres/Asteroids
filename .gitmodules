@@ -13,3 +13,6 @@
 [submodule "core/lib/easy_profiler"]
 	path = core/lib/easy_profiler
 	url = https://github.com/yse/easy_profiler.git
+[submodule "core/lib/assimp"]
+	path = core/lib/assimp
+	url = https://github.com/assimp/assimp
