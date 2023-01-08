@@ -26,12 +26,12 @@ namespace core::audio
         struct Internal;
         std::unique_ptr<Internal> m_internal;
     protected:
-        // Use AudioComponent to create AudioClip
-        Audio(const AssetName &assetName, AudioComponent &audioComponent);
     public:
-
         static constexpr uint8_t MAX_VOLUME = 1.0f;
         static constexpr uint8_t MAX_FADE   = 0xFF;
+
+        Audio() = delete;
+        Audio(const AssetName &assetName, AudioComponent &audioComponent);
 
         ~Audio();
         Audio(Audio &o)             = delete;
@@ -52,7 +52,7 @@ namespace core::audio
 
         /**
          * @brief Set position of audio source
-         * 
+         *
          * @param position audio position
          * @return Audio& reference to this object
          */
@@ -60,7 +60,7 @@ namespace core::audio
 
         /**
          * @brief Set velocity of audio source
-         * 
+         *
          * @param position audio velocity
          * @return Audio& reference to this object
          */
@@ -68,7 +68,7 @@ namespace core::audio
 
         /**
          * @brief Set direction of audio source
-         * 
+         *
          * @param position audio direction
          * @return Audio& reference to this object
          */
@@ -101,8 +101,8 @@ namespace core::audio
         /**
          * @brief Set whether audio is relative
          * @note For global sounds, set audio to relative and set position to 0,0,0
-         * @param relative audio 
-         * @return Audio& 
+         * @param relative audio
+         * @return Audio&
          */
         Audio &setRelative(const bool &relative) noexcept;
 
@@ -116,7 +116,7 @@ namespace core::audio
 
         /**
          * @brief Anchors the audio to the attached component
-         * 
+         *
          * @param anchor anchor state
          * @return Audio& reference to this object
          */
@@ -150,9 +150,9 @@ namespace core::audio
         AudioComponent &getComponent() const noexcept;
 
         /**
-         * @brief Perform audio updates. 
+         * @brief Perform audio updates.
          * If audio is relative, performs positional update for audio
-         * 
+         *
          * @param delta delta time in ms
          */
         void update(time_ms delta);

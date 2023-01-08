@@ -27,7 +27,7 @@ core::audio::Audio &AudioComponent::addAudioClip(const AssetName &audioName, con
 {
     L_TAG("AudioComponent::addAudioClip");
     std::shared_ptr<core::audio::Audio> clip =
-        std::make_unique<core::audio::Audio>(core::audio::Audio(audioName, *this));
+        std::make_shared<core::audio::Audio>(audioName, *this);
 
     // Register to audio manager
     core::audio::AudioManager::Instance().registerAudio(clip);

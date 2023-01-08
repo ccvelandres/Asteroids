@@ -46,6 +46,7 @@ namespace core::audio
     Audio::~Audio()
     {
         L_TAG("Audio::~Audio");
+        /** @todo: move delete source to deleter of m_internal? */
         alDeleteSources((ALsizei)1, &this->m_internal->sourceId);
     }
 
@@ -294,6 +295,7 @@ namespace core::audio
         if (this->m_internal->isAnchored)
         {
             this->setPosition(transform->m_position);
+            this->setVelocity(transform->m_velocity);
         }
 
         // Directional sound

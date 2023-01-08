@@ -127,13 +127,16 @@ namespace core::utils::logging
 #define _L_CAT(A, B) A##B
 #define L_CAT(A, B) _L_CAT(A,B)
 
+#define LOG_DEFINE_TAG(STR) \
+    static const std::string tag__ { std::string(core::utils::logging::baseFileName(__FILE__)) + std::string(": " STR) }
+
 /**
  * @brief Add tags log calls in this scope (required for logging).
  * If the profiler is enabled, also adds a profiler block on the current scope
  */
 #define L_TAG(STR)       \
     PROFILER_BLOCK(STR); \
-    static const std::string tag__ { std::string(core::utils::logging::baseFileName(__FILE__)) + std::string(": " STR) }
+    LOG_DEFINE_TAG(STR)
 
 #if defined(CONFIG_CORE_LOG_LINENUM)
 /** @brief Macro for adding line numbers to logs (See CONFIG_CORE_LOG_LINENUM to disable line numbers) */
