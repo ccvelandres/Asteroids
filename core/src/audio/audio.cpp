@@ -8,8 +8,7 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_audio.h>
 
-#include <vector>
-#include <algorithm>
+#include <glm/gtc/type_ptr.hpp>
 
 namespace core::audio
 {
@@ -19,18 +18,17 @@ namespace core::audio
         L_TAG("Audio::Audio");
         ALenum err;
 
-        this->m_internal = std::make_unique<Internal>(Internal{.assetName = assetName, .audioComponent = audioComponent});
+        this->m_internal = std::make_unique<Internal>();
         L_ASSERT(this->m_internal, "Failed to allocate private internal data");
+
+        this->m_internal->assetName      = assetName;
+        this->m_internal->audioComponent = &audioComponent;
 
         this->m_internal->audioData = AudioManager::Instance().loadAudioFile(assetName);
         L_ASSERT(this->m_internal->audioData, "Failed to load audio data");
 
-        this->m_internal->isPlaying = false;
-        this->m_internal->transform = audioComponent.m_transform;
-
-        alGetError();
-
         // Generate source
+        alGetError();
         alGenSources((ALsizei)1, &this->m_internal->sourceId);
         if ((err = alGetError()) != AL_NO_ERROR)
         {
@@ -45,7 +43,11 @@ namespace core::audio
         }
     }
 
-    Audio::~Audio() = default;
+    Audio::~Audio()
+    {
+        L_TAG("Audio::~Audio");
+        alDeleteSources((ALsizei)1, &this->m_internal->sourceId);
+    }
 
     void Audio::play(const float &offset)
     {
@@ -92,12 +94,51 @@ namespace core::audio
         }
     }
 
+    Audio &Audio::setPosition(const glm::vec3 &position) noexcept
+    {
+        L_TAG("Audio::setPosition");
+        ALenum err;
+        alGetError();
+        alSourcefv(this->m_internal->sourceId, AL_POSITION, glm::value_ptr(position));
+        if ((err = alGetError()) != AL_NO_ERROR)
+        {
+            L_ERROR("Could not set source position");
+        }
+        return *this;
+    }
+
+    Audio &Audio::setVelocity(const glm::vec3 &velocity) noexcept
+    {
+        L_TAG("Audio::setVelocity");
+        ALenum err;
+        alGetError();
+        alSourcefv(this->m_internal->sourceId, AL_VELOCITY, glm::value_ptr(velocity));
+        if ((err = alGetError()) != AL_NO_ERROR)
+        {
+            L_ERROR("Could not set source velocity");
+        }
+        return *this;
+    }
+
+    Audio &Audio::setDirection(const glm::vec3 &direction) noexcept
+    {
+        L_TAG("Audio::setDirection");
+        ALenum err;
+        alGetError();
+        alSourcefv(this->m_internal->sourceId, AL_DIRECTION, glm::value_ptr(direction));
+        if ((err = alGetError()) != AL_NO_ERROR)
+        {
+            L_ERROR("Could not set source direction");
+        }
+        return *this;
+    }
+
     Audio &Audio::setVolume(const float &volume) noexcept
     {
         L_TAG("Audio::setVolume");
         ALenum err;
         alGetError();
-        
+
         alSourcef(this->m_internal->sourceId, AL_GAIN, volume);
         if ((err = alGetError()) != AL_NO_ERROR)
         {
@@ -110,7 +151,7 @@ namespace core::audio
     {
         L_TAG("Audio::setLoop");
         ALenum err;
-        ALint value = loop ? AL_TRUE : AL_FALSE;
+        ALint  value = loop ? AL_TRUE : AL_FALSE;
         alGetError();
 
         alSourcei(this->m_internal->sourceId, AL_LOOPING, value);
@@ -118,6 +159,22 @@ namespace core::audio
         {
             L_ERROR("Could not set volume: {}", this->m_internal->assetName);
         }
+        this->m_internal->isLooping = loop;
+        return *this;
+    }
+
+    Audio &Audio::setRelative(const bool &relative) noexcept
+    {
+        L_TAG("Audio::setRelative");
+        ALenum err;
+        alGetError();
+
+        alSourcef(this->m_internal->sourceId, AL_SOURCE_RELATIVE, relative);
+        if ((err = alGetError()) != AL_NO_ERROR)
+        {
+            L_ERROR("Could not set position relative: {}", this->m_internal->assetName);
+        }
+        this->m_internal->isRelative = relative;
         return *this;
     }
 
@@ -132,6 +189,13 @@ namespace core::audio
         {
             L_ERROR("Could not set playback offset: {}", this->m_internal->assetName);
         }
+        return *this;
+    }
+
+    Audio &Audio::setAnchor(const bool &anchor) noexcept
+    {
+        L_TAG("Audio::setAnchor");
+        this->m_internal->isAnchored = anchor;
         return *this;
     }
 
@@ -170,16 +234,7 @@ namespace core::audio
     bool Audio::getLoop() const noexcept
     {
         L_TAG("Audio::getLoop");
-        /** @todo: is it worth caching this values to internal struct */
-        ALenum err;
-        ALint  value;
-        alGetError();
-        alGetSourcei(this->m_internal->sourceId, AL_LOOPING, &value);
-        if (err = alGetError() != AL_NO_ERROR)
-        {
-            L_ERROR("Error during query: {}", alGetString(err));
-        }
-        return value == AL_TRUE ? true : false;
+        return this->m_internal->isLooping;
     }
 
     std::size_t Audio::getLength() const noexcept
@@ -187,6 +242,12 @@ namespace core::audio
         L_TAG("Audio::getLength");
 
         return this->m_internal->audioData->duration;
+    }
+
+    bool Audio::getRelative() const noexcept
+    {
+        L_TAG("Audio::getLength");
+        return this->m_internal->isRelative;
     }
 
     float Audio::getOffset() const noexcept
@@ -205,8 +266,42 @@ namespace core::audio
         return value;
     }
 
-    const AssetName &Audio::getAssetName() const noexcept { return this->m_internal->assetName; }
+    bool Audio::getAnchor() const noexcept
+    {
+        L_TAG("Audio::getAnchor");
+        return this->m_internal->isAnchored;
+    }
 
-    AudioComponent &Audio::getComponent() const noexcept { return this->m_internal->audioComponent; }
+    const AssetName &Audio::getAssetName() const noexcept
+    {
+        L_TAG("Audio::getOffset");
+        return this->m_internal->assetName;
+    }
+
+    AudioComponent &Audio::getComponent() const noexcept
+    {
+        L_TAG("Audio::getOffset");
+        return *this->m_internal->audioComponent;
+    }
+
+    void Audio::update(time_ms delta)
+    {
+        L_TAG("Audio::update");
+        TransformComponent *transform = this->m_internal->audioComponent->m_transform;
+
+        // Anchored audio
+        // If audio is anchored, position follows the attached transform component
+        if (this->m_internal->isAnchored)
+        {
+            this->setPosition(transform->m_position);
+        }
+
+        // Directional sound
+        // if direction vector is not == zero vector(0,0,0), sound is directional, else sound is omnidirectional
+        if(this->m_internal->isDirectional)
+        {
+            this->setDirection(transform->getFront());
+        }
+    }
 
 } // namespace core::audio

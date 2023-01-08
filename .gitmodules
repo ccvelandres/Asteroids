@@ -10,3 +10,6 @@
 [submodule "core/lib/SDL_mixer"]
 	path = core/lib/SDL_mixer
 	url = https://github.com/libsdl-org/SDL_mixer
+[submodule "core/lib/easy_profiler"]
+	path = core/lib/easy_profiler
+	url = https://github.com/yse/easy_profiler.git

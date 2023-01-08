@@ -28,25 +28,24 @@ include(FetchContent)
 #######################################################
 ###### easy_profiler
 
-# message(STATUS "Fetching easy_profiler...")
-# FetchContent_Declare(
-#     easy_profiler_project
-#     GIT_REPOSITORY      https://github.com/yse/easy_profiler.git
-#     GIT_TAG             v2.1.0
-#     GIT_SHALLOW         TRUE
-#     SOURCE_DIR          ${PROJECT_LIBRARY_SOURCE_DIR}/easy_profiler
-#     UPDATE_DISCONNECTED ON
-# )
-# FetchContent_MakeAvailable(easy_profiler_project)
+ExternalProject_Add(easy_profiler_project
+    DOWNLOAD_COMMAND ""
+    UPDATE_COMMAND ""
+    SOURCE_DIR ${CMAKE_CURRENT_LIST_DIR}/lib/easy_profiler
+    INSTALL_DIR ${CORE_LIBRARY_INSTALL_DIR}
+    CMAKE_ARGS
+        -DSDLSOUND_BUILD_TEST=OFF
+        -DBUILD_SHARED_LIBS=${BUILD_SHARED_LIBS}
+        -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
+        -DCMAKE_INSTALL_PREFIX:PATH=${CORE_LIBRARY_INSTALL_DIR})
+ExternalProject_Get_Property(easy_profiler_project INSTALL_DIR)
 
-# add_custom_command(TARGET ${CORE_TARGET} PRE_LINK
-#     DEPENDS 
-#     $<$<BOOL:$<TARGET_PROPERTY:CONFIG_CORE_PROFILER_ENABLE>>:easy_profiler>
-#     COMMAND ${CMAKE_COMMAND} -E 
-#     $<IF:$<BOOL:$<TARGET_PROPERTY:CONFIG_CORE_PROFILER_ENABLE>>,copy_directory,echo>
-#     $<$<BOOL:$<TARGET_PROPERTY:CONFIG_CORE_PROFILER_ENABLE>>:${easy_profiler_project_BINARY_DIR}/bin>
-#     $<$<BOOL:$<TARGET_PROPERTY:CONFIG_CORE_PROFILER_ENABLE>>:${CMAKE_RUNTIME_OUTPUT_DIRECTORY}>)
-# target_link_libraries(${CORE_TARGET} PUBLIC $<$<BOOL:$<TARGET_PROPERTY:CONFIG_CORE_PROFILER_ENABLE>>:easy_profiler>)
+add_library(easy_profiler SHARED IMPORTED)
+add_dependencies(easy_profiler easy_profiler_project)
+set_target_properties(easy_profiler PROPERTIES IMPORTED_LOCATION ${INSTALL_DIR}/lib/libeasy_profiler.so)
+file(MAKE_DIRECTORY ${INSTALL_DIR}/include/SDL2 ${INSTALL_DIR}/include)
+target_include_directories(easy_profiler INTERFACE ${INSTALL_DIR}/include/SDL2 ${INSTALL_DIR}/include)
+target_link_libraries(${CORE_TARGET} PUBLIC easy_profiler)
 
 #######################################################
 ###### JSON

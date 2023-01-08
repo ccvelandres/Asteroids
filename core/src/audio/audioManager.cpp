@@ -7,7 +7,6 @@
 
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_sound.h>
-#include <SDL2/SDL_mixer.h>
 
 #include <AL/al.h>
 #include <AL/alc.h>
@@ -199,10 +198,10 @@ namespace core::audio
         auto idCache = m_audioDataCache.find(assetName);
         if (idCache != m_audioDataCache.end())
         {
-            if (audioData)
+            if (idCache->second)
             {
                 L_DEBUG("Audio loaded from cache: {}", assetName);
-                return audioData;
+                return idCache->second;
             }
         }
 

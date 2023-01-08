@@ -58,46 +58,33 @@
             },
         },
         {
-            "label": "Configure:Release",
-            "linux":{
-                "command": "cmake",
-                "args": [
-                    "-B${workspaceFolder}/build/linux",
-                    "-DCMAKE_BUILD_TYPE:STRING=Release"
-                ],
-            },
-            "problemMatcher": [
-                "$gcc"
-            ]
-        },
-        {
-            "label": "Build:Release",
+            "label": "Build:Profiler",
             "linux":{
                 "command": "cmake",
                 "args": [
                     "--build",
-                    "${workspaceFolder}/build/linux",
-                    "--target",
-                    "all",
+                    "--preset=native",
+                    "--target", "easy_profiler_project",
                     "--parallel"
                 ],
-            },
-            "dependsOn": [
-                "Configure:Release"
-            ],
-            "dependsOrder": "sequence"
+            }
         },
         {
             "label": "Launch:Profiler",
             "linux":{
-                "command": "${workspaceFolder}/build/linux/out/profiler_gui",
+                "command": "${workspaceFolder}/build/native/debug/core/install/bin/profiler_gui",
+                "options": {
+                    "env": {
+                        "LD_LIBRARY_PATH": "${workspaceFolder}/build/native/debug/core/install/lib"
+                    }
+                }
             },
             "isBackground": true,
             "runOptions": {
                 "instanceLimit": 1
             },
             "dependsOn": [
-                "Build:Debug"
+                "Build:Profiler"
             ],
             "type": "process",
             "problemMatcher": []

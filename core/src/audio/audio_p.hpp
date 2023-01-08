@@ -14,17 +14,14 @@ namespace core::audio
 {
     struct Audio::Internal
     {
-        AssetName       assetName;
-        AudioType       type;
-        AudioComponent &audioComponent;
-        std::size_t offset;
-
-        ALuint              sourceId;
-        bool                isPlaying;
-        TransformComponent *transform;
-
-        /** Shared pointer to audio data */
-        std::shared_ptr<core::audio::AudioData> audioData;
+        AssetName                               assetName;
+        AudioComponent                         *audioComponent;
+        std::shared_ptr<core::audio::AudioData> audioData; /** Shared pointer to audio data */
+        ALuint                                  sourceId;
+        bool                                    isRelative    = false;
+        bool                                    isLooping     = false;
+        bool                                    isAnchored    = false;
+        bool                                    isDirectional = false;
     };
 } // namespace core::audio
 

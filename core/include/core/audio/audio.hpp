@@ -9,7 +9,8 @@
  */
 
 #include "../assets/asset-inventory.hpp"
-
+#include "../time.hpp"
+#include <glm/glm.hpp>
 #include <memory>
 
 class AudioComponent;
@@ -17,16 +18,6 @@ class AudioComponent;
 namespace core::audio
 {
     class AudioManager;
-
-    /**
-     * @brief Describes audio type and attenuation via distance
-     *
-     */
-    enum class AudioType
-    {
-        Global,
-        Spatial
-    };
 
     class Audio
     {
@@ -60,6 +51,30 @@ namespace core::audio
         void pause();
 
         /**
+         * @brief Set position of audio source
+         * 
+         * @param position audio position
+         * @return Audio& reference to this object
+         */
+        Audio &setPosition(const glm::vec3 &position) noexcept;
+
+        /**
+         * @brief Set velocity of audio source
+         * 
+         * @param position audio velocity
+         * @return Audio& reference to this object
+         */
+        Audio &setVelocity(const glm::vec3 &velocity) noexcept;
+
+        /**
+         * @brief Set direction of audio source
+         * 
+         * @param position audio direction
+         * @return Audio& reference to this object
+         */
+        Audio &setDirection(const glm::vec3 &direction) noexcept;
+
+        /**
          * @brief Set the Volume of current audio clip
          *
          * @param volume volume (max = 1.0f)
@@ -84,12 +99,28 @@ namespace core::audio
         Audio &setLength(const std::size_t &length) noexcept;
 
         /**
+         * @brief Set whether audio is relative
+         * @note For global sounds, set audio to relative and set position to 0,0,0
+         * @param relative audio 
+         * @return Audio& 
+         */
+        Audio &setRelative(const bool &relative) noexcept;
+
+        /**
          * @brief Set the playback offset
          *
          * @param offset offset to play (bytes)
          * @return AudioClip& reference to this object
          */
         Audio &setOffset(const float &offset) noexcept;
+
+        /**
+         * @brief Anchors the audio to the attached component
+         * 
+         * @param anchor anchor state
+         * @return Audio& reference to this object
+         */
+        Audio &setAnchor(const bool &anchor) noexcept;
 
         /** @brief Check if the audio clip is playing */
         bool isPlaying() const noexcept;
@@ -99,8 +130,12 @@ namespace core::audio
         bool getLoop() const noexcept;
         /** @brief Get the length of audio data in bytes */
         std::size_t getLength() const noexcept;
+        /** @brief Get the current position relation */
+        bool getRelative() const noexcept;
         /** @brief Get the current playback offset */
         float getOffset() const noexcept;
+        /** @brief Get the current anchor state */
+        bool getAnchor() const noexcept;
 
         /**
          * @brief Retrieve the asset name for this audio clip
@@ -115,11 +150,12 @@ namespace core::audio
         AudioComponent &getComponent() const noexcept;
 
         /**
-         * @brief Free the resources for this audio clip. After this call, the audio clip object is no longer valid.
-         * @note The audio clip may be cached and referenced by multiple audio clip objects. In this case, the shared
-         * resource is only freed when the last object is freed
+         * @brief Perform audio updates. 
+         * If audio is relative, performs positional update for audio
+         * 
+         * @param delta delta time in ms
          */
-        void free();
+        void update(time_ms delta);
 
         friend AudioManager;
         friend AudioComponent;
