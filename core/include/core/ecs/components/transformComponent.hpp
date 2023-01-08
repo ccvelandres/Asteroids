@@ -29,13 +29,18 @@ protected:
     TransformComponent();
 
 public:
-    static constexpr glm::vec3 worldFront = glm::vec3(0.0f, 0.0f, 1.0f);
-    static constexpr glm::vec3 worldUp    = glm::vec3(0.0f, 1.0f, 0.0f);
-    static constexpr glm::vec3 worldRight = glm::vec3(1.0f, 0.0f, 0.0f);
+    static constexpr glm::vec3 worldFront   = glm::vec3(0.0f, 0.0f, 1.0f);
+    static constexpr glm::vec3 worldUp      = glm::vec3(0.0f, 1.0f, 0.0f);
+    static constexpr glm::vec3 worldRight   = glm::vec3(1.0f, 0.0f, 0.0f);
+    static constexpr glm::vec3 worldFront_i = -worldFront;
+    static constexpr glm::vec3 worldUp_i    = -worldUp;
+    static constexpr glm::vec3 worldRight_i = -worldRight;
 
-    glm::vec3 m_position;    /** the position of the object in world space */
-    glm::vec3 m_scale;       /** the scale of the object */
-    glm::quat m_orientation; /** the orientation of the object */
+    glm::vec3 m_position;     /** the position of the object in world space */
+    glm::vec3 m_velocity;     /** the velocity of the object in world space */
+    glm::vec3 m_acceleration; /** the acceleration of the object in world space */
+    glm::vec3 m_scale;        /** the scale of the object */
+    glm::quat m_orientation;  /** the orientation of the object */
 
     ~TransformComponent();
     TransformComponent(TransformComponent &o)             = delete;

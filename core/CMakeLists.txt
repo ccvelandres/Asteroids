@@ -1,5 +1,6 @@
 include(Kconfig)
 include(ExternalProject)
+include(FetchContent)
 
 message(STATUS "-------- CORE ---------")
 kconfig_add_kconfig("${CMAKE_CURRENT_LIST_DIR}/include/core/Kconfig")
@@ -23,29 +24,14 @@ set(CORE_LIBRARY_INSTALL_DIR ${CMAKE_CURRENT_BINARY_DIR}/install)
 message(STATUS "CORE_LIBRARY_INSTALL_DIR: ${CORE_LIBRARY_INSTALL_DIR}")
 ######################################################
 # Link Libraries
-include(FetchContent)
 
 #######################################################
 ###### easy_profiler
+set(EASY_OPTION_LISTEN ON CACHE BOOL "")
+set(EASY_PROFILER_NO_SAMPLES ON CACHE BOOL "")
 
-ExternalProject_Add(easy_profiler_project
-    DOWNLOAD_COMMAND ""
-    UPDATE_COMMAND ""
-    SOURCE_DIR ${CMAKE_CURRENT_LIST_DIR}/lib/easy_profiler
-    INSTALL_DIR ${CORE_LIBRARY_INSTALL_DIR}
-    CMAKE_ARGS
-        -DSDLSOUND_BUILD_TEST=OFF
-        -DBUILD_SHARED_LIBS=${BUILD_SHARED_LIBS}
-        -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
-        -DCMAKE_INSTALL_PREFIX:PATH=${CORE_LIBRARY_INSTALL_DIR})
-ExternalProject_Get_Property(easy_profiler_project INSTALL_DIR)
-
-add_library(easy_profiler SHARED IMPORTED)
-add_dependencies(easy_profiler easy_profiler_project)
-set_target_properties(easy_profiler PROPERTIES IMPORTED_LOCATION ${INSTALL_DIR}/lib/libeasy_profiler.so)
-file(MAKE_DIRECTORY ${INSTALL_DIR}/include/SDL2 ${INSTALL_DIR}/include)
-target_include_directories(easy_profiler INTERFACE ${INSTALL_DIR}/include/SDL2 ${INSTALL_DIR}/include)
-target_link_libraries(${CORE_TARGET} PUBLIC easy_profiler)
+add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/lib/easy_profiler)
+target_link_libraries(${CORE_TARGET} PUBLIC $<$<BOOL:$<TARGET_PROPERTY:CONFIG_CORE_PROFILER_ENABLE>>:easy_profiler>)
 
 #######################################################
 ###### JSON

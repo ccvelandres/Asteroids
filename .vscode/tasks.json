@@ -64,7 +64,7 @@
                 "args": [
                     "--build",
                     "--preset=native",
-                    "--target", "easy_profiler_project",
+                    "--target", "profiler_gui",
                     "--parallel"
                 ],
             }
@@ -72,12 +72,7 @@
         {
             "label": "Launch:Profiler",
             "linux":{
-                "command": "${workspaceFolder}/build/native/debug/core/install/bin/profiler_gui",
-                "options": {
-                    "env": {
-                        "LD_LIBRARY_PATH": "${workspaceFolder}/build/native/debug/core/install/lib"
-                    }
-                }
+                "command": "${workspaceFolder}/build/native/debug/core/lib/easy_profiler/bin/profiler_gui",
             },
             "isBackground": true,
             "runOptions": {

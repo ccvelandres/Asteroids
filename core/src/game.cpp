@@ -43,10 +43,10 @@ Game::Game(const std::string &windowTitle, const int &windowWidth, const int &wi
       m_windowWidth(windowWidth),
       m_windowHeight(windowHeight)
 {
-    L_TAG("Game::Game");
-
     /** Start profiling */
     PROFILER_START();
+
+    L_TAG("Game::Game");
 
     // Change directory to project dir
     std::filesystem::current_path(core::utils::platform::getProjectPath());

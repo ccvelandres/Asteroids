@@ -19,6 +19,7 @@ constexpr int windowWidth  = 640;
 constexpr int windowHeight = 480;
 constexpr int originX      = windowWidth / 2;
 constexpr int originY      = windowHeight / 2;
+AudioComponent *audioComponent;
 
 class Crate : public Entity
 {
@@ -54,8 +55,6 @@ public:
 
 int main(int arc, char **argv)
 {
-    L_TAG("main");
-
     /** Set compact pattern for logging */
     core::utils::logging::setPattern("[%H:%M:%S.%e] [%t] %L : %v");
     core::utils::logging::setLevel(core::utils::logging::level::TRACE);
@@ -87,7 +86,8 @@ int main(int arc, char **argv)
     camObject.inputComponent->setListener(
         InputEventType::KeyDown,
         [&camObject](const InputEventType type, SDL_Event *ev) -> void {
-            L_INFO_RATE(32, "cameraInput KeyDown Event: {}", ev->key.keysym.sym);
+            // L_TAG("main");
+            // L_INFO_RATE(32, "cameraInput KeyDown Event: {}", ev->key.keysym.sym);
             CameraComponent    *cam       = &camObject.getComponent<CameraComponent>();
             TransformComponent *transform = &camObject.getComponent<TransformComponent>();
             switch (ev->key.keysym.sym)
@@ -129,23 +129,23 @@ int main(int arc, char **argv)
             float     td            = 1 / std::sin(rotationAngle / 2);
             glm::vec3 rotationAxis(q.x * td, q.y * td, q.z * td);
 
-            L_TRACE("position        {}", glm::to_string(transform->m_position));
-            L_TRACE("front:          {}", glm::to_string(transform->getFront()));
-            L_TRACE("right:          {}", glm::to_string(transform->getRight()));
-            L_TRACE("up:             {}", glm::to_string(transform->getUp()));
-            L_TRACE("rotationAxis:   {}", glm::to_string(rotationAxis));
-            L_TRACE("rotationAngle:  {}", rotationAngle);
-            L_TRACE("euler:          {}", glm::to_string(glm::degrees(glm::eulerAngles(transform->getOrientation()))));
-            L_TRACE("orientation:    {}", glm::to_string(transform->getOrientation()));
-            L_TRACE("orientation:    {}", glm::to_string(glm::mat4_cast(transform->getOrientation())));
-            L_TRACE("viewMatrix:     {}", glm::to_string(cam->getViewMatrix()));
-            L_TRACE("projection:     {}", glm::to_string(cam->getProjectionMatrix()));
+            // L_TRACE("position        {}", glm::to_string(transform->m_position));
+            // L_TRACE("front:          {}", glm::to_string(transform->getFront()));
+            // L_TRACE("right:          {}", glm::to_string(transform->getRight()));
+            // L_TRACE("up:             {}", glm::to_string(transform->getUp()));
+            // L_TRACE("rotationAxis:   {}", glm::to_string(rotationAxis));
+            // L_TRACE("rotationAngle:  {}", rotationAngle);
+            // L_TRACE("euler:          {}", glm::to_string(glm::degrees(glm::eulerAngles(transform->getOrientation()))));
+            // L_TRACE("orientation:    {}", glm::to_string(transform->getOrientation()));
+            // L_TRACE("orientation:    {}", glm::to_string(glm::mat4_cast(transform->getOrientation())));
+            // L_TRACE("viewMatrix:     {}", glm::to_string(cam->getViewMatrix()));
+            // L_TRACE("projection:     {}", glm::to_string(cam->getProjectionMatrix()));
         });
 
-    AudioComponent *audioComponent = &camObject.addComponent<AudioComponent>();
+    audioComponent = &camObject.addComponent<AudioComponent>();
 
     core::audio::Audio &music0 = audioComponent->addAudioClip("ImperialMarch60.wav", false);
-    music0.play();
+    music0.setLoop(true).setVolume(1.0f).play();
     game->startGameLoop();
 
     delete game;

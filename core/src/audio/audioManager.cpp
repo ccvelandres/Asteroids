@@ -104,67 +104,63 @@ namespace core::audio
             L_INFO("Could not enumerate audio devices.");
         }
 
-        // Open dfault audio device
-        m_alDevice = alcOpenDevice(NULL);
-        if (!m_alDevice)
         {
-            L_THROW_RUNTIME("Could not open audio playback device");
+            PROFILER_BLOCK("AudioManager::init::initAL");
+
+            // Open dfault audio device
+            m_alDevice = alcOpenDevice(NULL);
+            if (!m_alDevice)
+            {
+                L_THROW_RUNTIME("Could not open audio playback device");
+            }
+
+            // Query audio device specifier
+            m_alDeviceSpecifier = alcGetString(m_alDevice, ALC_DEVICE_SPECIFIER);
+            if((err = alGetError()) != AL_NO_ERROR)
+            {
+                L_ERROR("Could not query audio device specifier");
+            }
+            L_INFO("Default audio device: {}", m_alDeviceSpecifier);
+
+            // Create al context
+            m_alContext = alcCreateContext(m_alDevice, NULL);
+            if (!alcMakeContextCurrent(m_alContext))
+            {
+                L_THROW_RUNTIME("Failed to switch context current");
+            }
+
+            // Query context attributes
+            m_alAudioFrequency = getAudioDeviceFrequency(m_alDevice);
         }
 
-        // Query audio device specifier
-        m_alDeviceSpecifier = alcGetString(m_alDevice, ALC_DEVICE_SPECIFIER);
-        if((err = alGetError()) != AL_NO_ERROR)
         {
-            L_ERROR("Could not query audio device specifier");
+            PROFILER_BLOCK("AudioManager::init::initDecoders");
+
+            // Initialize SDL2_Sound used for audio decoding
+            if (!Sound_Init())
+            {
+                L_THROW_RUNTIME("Could not initialize SDL_Sound");
+            }
+            else
+            {
+                Sound_Version compiled, linked;
+
+                SOUND_VERSION(&compiled);
+                Sound_GetLinkedVersion(&linked);
+
+                L_INFO("SDL2_Sound compiled with: {}.{}.{}", compiled.major, compiled.minor, compiled.patch);
+                L_INFO("Using linked SDL2_Sound: {}.{}.{}", linked.major, linked.minor, linked.patch);
+            }
+
+            // Get list of available decoders
+            for (const Sound_DecoderInfo **decoders = Sound_AvailableDecoders(); *decoders != NULL; decoders++)
+            {
+                L_INFO("Found decoder: {}", (*decoders)->description);
+            }
+
+            // // Setup requested raw audio stream format
+            m_decodeInfo = {.format = m_audioFormat, .channels = m_audioChannels, .rate = m_audioFrequency};
         }
-        L_INFO("Default audio device: {}", m_alDeviceSpecifier);
-
-        // Create al context
-        m_alContext = alcCreateContext(m_alDevice, NULL);
-        if (!alcMakeContextCurrent(m_alContext))
-        {
-            L_THROW_RUNTIME("Failed to switch context current");
-        }
-
-        // Query context attributes
-        m_alAudioFrequency = getAudioDeviceFrequency(m_alDevice);
-
-        // Create default stationary listener on origin
-        // {
-        //     alListener3f(AL_POSITION, 0.0f, 0.0f, 0.0f);
-        //     if (err = alGetError() != AL_NO_ERROR) L_THROW_RUNTIME("Could not set listener position");
-        //     alListener3f(AL_VELOCITY, 0.0f, 0.0f, 0.0f);
-        //     if (err = alGetError() != AL_NO_ERROR) L_THROW_RUNTIME("Could not set listener velocity");
-        // }
-
-        // alListenerfv(AL_ORIENTATION, );
-        // if (err = alGetError() != AL_NO_ERROR)
-        //     L_THROW_RUNTIME("Could not set listener orientation");
-
-        // Initialize SDL2_Sound used for audio decoding
-        if (!Sound_Init())
-        {
-            L_THROW_RUNTIME("Could not initialize SDL_Sound");
-        }
-        else
-        {
-            Sound_Version compiled, linked;
-
-            SOUND_VERSION(&compiled);
-            Sound_GetLinkedVersion(&linked);
-
-            L_INFO("SDL2_Sound compiled with: {}.{}.{}", compiled.major, compiled.minor, compiled.patch);
-            L_INFO("Using linked SDL2_Sound: {}.{}.{}", linked.major, linked.minor, linked.patch);
-        }
-
-        // Get list of available decoders
-        for (const Sound_DecoderInfo **decoders = Sound_AvailableDecoders(); *decoders != NULL; decoders++)
-        {
-            L_INFO("Found decoder: {}", (*decoders)->description);
-        }
-
-        // // Setup requested raw audio stream format
-        m_decodeInfo = {.format = m_audioFormat, .channels = m_audioChannels, .rate = m_audioFrequency};
 
         return true;
     }
