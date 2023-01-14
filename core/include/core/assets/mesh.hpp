@@ -24,6 +24,24 @@ namespace core::assets
     class Mesh
     {
     public:
+        /**
+         * @brief Container for vertices used for 3D mesh
+         *
+         */
+        struct Vertex_
+        {
+            glm::vec3 v;  /** Geometry vertex */
+            glm::vec3 vn; /** Vertex normals */
+            glm::vec2 uv; /** Texture coordinates */
+            glm::vec3 tangents; /** tangets */
+            glm::vec3 bitangents; /** bitangents */
+        };
+
+        struct Texture_
+        {
+            std::string name;
+        };
+
         struct MeshData
         {
             std::vector<Vertex>   vertices;
