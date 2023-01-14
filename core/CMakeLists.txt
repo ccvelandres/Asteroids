@@ -1,6 +1,9 @@
 include(Kconfig)
 include(ExternalProject)
 include(FetchContent)
+include(FindPkgConfig)
+
+set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/cmake;${CMAKE_MODULE_PATH}")
 
 message(STATUS "-------- CORE ---------")
 kconfig_add_kconfig("${CMAKE_CURRENT_LIST_DIR}/include/core/Kconfig")
@@ -27,11 +30,26 @@ message(STATUS "CORE_LIBRARY_INSTALL_DIR: ${CORE_LIBRARY_INSTALL_DIR}")
 # Link Libraries
 
 # ######################################################
-# ##### easy_profiler
-set(EASY_OPTION_LISTEN ON CACHE BOOL "")
-set(EASY_PROFILER_NO_SAMPLES ON CACHE BOOL "")
+# ##### easy_profiler (static)
 
-add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/lib/easy_profiler)
+ExternalProject_Add(easy_profiler_project
+    DOWNLOAD_COMMAND ""
+    UPDATE_COMMAND ""
+    SOURCE_DIR ${CMAKE_CURRENT_LIST_DIR}/lib/easy_profiler
+    INSTALL_DIR ${CORE_LIBRARY_INSTALL_DIR}
+    CMAKE_ARGS
+    -DSDLSOUND_BUILD_TEST=OFF
+    -DBUILD_SHARED_LIBS=${BUILD_SHARED_LIBS}
+    -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
+    -DCMAKE_INSTALL_PREFIX:PATH=${CORE_LIBRARY_INSTALL_DIR})
+ExternalProject_Get_Property(easy_profiler_project INSTALL_DIR)
+
+add_library(easy_profiler SHARED IMPORTED)
+add_dependencies(easy_profiler easy_profiler_project)
+set_target_properties(easy_profiler PROPERTIES IMPORTED_LOCATION ${INSTALL_DIR}/lib/libeasy_profiler.so)
+file(MAKE_DIRECTORY ${INSTALL_DIR}/include/easy ${INSTALL_DIR}/include)
+target_compile_definitions(easy_profiler INTERFACE BUILD_WITH_EASY_PROFILER)
+target_include_directories(easy_profiler INTERFACE ${INSTALL_DIR}/include/easy ${INSTALL_DIR}/include)
 target_link_libraries(${CORE_TARGET} PUBLIC $<$<BOOL:$<TARGET_PROPERTY:CONFIG_CORE_PROFILER_ENABLE>>:easy_profiler>)
 
 # ######################################################
@@ -84,70 +102,59 @@ target_link_libraries(${CORE_TARGET} PUBLIC $<$<BOOL:$<TARGET_PROPERTY:CONFIG_CO
 
 # ######################################################
 # #### SDL2
-find_library(SDL2_LIBRARIES
-    NAMES SDL2
-    HINTS
-    ENV SDL2_DIR
-    PATHS ${SDL2_DIR})
-find_path(SDL2_INCLUDE_DIR
-    NAMES SDL.h
-    HINTS
-    ENV SDL2_DIR
-    PATHS ${SDL2_DIR}
-    PATH_SUFFIXES SDL2)
 
-if(SDL2_LIBRARIES AND SDL2_INCLUDE_DIR)
+pkg_search_module(SDL2_lib REQUIRED sdl2)
+
+if(SDL2_lib_FOUND)
     message(STATUS "Found library: SDL2")
-    message(STATUS "    Library: ${SDL2_LIBRARIES}")
-    message(STATUS "    Include: ${SDL2_INCLUDE_DIR}")
-    add_library(SDL2 UNKNOWN IMPORTED)
-    set_target_properties(SDL2 PROPERTIES
-        IMPORTED_LOCATION "${SDL2_LIBRARIES}"
-        INTERFACE_INCLUDE_DIRECTORIES "${SDL2_INCLUDE_DIR}")
+    message(STATUS "    Library: ${SDL2_lib_LIBRARIES}")
+    message(STATUS "    Link:    ${SDL2_lib_LINK_LIBRARIES}")
+    message(STATUS "    Include: ${SDL2_lib_INCLUDE_DIRS}")
+    message(STATUS "    Version: ${SDL2_lib_VERSION}")
 else()
     message(FATAL_ERROR "SDL2 not found")
 endif()
-
-target_link_libraries(${CORE_TARGET} PUBLIC SDL2)
+target_link_libraries(${CORE_TARGET} PUBLIC ${SDL2_lib_LIBRARIES})
+target_include_directories(${CORE_TARGET} PUBLIC ${SDL2_lib_INCLUDE_DIRS})
 
 # ######################################################
 # ##### SDL2_image
-find_library(SDL2_IMAGE_LIBRARIES
-    NAMES SDL2_image
-    HINTS
-    ENV SDL2_DIR
-    ENV SDL2_IMAGE_DIR
-    PATHS ${SDL2_IMAGE_PATH})
-find_path(SDL2_IMAGE_INCLUDE_DIR
-    NAMES SDL_image.h
-    HINTS
-    ENV SDL2_DIR
-    ENV SDL2_IMAGE_DIR
-    PATHS ${SDL2_IMAGE_PATH}
-    PATH_SUFFIXES SDL2)
 
-if(SDL2_IMAGE_LIBRARIES AND SDL2_IMAGE_INCLUDE_DIR)
-    message(STATUS "Found library: SDL2_image")
-    message(STATUS "    Library: ${SDL2_IMAGE_LIBRARIES}")
-    message(STATUS "    Include: ${SDL2_IMAGE_INCLUDE_DIR}")
-    add_library(SDL2_image UNKNOWN IMPORTED)
-    set_target_properties(SDL2_image PROPERTIES
-        IMPORTED_LOCATION "${SDL2_IMAGE_LIBRARIES}"
-        INTERFACE_INCLUDE_DIRECTORIES "${SDL2_IMAGE_INCLUDE_DIR}")
+pkg_search_module(SDL2_image_lib REQUIRED SDL2_image)
+
+if(SDL2_image_lib_FOUND)
+    message(STATUS "Found library: SDL2")
+    message(STATUS "    Library: ${SDL2_image_lib_LIBRARIES}")
+    message(STATUS "    Link:    ${SDL2_image_lib_LINK_LIBRARIES}")
+    message(STATUS "    Include: ${SDL2_image_lib_INCLUDE_DIRS}")
+    message(STATUS "    Version: ${SDL2_image_lib_VERSION}")
 else()
-    message(FATAL_ERROR "Could not find SDL2_image")
+    message(FATAL_ERROR "SDL2 not found")
 endif()
-
-target_link_libraries(${CORE_TARGET} PUBLIC SDL2_image)
+target_link_libraries(${CORE_TARGET} PUBLIC ${SDL2_image_lib_LIBRARIES})
+target_include_directories(${CORE_TARGET} PUBLIC ${SDL2_image_lib_INCLUDE_DIRS})
 
 # ######################################################
-# ##### SDL2_sound
-set(SDLSOUND_BUILD_TEST OFF CACHE INTERNAL "")
+# ##### SDL2_sound (shared library)
 
-add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/lib/SDL_sound)
+ExternalProject_Add(SDL2_sound_project
+    DOWNLOAD_COMMAND ""
+    UPDATE_COMMAND ""
+    SOURCE_DIR ${CMAKE_CURRENT_LIST_DIR}/lib/SDL_sound
+    INSTALL_DIR ${CORE_LIBRARY_INSTALL_DIR}
+    CMAKE_ARGS
+        -DSDLSOUND_BUILD_TEST=OFF
+        -DBUILD_SHARED_LIBS=ON
+        -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
+        -DCMAKE_INSTALL_PREFIX:PATH=${CORE_LIBRARY_INSTALL_DIR})
+ExternalProject_Get_Property(SDL2_sound_project INSTALL_DIR)
+
+add_library(SDL2_sound SHARED IMPORTED)
+add_dependencies(SDL2_sound SDL2_sound_project)
+set_target_properties(SDL2_sound PROPERTIES IMPORTED_LOCATION ${INSTALL_DIR}/lib/libSDL2_sound.so)
+file(MAKE_DIRECTORY ${INSTALL_DIR}/include/SDL2 ${INSTALL_DIR}/include)
+target_include_directories(SDL2_sound INTERFACE ${INSTALL_DIR}/include/SDL2 ${INSTALL_DIR}/include)
 target_link_libraries(${CORE_TARGET} PUBLIC SDL2_sound)
-# For some reason, can't inherit include directories
-target_include_directories(${CORE_TARGET} PUBLIC ${CMAKE_CURRENT_LIST_DIR}/lib/SDL_sound/src)
 
 # ######################################################
 # ##### OpenAL-soft
