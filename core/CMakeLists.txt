@@ -36,24 +36,15 @@ target_link_libraries(${CORE_TARGET} PUBLIC $<$<BOOL:$<TARGET_PROPERTY:CONFIG_CO
 #######################################################
 ###### Assimp
 
-ExternalProject_Add(assimp_project
-    DOWNLOAD_COMMAND ""
-    UPDATE_COMMAND ""
-    SOURCE_DIR ${CMAKE_CURRENT_LIST_DIR}/lib/assimp
-    INSTALL_DIR ${CORE_LIBRARY_INSTALL_DIR}
-    CMAKE_ARGS
-        -DASSIMP_BUILD_TESTS=OFF
-        -DASSIMP_BUILD_ALL_EXPORTERS_BY_DEFAULT=OFF
-        -DBUILD_SHARED_LIBS=${BUILD_SHARED_LIBS}
-        -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
-        -DCMAKE_INSTALL_PREFIX:PATH=${CORE_LIBRARY_INSTALL_DIR})
-ExternalProject_Get_Property(assimp_project INSTALL_DIR)
+set(ASSIMP_BUILD_ALL_EXPORTERS_BY_DEFAULT OFF CACHE INTERNAL "")
+set(ASSIMP_BUILD_TESTS OFF CACHE INTERNAL "")
+add_subdirectory(lib/assimp)
 
-find_package(assimp REQUIRED CONFIG
-    PATHS ${CORE_LIBRARY_INSTALL_DIR})
-if(NOT assimp_FOUND)
-    message(WARNING "assimp not found")
-endif()
+# find_package(assimp REQUIRED CONFIG
+#     PATHS ${CORE_LIBRARY_INSTALL_DIR})
+# if(NOT assimp_FOUND)
+#     message(WARNING "assimp not found")
+# endif()
 target_link_libraries(${CORE_TARGET} PUBLIC assimp::assimp)
 
 #######################################################

@@ -56,7 +56,7 @@ file(MAKE_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/assets)
 foreach(assetDir ${PROJECT_ASSET_FOLDERS})
     # Copy asset directories to output path
     if(EXISTS assets/${assetDir})
-        file(COPY assets/${assetDir} DESTINATION ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/assets)
+        file(COPY assets/${assetDir} DESTINATION ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/assets FOLLOW_SYMLINK_CHAIN)
     endif()
 endforeach()
 
@@ -68,15 +68,15 @@ execute_process(COMMAND ${PROJECT_ROOT}/tools/scripts/compile_shaders.sh INPUTDI
 
 # ################################################################
 # # Examples
-if(CONFIG_CORE_BUILD_EXAMPLES)
-    add_subdirectory(examples)
-endif()
+# if(CONFIG_CORE_BUILD_EXAMPLES)
+#     add_subdirectory(examples)
+# endif()
 
 # ################################################################
 # # References
-if(CONFIG_CORE_BUILD_REFERENCES)
-    add_subdirectory(references)
-endif()
+# if(CONFIG_CORE_BUILD_REFERENCES)
+#     add_subdirectory(references)
+# endif()
 
 # ################################################################
 # # Documentation

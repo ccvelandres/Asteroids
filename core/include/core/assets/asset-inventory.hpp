@@ -28,7 +28,8 @@
 #include <fstream>
 
 using AssetName  = std::string;
-using AssetPaths = std::vector<std::string>;
+using AssetPath = std::string;
+using AssetPaths = std::vector<AssetPath>;
 
 class AssetInventory; /** Forward declaration for AssetInventory */
 
