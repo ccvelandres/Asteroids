@@ -12,8 +12,8 @@
 #include "../ecs/component.hpp"
 #include "../ecs/components/inputComponent.hpp"
 
-#include <SDL2/SDL.h>
-#include <SDL2/SDL_scancode.h>
+#include <SDL.h>
+#include <SDL_scancode.h>
 
 #include <vector>
 #include <memory>

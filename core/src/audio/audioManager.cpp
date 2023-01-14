@@ -5,8 +5,8 @@
 #include <audio/audio_p.hpp>
 #include <audio/audioManager_p.hpp>
 
-#include <SDL2/SDL.h>
-#include <SDL2/SDL_sound.h>
+#include <SDL.h>
+#include <SDL_sound.h>
 
 #include <AL/al.h>
 #include <AL/alc.h>

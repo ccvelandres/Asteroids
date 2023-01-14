@@ -5,8 +5,8 @@
 #include <core/ecs/components/audioComponent.hpp>
 #include <audio/audio_p.hpp>
 
-#include <SDL2/SDL.h>
-#include <SDL2/SDL_audio.h>
+#include <SDL.h>
+#include <SDL_audio.h>
 
 #include <glm/gtc/type_ptr.hpp>
 

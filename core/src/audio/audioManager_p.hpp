@@ -13,7 +13,7 @@
 
 #include <AL/al.h>
 #include <AL/alc.h>
-#include <SDL2/SDL_sound.h>
+#include <SDL_sound.h>
 
 namespace core::audio
 {

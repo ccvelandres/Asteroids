@@ -3,8 +3,8 @@
 #include <core/graphics/renderer/opengl/gl-wrapper.hpp>
 #include <core/graphics/renderer/opengl/gl-assetManager.hpp>
 
-#include <SDL2/SDL.h>
-#include <SDL2/SDL_video.h>
+#include <SDL.h>
+#include <SDL_video.h>
 
 #include <utils/logging.hpp>
 

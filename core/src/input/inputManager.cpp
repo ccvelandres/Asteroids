@@ -2,7 +2,7 @@
 #include <core/utils/logging.hpp>
 #include <core/ecs/componentManager.hpp>
 
-#include <SDL2/SDL.h>
+#include <SDL.h>
 
 #include <unordered_map>
 

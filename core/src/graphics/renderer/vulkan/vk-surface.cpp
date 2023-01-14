@@ -1,6 +1,6 @@
 #include <core/graphics/renderer/vulkan/vk-surface.hpp>
 #include <core/graphics/renderer/vulkan/vk-utils.hpp>
-#include <SDL2/SDL_vulkan.h>
+#include <SDL_vulkan.h>
 #include <utils/logging.hpp>
 
 vk::UniqueSurfaceKHR createSurface(SDL_Window *window, const vk::Instance &instance)

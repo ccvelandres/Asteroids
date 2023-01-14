@@ -9,7 +9,7 @@
  */
 
 #include <string>
-#include <SDL2/SDL_surface.h>
+#include <SDL_surface.h>
 
 #include "asset-inventory.hpp"
 

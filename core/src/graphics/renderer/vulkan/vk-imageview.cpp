@@ -1,6 +1,6 @@
 #include <core/graphics/renderer/vulkan/vk-imageview.hpp>
 #include <core/graphics/renderer/vulkan/vk-utils.hpp>
-#include <SDL2/SDL_vulkan.h>
+#include <SDL_vulkan.h>
 
 #include <utils/logging.hpp>
 

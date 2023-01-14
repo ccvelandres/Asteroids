@@ -12,7 +12,6 @@
 #include <core/ecs/components.hpp>
 #include <core/graphics/renderer/renderer.hpp>
 #include <core/utils/logging.hpp>
-#include <core/assets/asset.hpp>
 #include <core/assets/model.hpp>
 
 #include <glm/gtx/string_cast.hpp>

@@ -1,7 +1,7 @@
 #include <core/assets/texture.hpp>
 #include <core/utils/logging.hpp>
 
-#include <SDL2/SDL_image.h>
+#include <SDL_image.h>
 
 namespace core::assets
 {

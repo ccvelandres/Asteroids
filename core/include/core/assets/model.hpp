@@ -10,7 +10,7 @@
 
 #include <string>
 #include <vector>
-#include <SDL2/SDL_surface.h>
+#include <SDL_surface.h>
 
 #include "asset-inventory.hpp"
 #include "mesh.hpp"
