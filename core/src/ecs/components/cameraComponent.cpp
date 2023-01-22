@@ -21,7 +21,7 @@ CameraComponent::CameraComponent(const glm::vec2 &viewportSize, const Projection
 
 void CameraComponent::init()
 {
-    if(this->m_entity->hasComponent<TransformComponent>())
+    if (this->m_entity->hasComponent<TransformComponent>())
     {
         this->m_transform = &this->m_entity->getComponent<TransformComponent>();
     }
@@ -54,7 +54,7 @@ void CameraComponent::updateOrthogonalMatrix()
 void CameraComponent::updateMatrix()
 {
     L_TAG("CameraComponent::updateMatrix");
-    
+
     switch (this->m_projection)
     {
     case Projection::Orthographic:
@@ -67,8 +67,8 @@ void CameraComponent::updateMatrix()
         L_THROW_RUNTIME("Unhandled camera projection mode: {}", this->m_projection);
     }
     /** @todo: this needs fixing together with transformComponent local space translation */
-    this->m_viewMatrix =
-        (glm::mat4_cast(m_transform->getOrientation())) * glm::translate(identityMatrix, m_transform->getPosition());
+    this->m_viewMatrix = glm::mat4_cast(m_transform->getOrientation())
+                       * glm::inverse(glm::translate(identityMatrix, m_transform->getPosition()));
 }
 
 CameraComponent &CameraComponent::setProjection(const Projection &projection) noexcept

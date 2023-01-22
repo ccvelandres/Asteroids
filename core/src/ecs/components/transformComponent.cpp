@@ -4,6 +4,9 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtx/euler_angles.hpp>
 #include <glm/gtc/quaternion.hpp>
+#include <glm/gtx/string_cast.hpp>
+
+constexpr glm::mat4 identityMatrix = glm::mat4(1.0f);
 
 TransformComponent::TransformComponent() : m_position(0.0f), m_scale(1.0f), m_orientation(glm::vec3(0.0f)) {}
 TransformComponent::TransformComponent(glm::vec3 position, glm::vec3 scale, glm::vec3 rotation)
@@ -17,6 +20,8 @@ TransformComponent::~TransformComponent() = default;
 
 TransformComponent &TransformComponent::translate(const glm::vec3 &v, bool localSpace) noexcept
 {
+    L_TAG("TransformComponent::translate");
+
     if (localSpace)
     {
         /** net says translation of vector via quat is:
@@ -24,8 +29,29 @@ TransformComponent &TransformComponent::translate(const glm::vec3 &v, bool local
          * however, the z axis is inversed. WHY?
          * this works the same -> v` = quat * v; BUT WHY?
          */
-        glm::vec3 tV = glm::inverse(m_orientation) * v;
-        this->m_position += tV;
+        // glm::vec3 tV = m_orientation  * v * glm::conjugate(m_orientation);
+        // this->m_position += tV;
+
+        /** this rotates the translation vector using the object quat
+         * then we add the rotated translation vector to the object's
+         * current position
+         * BUT, why the fck is the translation vector negative?? lmao
+         */
+        // glm::mat4 tM = glm::translate(glm::mat4_cast(m_orientation), v);
+        // glm::vec3 tV = glm::vec3(tM[3]);
+        // this->m_position -= tV;
+
+        // glm::mat4 objectMatrix = glm::mat4_cast(m_orientation);
+        // glm::mat4 objectMatrix = glm::translate (identityMatrix, this->m_position);
+        // glm::mat4 translationMatrix = glm::translate(identityMatrix, v);
+        // glm::mat4 orientationMatrix = glm::mat4_cast(this->m_orientation);
+
+        // objectMatrix = glm::inverse(translationMatrix * orientationMatrix);
+        // this->m_position += glm::vec3( (objectMatrix[3]));
+
+        // Now why the hell does this work?
+        // Apply translation vect
+        this->m_position += glm::inverse(m_orientation) * v;
     }
     else
     {
@@ -72,7 +98,7 @@ TransformComponent &TransformComponent::rotateYXZ(const glm::vec3 &euler, bool l
 TransformComponent &TransformComponent::rotate(float angle, const glm::vec3 &axis, bool localSpace) noexcept
 {
     // rotation via angle-axis
-    glm::quat rotationQuat = glm::angleAxis(glm::radians(angle), glm::normalize(axis));
+    glm::quat rotationQuat = (glm::angleAxis(glm::radians(angle), glm::normalize(axis)));
     this->m_orientation    = localSpace ? this->m_orientation * rotationQuat : rotationQuat * this->m_orientation;
     return *this;
 }
@@ -107,14 +133,14 @@ TransformComponent &TransformComponent::setOrientation(const glm::vec3 &forward,
      * or in shorter terms, we want to set direction such that we are looking
      * at the vector
      */
-    glm::quat orientation = glm::conjugate(glm::quat(glm::lookAt(this->m_position, forward, up)));
+    glm::quat orientation = glm::conjugate(glm::quat(glm::lookAt(glm::vec3(0.0f), forward, up)));
     this->m_orientation   = orientation;
     return *this;
 }
 
 TransformComponent &TransformComponent::setOrientationEuler(const glm::vec3 &v) noexcept
 {
-    this->m_orientation   = glm::quat(glm::radians(v));
+    this->m_orientation = glm::quat(glm::radians(v));
     return *this;
 }
 
@@ -155,7 +181,4 @@ const glm::vec3 TransformComponent::getRight() const noexcept
     return TransformComponent::worldRight * this->m_orientation;
 }
 
-const glm::vec3 TransformComponent::getUp() const noexcept
-{
-    return TransformComponent::worldUp * this->m_orientation;
-}
+const glm::vec3 TransformComponent::getUp() const noexcept { return TransformComponent::worldUp * this->m_orientation; }
