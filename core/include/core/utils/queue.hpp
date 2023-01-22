@@ -219,7 +219,7 @@ namespace core::utils
          * @return true if the data was added
          * @return false if the data was not added
          */
-        bool try_push(_T &o) noexcept
+        bool try_push(const _T &o) noexcept
         {
             // reserve tail node for pushing new data
             unsigned int tail = std::atomic_load_explicit(&_tail, std::memory_order_relaxed);
@@ -249,7 +249,51 @@ namespace core::utils
                                                                std::memory_order_relaxed))
                 expected = _State::EMPTY; // maybe add a spin or yield here?
             // we can now load the data
-            node.data = std::forward<_T>(o);
+            node.data = o;
+            // do release store to state and set it to LOADED
+            std::atomic_store_explicit(&node.state, _State::LOADED, std::memory_order_release);
+            return true;
+        }
+
+        /**
+         * @brief Push data to queue
+         * @todo: make move version?
+         *
+         * @param o data to be added
+         * @return true if the data was added
+         * @return false if the data was not added
+         */
+        bool try_push(_T &&o) noexcept
+        {
+            // reserve tail node for pushing new data
+            unsigned int tail = std::atomic_load_explicit(&_tail, std::memory_order_relaxed);
+            do
+            {
+                // weak check that we are not behind head
+                unsigned int head = std::atomic_load_explicit(&_head, std::memory_order_relaxed);
+                if ((tail % _bufsize) - (head % _bufsize) >= _bufsize) return false;
+            } while (!std::atomic_compare_exchange_weak_explicit(&_tail,
+                                                                 &tail,
+                                                                 tail + 1,
+                                                                 std::memory_order_acq_rel,
+                                                                 std::memory_order_relaxed));
+
+            _node &node     = _nodes[tail % _bufsize];
+            _State expected = _State::EMPTY;
+            /**
+             * we expect state to be empty
+             *  if not empty, spin till empty
+             * on success, we acquire and set state to LOADING
+             * on fail, do relaxed loads
+             */
+            while (!std::atomic_compare_exchange_weak_explicit(&node.state,
+                                                               &expected,
+                                                               _State::LOADING,
+                                                               std::memory_order_acquire,
+                                                               std::memory_order_relaxed))
+                expected = _State::EMPTY; // maybe add a spin or yield here?
+            // we can now load the data
+            node.data = std::move(o);
             // do release store to state and set it to LOADED
             std::atomic_store_explicit(&node.state, _State::LOADED, std::memory_order_release);
             return true;
@@ -306,10 +350,10 @@ namespace core::utils
 {
 #if defined(CONFIG_CORE_QUEUE_DEFAULT_STDMUTEX)
     template <typename T>
-    using queue = atomic_queue<T>;
+    using queue = mutex_queue<T>;
 #elif defined(CONFIG_CORE_QUEUE_DEFAULT_LOCKFREE)
     template <typename T>
-    using queue = mutex_queue<T>;
+    using queue = atomic_queue<T>;
 #else
 #error "Missing implementation for core::utils::queue. See CORE_QUEUE_DEFAULT_* for options"
 #endif
