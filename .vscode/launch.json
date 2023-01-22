@@ -8,10 +8,9 @@
             "name": "(lldb) Launch",
             "type": "lldb",
             "request": "launch",
-            "program": "${workspaceFolder}/build/native/debug/out/sample",
             "linux": {
-                "cwd": "${workspaceFolder}/build/native/debug/out",
-                "program": "${workspaceFolder}/build/native/debug/out/sample",
+                "cwd": "${workspaceFolder}/build/native/debug/logic",
+                "program": "${workspaceFolder}/build/native/debug/logic/sample",
             },
             "env": {
                 "__NV_PRIME_RENDER_OFFLOAD": "1",

@@ -54,10 +54,41 @@ target_link_libraries(${CORE_TARGET} PUBLIC $<$<BOOL:$<TARGET_PROPERTY:CONFIG_CO
 
 # ######################################################
 # ##### Assimp
+
 set(ASSIMP_BUILD_ALL_EXPORTERS_BY_DEFAULT OFF CACHE INTERNAL "")
 set(ASSIMP_BUILD_TESTS OFF CACHE INTERNAL "")
+set(ASSIMP_INSTALL OFF CACHE INTERNAL "")
+set(ASSIMP_INJECT_DEBUG_POSTFIX OFF CACHE INTERNAL "")
+set(ASSIMP_NO_EXPORT OFF CACHE INTERNAL "")
+# build only obj importer
+set(ASSIMP_BUILD_ALL_IMPORTERS_BY_DEFAULT OFF CACHE INTERNAL "")
+set(ASSIMP_BUILD_OBJ_IMPORTER ON CACHE INTERNAL "")
+
 add_subdirectory(lib/assimp)
 target_link_libraries(${CORE_TARGET} PUBLIC assimp::assimp)
+
+# ######################################################
+# ##### FreeType
+find_package(Freetype REQUIRED)
+
+if(NOT FREETYPE_FOUND)
+    message(STATUS "Fetching spdlog...")
+    FetchContent_Declare(
+        spdlog_project
+        GIT_REPOSITORY https://github.com/gabime/spdlog.git
+        GIT_TAG v1.10.0
+        SOURCE_DIR ${PROJECT_LIBRARY_SOURCE_DIR}/spdlog
+        UPDATE_DISCONNECTED ON
+    )
+    FetchContent_MakeAvailable(spdlog_project)
+else()
+    message(STATUS "Found library: Freetype")
+    message(STATUS "    Library: ${FREETYPE_LIBRARIES}")
+    message(STATUS "    Include: ${FREETYPE_INCLUDE_DIRS}")
+    message(STATUS "    Version: ${FREETYPE_VERSION_STRING}")
+endif()
+
+target_link_libraries(${CORE_TARGET} PUBLIC Freetype::Freetype)
 
 # ######################################################
 # ##### JSON
@@ -252,6 +283,14 @@ target_link_libraries(${CORE_TARGET} PUBLIC fmt)
 
 # #####################################################
 # Post-commands
+
+
+# #####################################################
+# Tests
+set(CORE_BUILD_TESTS ON)
+if( CORE_BUILD_TESTS )
+    add_subdirectory(test)
+endif()
 
 # TODO: add post command to copy shared libs (so/dll) post build
 message(STATUS "------ END CORE -------")

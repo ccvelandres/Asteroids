@@ -101,7 +101,7 @@ int main(int arc, char **argv)
     // reset position
     camObject.transform->setPosition(glm::vec3(0.0f, 0.0f, -10.0f))
         .setOrientation(TransformComponent::worldFront, TransformComponent::worldUp);
-    camObject.camera->setProjection(CameraComponent::Projection::Orthographic);
+    // camObject.camera->setProjection(CameraComponent::Projection::Orthographic);
     camObject.camera->updateMatrix();
 
 

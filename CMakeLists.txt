@@ -1,16 +1,17 @@
 cmake_minimum_required(VERSION 3.21)
 set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake/kconfig-cmake;${CMAKE_MODULE_PATH}")
 include(Kconfig)
+enable_testing()
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
-SET(CMAKE_SKIP_BUILD_RPATH FALSE)
+# SET(CMAKE_SKIP_BUILD_RPATH FALSE)
 # SET(CMAKE_BUILD_WITH_INSTALL_RPATH TRUE)
 # SET(CMAKE_INSTALL_RPATH "$\{ORIGIN\}")
 
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/out")
-set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/out")
-set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/out")
-set(CMAKE_DOCS_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/docs")
+# set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/out")
+# set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/out")
+# set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/out")
+# set(CMAKE_DOCS_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/docs")
 set(BUILD_SHARED_LIBS ON)
 
 set(CMAKE_C_STANDARD 99) # Requires C11 standard
@@ -50,20 +51,21 @@ add_subdirectory(logic)
 # # Shaders
 
 list(APPEND PROJECT_ASSET_FOLDERS audio env models spritesheets textures)
-file(MAKE_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/assets)
+set(PROJECT_BUILD_ASSET_DIR ${CMAKE_BINARY_DIR}/logic/assets)
+file(MAKE_DIRECTORY ${PROJECT_BUILD_ASSET_DIR})
 
 # Copy each asset subdirectory
 foreach(assetDir ${PROJECT_ASSET_FOLDERS})
     # Copy asset directories to output path
     if(EXISTS assets/${assetDir})
-        file(COPY assets/${assetDir} DESTINATION ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/assets FOLLOW_SYMLINK_CHAIN)
+        file(COPY assets/${assetDir} DESTINATION ${PROJECT_BUILD_ASSET_DIR} FOLLOW_SYMLINK_CHAIN)
     endif()
 endforeach()
 
 # Special handling for shader assets
-file(MAKE_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/assets/shaders)
+file(MAKE_DIRECTORY ${PROJECT_BUILD_ASSET_DIR}/shaders)
 # TODO: needs fixing so shader target are rerun when shader source are modified
-execute_process(COMMAND ${PROJECT_ROOT}/tools/scripts/compile_shaders.sh INPUTDIR=assets/shaders OUTDIR=${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/assets/shaders
+execute_process(COMMAND ${PROJECT_ROOT}/tools/scripts/compile_shaders.sh INPUTDIR=assets/shaders OUTDIR=${PROJECT_BUILD_ASSET_DIR}/shaders
     WORKING_DIRECTORY ${PROJECT_ROOT})
 
 # ################################################################

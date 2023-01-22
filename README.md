@@ -82,7 +82,7 @@ Move the crate using keybinds :)
 ### Dependencies
 
 ```bash
-sudo apt install git cmake build-essential doxygen dotd libsdl2-dev libsdl2-gfx-dev libsdl2-image-dev libvulkan-dev vulkan-validationlayers libglm-dev libglew-dev libgl-dev libglew-dev
+sudo apt install git cmake build-essential doxygen dotd libsdl2-dev libsdl2-gfx-dev libsdl2-image-dev libvulkan-dev vulkan-validationlayers libglm-dev libglew-dev libgl-dev libglew-dev libfreetype-dev
 mkdir build
 cmake .. -GNinja
 ninja

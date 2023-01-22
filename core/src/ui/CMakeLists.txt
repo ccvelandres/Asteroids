@@ -1,0 +1,7 @@
+
+message(STATUS "Adding Core: UI")
+file(GLOB SRC_UI ${CMAKE_CURRENT_SOURCE_DIR}/*.cpp ${CMAKE_CURRENT_SOURCE_DIR}/*.c)
+target_sources(${CORE_TARGET} PRIVATE ${SRC_UI})
+
+file(GLOB SRC_UI_TEXT ${CMAKE_CURRENT_SOURCE_DIR}/text/*.cpp ${CMAKE_CURRENT_SOURCE_DIR}/text/*.c)
+target_sources(${CORE_TARGET} PRIVATE ${SRC_UI_TEXT})

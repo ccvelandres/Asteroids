@@ -19,5 +19,11 @@
             "name": "native",
             "configurePreset": "native"
         }
+    ],
+    "testPresets": [
+        {
+            "name": "core_ut",
+            "configurePreset": "native"
+        }
     ]
 }
