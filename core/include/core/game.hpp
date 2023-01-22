@@ -4,6 +4,8 @@
 #include <memory>
 #include <string>
 
+#include "glm/glm.hpp"
+
 #include "time.hpp"
 
 class EntityManager;
@@ -18,14 +20,14 @@ class Game
 {
 private:
     std::string m_windowTitle;
-    int         m_windowWidth, m_windowHeight;
+    glm::vec2 m_windowSize;
 
     time_ds m_targetDelta;
     float   m_minfps = std::numeric_limits<float>::max(), m_maxfps;
     float   m_fps;
 protected:
 public:
-    Game(const std::string &windowTitle, const int &windowWidth, const int &windowHeight);
+    Game(const std::string &windowTitle, const float &windowWidth, const float &windowHeight);
 
     ~Game();
 
@@ -33,6 +35,8 @@ public:
     void startGameLoop();
 
     void setTargetFPS(const float fps);
+
+    glm::vec2 getWindowSize() const noexcept;
 
     /** @note Globals for manager objects (probably bad but this saves storing pointers on each object) */
     static Game             *this_game();        /** Get the current game instance */

@@ -27,21 +27,20 @@
 #include <thread>
 
 /** @todo: replace these with shared ptrs? */
-Game                   *g_game             = nullptr;
-core::audio::AudioManager *g_audioManager = nullptr;
-EntityManager          *g_entityManager    = nullptr;
-ComponentManager       *g_componentManager = nullptr;
-EventManager           *g_eventManager     = nullptr;
-Renderer               *g_renderer         = nullptr;
-InputManager           *g_inputManager     = nullptr;
-Time                   *g_time             = nullptr;
-AssetManager           *g_assetManager   = nullptr;
-AssetInventory         *g_assetInventory = nullptr;
+Game                      *g_game             = nullptr;
+core::audio::AudioManager *g_audioManager     = nullptr;
+EntityManager             *g_entityManager    = nullptr;
+ComponentManager          *g_componentManager = nullptr;
+EventManager              *g_eventManager     = nullptr;
+Renderer                  *g_renderer         = nullptr;
+InputManager              *g_inputManager     = nullptr;
+Time                      *g_time             = nullptr;
+AssetManager              *g_assetManager     = nullptr;
+AssetInventory            *g_assetInventory   = nullptr;
 
-Game::Game(const std::string &windowTitle, const int &windowWidth, const int &windowHeight)
+Game::Game(const std::string &windowTitle, const float &windowWidth, const float &windowHeight)
     : m_windowTitle(windowTitle),
-      m_windowWidth(windowWidth),
-      m_windowHeight(windowHeight)
+      m_windowSize(windowWidth, windowHeight)
 {
     /** Start profiling */
     PROFILER_START();
@@ -52,6 +51,7 @@ Game::Game(const std::string &windowTitle, const int &windowWidth, const int &wi
     std::filesystem::current_path(core::utils::platform::getProjectPath());
     L_TRACE("CWD: {}", std::filesystem::current_path().c_str());
 
+    /** @todo: thread-safe game instance creation for singleton */
     if (g_game) assert("Only one Game class object may exist");
     g_game = this;
     g_time = new Time();
@@ -218,12 +218,14 @@ void Game::setTargetFPS(const float fps)
     m_targetDelta = time_ds(static_cast<time_ds::rep>(time_step::den / fps));
 }
 
-Game                   *Game::this_game() { return g_game; }
-EntityManager          *Game::entityManager() { return g_entityManager; }
-ComponentManager       *Game::componentManager() { return g_componentManager; }
-EventManager           *Game::eventManager() { return g_eventManager; }
-InputManager           *Game::inputManager() { return g_inputManager; }
-Time                   *Game::time() { return g_time; }
-Renderer               *Game::renderer() { return g_renderer; }
-AssetManager           *Game::assetManager() { return g_assetManager; }
-AssetInventory         *Game::assetInventory() { return g_assetInventory; }
+glm::vec2 Game::getWindowSize() const noexcept { return this->m_windowSize; }
+
+Game             *Game::this_game() { return g_game; }
+EntityManager    *Game::entityManager() { return g_entityManager; }
+ComponentManager *Game::componentManager() { return g_componentManager; }
+EventManager     *Game::eventManager() { return g_eventManager; }
+InputManager     *Game::inputManager() { return g_inputManager; }
+Time             *Game::time() { return g_time; }
+Renderer         *Game::renderer() { return g_renderer; }
+AssetManager     *Game::assetManager() { return g_assetManager; }
+AssetInventory   *Game::assetInventory() { return g_assetInventory; }

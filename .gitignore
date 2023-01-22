@@ -1,3 +1,4 @@
+tmp/
 build/
 .vscode/settings.json
 **__pycache__**

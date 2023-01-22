@@ -55,7 +55,7 @@ public:
     {
         transform = &this->addComponent<TransformComponent>();
         camera =
-            &this->addComponent<CameraComponent>(glm::vec2(1280.0f, 720.0f), CameraComponent::Projection::Perspective);
+            &this->addComponent<CameraComponent>(CameraComponent::Projection::Perspective);
         inputComponent = &this->addComponent<InputComponent>();
     }
 };
@@ -80,6 +80,7 @@ int main(int arc, char **argv)
     game->setTargetFPS(90);
 
     EntityManager *entityManager = Game::entityManager();
+    L_TAG("main");
 
     {
         core::assets::Model model("assets/models/backpack/backpack.obj");
@@ -87,12 +88,12 @@ int main(int arc, char **argv)
 
     // Create crate entities
     std::array<Crate *, 8> crates = {&entityManager->addEntity<Crate>(glm::vec3(0.0f, 0.0f, 0.0f)),
-                                     &entityManager->addEntity<Crate>(glm::vec3(2.5f, 0.0f, 0.0f)),
-                                     &entityManager->addEntity<Crate>(glm::vec3(5.0f, 0.0f, 0.0f)),
-                                     &entityManager->addEntity<Crate>(glm::vec3(0.0f, 0.0f, 2.5f)),
-                                     &entityManager->addEntity<Crate>(glm::vec3(0.0f, 2.5f, 0.0f)),
-                                     &entityManager->addEntity<Crate>(glm::vec3(0.0f, 5.0f, 0.0f)),
-                                     &entityManager->addEntity<Crate>(glm::vec3(0.0f, 7.5f, 0.0f))};
+                                     &entityManager->addEntity<Crate>(glm::vec3(2.5f) * TransformComponent::worldFront),
+                                     &entityManager->addEntity<Crate>(glm::vec3(2.5f) * TransformComponent::worldUp),
+                                     &entityManager->addEntity<Crate>(glm::vec3(5.0f) * TransformComponent::worldUp),
+                                     &entityManager->addEntity<Crate>(glm::vec3(2.5f) * TransformComponent::worldRight),
+                                     &entityManager->addEntity<Crate>(glm::vec3(5.0f) * TransformComponent::worldRight),
+                                     &entityManager->addEntity<Crate>(glm::vec3(7.5f) * TransformComponent::worldRight)};
 
     CameraObject  &camObject = entityManager->addEntity<CameraObject>();
     AudioListener &listener  = camObject.addComponent<AudioListener>();
@@ -100,6 +101,7 @@ int main(int arc, char **argv)
     // reset position
     camObject.transform->setPosition(glm::vec3(0.0f, 0.0f, -10.0f))
         .setOrientation(TransformComponent::worldFront, TransformComponent::worldUp);
+    camObject.camera->setProjection(CameraComponent::Projection::Orthographic);
     camObject.camera->updateMatrix();
 
 
