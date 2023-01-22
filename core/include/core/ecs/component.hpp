@@ -70,6 +70,8 @@ public:
     virtual void fixedUpdate(time_ms delta) {}
     /** Called for every frame update (uses scaled time) */
     virtual void update(time_ms delta) {}
+    /** Called for every frame update (for preparing for rendering */
+    virtual void postUpdate() {}
     /** Called when the component is released */
     virtual void clean() {}
 

@@ -31,21 +31,23 @@ private:
     void updatePerspectiveMatrix();
     void updateOrthogonalMatrix();
 
-    TransformComponent *m_transform;           /** the camera's transform component */
+    TransformComponent *m_transform;         /** the camera's transform component */
     glm::mat4           m_projectionMatrix;  /** the projection matrix */
     glm::mat4           m_viewMatrix;        /** the view matrix */
-    glm::vec2           m_viewportSize;      /** viewport size of the camera */
     Projection          m_projection;        /** current projection mode of the camera */
+    glm::vec2           m_viewportSize;      /** viewport size of the camera */
     float               m_fieldOfView_r;     /** field of view in perspective mode (radians) */
     float               m_aspectRatio;       /** aspect ratio in perspective mode */
     float               m_nearClippingPlane; /** near clipping plane in orthogonal mode */
     float               m_farClippingPlane;  /** far clipping plane in orthogonal mode */
+    float               m_zscaling;          /** z-scaling factor for orthogonal view */
     RenderMask          m_renderMask;        /** controls which renderComponents are visible */
 
 protected:
     /** Protected Constructors (use entity to add components) */
     CameraComponent();
-    CameraComponent(const glm::vec2 &viewportSize, const Projection &mode);
+    CameraComponent(const Projection &projection);
+    CameraComponent(const Projection &projection, const glm::vec2 &viewportSize);
 public:
 
     ~CameraComponent();
@@ -86,6 +88,8 @@ public:
     CameraComponent &setFarClippingPlane(const float &clip) noexcept;
     /** Set near clipping plane */
     CameraComponent &setRenderMask(const RenderMask &renderMask) noexcept;
+    /** Set Z-scaling mode for orthogonal view */
+    CameraComponent &setZScaling(const float &scale) noexcept;
 
     const glm::mat4  &getProjectionMatrix() const noexcept;
     const glm::mat4  &getViewMatrix() const noexcept;
@@ -97,6 +101,7 @@ public:
     const float       getNearClippingPlane() const noexcept;
     const float       getFarClippingPlane() const noexcept;
     const RenderMask &getRenderMask() const noexcept;
+    const float       getZScaling() const noexcept;
 
     friend Entity;
     friend EntityManager;

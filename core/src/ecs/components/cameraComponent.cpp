@@ -1,5 +1,6 @@
 #include <core/ecs/components/cameraComponent.hpp>
 #include <core/ecs/entity.hpp>
+#include <core/game.hpp>
 
 #include <core/utils/logging.hpp>
 
@@ -8,13 +9,26 @@ constexpr glm::mat4 identityMatrix = glm::mat4(1.0f);
 CameraComponent::CameraComponent()  = default;
 CameraComponent::~CameraComponent() = default;
 
-CameraComponent::CameraComponent(const glm::vec2 &viewportSize, const Projection &projection)
-    : m_viewportSize(viewportSize),
-      m_projection(projection),
+CameraComponent::CameraComponent(const Projection &projection)
+    : m_projection(projection),
+      m_viewportSize(Game::this_game()->getWindowSize()),
       m_fieldOfView_r(glm::radians(90.0f)),
-      m_aspectRatio(4.0f / 3.0f),
+      m_aspectRatio(m_viewportSize.x / m_viewportSize.y),
       m_nearClippingPlane(0.1f),
       m_farClippingPlane(100.0f),
+      m_zscaling(0.01f),
+      m_renderMask(0xFFFF)
+{
+}
+
+CameraComponent::CameraComponent(const Projection &projection, const glm::vec2 &viewportSize)
+    : m_projection(projection),
+      m_viewportSize(viewportSize),
+      m_fieldOfView_r(glm::radians(90.0f)),
+      m_aspectRatio(m_viewportSize.x / m_viewportSize.y),
+      m_nearClippingPlane(0.1f),
+      m_farClippingPlane(100.0f),
+      m_zscaling(0.01f),
       m_renderMask(0xFFFF)
 {
 }
@@ -41,12 +55,12 @@ void CameraComponent::updateOrthogonalMatrix()
     /** screen size defines the xy of bounding box
      * while the clipping planes defines the z ranges of the bounding box
      */
-
-    glm::vec2 cameraBounds = glm::vec2(m_transform->getPosition()) - (m_viewportSize * 0.5f);
-    m_projectionMatrix     = glm::ortho(cameraBounds.x,
-                                    cameraBounds.x + m_viewportSize.x,
-                                    cameraBounds.y,
-                                    cameraBounds.y + m_viewportSize.y,
+    glm::vec2 screenCenter = glm::vec2(m_transform->getPosition());
+    glm::vec2 screenSize   = m_viewportSize * m_zscaling * 0.5f;
+    m_projectionMatrix = glm::ortho(screenCenter.x - screenSize.x,
+                                    screenCenter.x + screenSize.x,
+                                    screenCenter.y - screenSize.y,
+                                    screenCenter.y + screenSize.y,
                                     m_nearClippingPlane,
                                     m_farClippingPlane);
 }
