@@ -1,5 +1,7 @@
 #!/bin/bash
 
-docker build -t gamedev -f "$(pwd)/win.dockerfile" .
-project_root=$(realpath "$(pwd)/../..")
-docker run -v "$project_root":/project -dit --name ast gamedev
+SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+PROJECT_ROOT=$(realpath "${SCRIPT_DIR}/../..")
+
+docker build -t gamedev -f "$(SCRIPT_DIR)/Dockerfile" .
+docker run -v "$PROJECT_ROOT":/project -dit --name ast gamedev
