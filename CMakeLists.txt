@@ -50,33 +50,11 @@ set(PROJECT_LIBRARY_INSTALL_DIR "${CMAKE_BINARY_DIR}/install")
 
 # ################################################################
 # # Core
-set(CORE_TARGET "core")
 add_subdirectory(core)
 
 # ################################################################
 # # Logic
 add_subdirectory(logic)
-
-# ################################################################
-# # Shaders
-
-list(APPEND PROJECT_ASSET_FOLDERS audio env models spritesheets textures)
-set(PROJECT_BUILD_ASSET_DIR ${CMAKE_BINARY_DIR}/logic/assets)
-file(MAKE_DIRECTORY ${PROJECT_BUILD_ASSET_DIR})
-
-# Copy each asset subdirectory
-foreach(assetDir ${PROJECT_ASSET_FOLDERS})
-    # Copy asset directories to output path
-    if(EXISTS assets/${assetDir})
-        file(COPY assets/${assetDir} DESTINATION ${PROJECT_BUILD_ASSET_DIR} FOLLOW_SYMLINK_CHAIN)
-    endif()
-endforeach()
-
-# Special handling for shader assets
-file(MAKE_DIRECTORY ${PROJECT_BUILD_ASSET_DIR}/shaders)
-# TODO: needs fixing so shader target are rerun when shader source are modified
-execute_process(COMMAND ${PROJECT_ROOT}/tools/scripts/compile_shaders.sh INPUTDIR=assets/shaders OUTDIR=${PROJECT_BUILD_ASSET_DIR}/shaders
-    WORKING_DIRECTORY ${PROJECT_ROOT})
 
 # ################################################################
 # # Examples

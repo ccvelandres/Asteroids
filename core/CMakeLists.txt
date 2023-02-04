@@ -15,6 +15,7 @@ set(SRC_CORE
     ${CMAKE_CURRENT_SOURCE_DIR}/src/game.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/time.cpp)
 
+set(CORE_TARGET "core" CACHE INTERNAL "")
 add_library(${CORE_TARGET} ${SRC_CORE})
 set_target_properties(${CORE_TARGET} PROPERTIES VERSION 0.1.0)
 
@@ -25,8 +26,14 @@ target_include_directories(${CORE_TARGET} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/sr
 target_include_directories(${CORE_TARGET} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include/core)
 target_include_directories(${CORE_TARGET} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
 
-set(CORE_LIBRARY_INSTALL_DIR ${CMAKE_CURRENT_BINARY_DIR}/install)
+set(CORE_CMAKE_MODULE_PATH ${CMAKE_CURRENT_LIST_DIR}/cmake CACHE INTERNAL "")
+set(CORE_LIBRARY_BINARY_DIR ${CMAKE_CURRENT_BINARY_DIR} CACHE INTERNAL "")
+set(CORE_LIBRARY_INSTALL_DIR ${CMAKE_CURRENT_BINARY_DIR}/install CACHE INTERNAL "")
 message(STATUS "CORE_LIBRARY_INSTALL_DIR: ${CORE_LIBRARY_INSTALL_DIR}")
+
+include(${CORE_CMAKE_MODULE_PATH}/assets.cmake)
+core_set_asset_directory(${CMAKE_CURRENT_BINARY_DIR}/assets)
+core_add_asset_directory(${CMAKE_CURRENT_LIST_DIR}/assets)
 
 # #####################################################
 # Link Libraries
@@ -66,26 +73,40 @@ target_link_libraries(${CORE_TARGET} PUBLIC assimp::assimp)
 
 # ######################################################
 # ##### FreeType
-find_package(Freetype REQUIRED)
+# find_package(Freetype REQUIRED)
 
-if(NOT FREETYPE_FOUND)
-    message(STATUS "Fetching spdlog...")
-    FetchContent_Declare(
-        spdlog_project
-        GIT_REPOSITORY https://github.com/gabime/spdlog.git
-        GIT_TAG v1.10.0
-        SOURCE_DIR ${PROJECT_LIBRARY_SOURCE_DIR}/spdlog
-        UPDATE_DISCONNECTED ON
-    )
-    FetchContent_MakeAvailable(spdlog_project)
+# if(NOT FREETYPE_FOUND)
+#     message(STATUS "Fetching spdlog...")
+#     FetchContent_Declare(
+#         spdlog_project
+#         GIT_REPOSITORY https://github.com/gabime/spdlog.git
+#         GIT_TAG v1.10.0
+#         SOURCE_DIR ${PROJECT_LIBRARY_SOURCE_DIR}/spdlog
+#         UPDATE_DISCONNECTED ON
+#     )
+#     FetchContent_MakeAvailable(spdlog_project)
+# else()
+#     message(STATUS "Found library: Freetype")
+#     message(STATUS "    Library: ${FREETYPE_LIBRARIES}")
+#     message(STATUS "    Include: ${FREETYPE_INCLUDE_DIRS}")
+#     message(STATUS "    Version: ${FREETYPE_VERSION_STRING}")
+# endif()
+
+# target_link_libraries(${CORE_TARGET} PUBLIC Freetype::Freetype)
+
+
+pkg_check_modules(Freetype2_lib REQUIRED IMPORTED_TARGET freetype2)
+
+if(Freetype2_lib_FOUND)
+    message(STATUS "Found library: Freetype2")
+    message(STATUS "    Library: ${Freetype2_lib_LIBRARIES}")
+    message(STATUS "    Link:    ${Freetype2_lib_LINK_LIBRARIES}")
+    message(STATUS "    Include: ${Freetype2_lib_INCLUDE_DIRS}")
+    message(STATUS "    Version: ${Freetype2_lib_VERSION}")
 else()
-    message(STATUS "Found library: Freetype")
-    message(STATUS "    Library: ${FREETYPE_LIBRARIES}")
-    message(STATUS "    Include: ${FREETYPE_INCLUDE_DIRS}")
-    message(STATUS "    Version: ${FREETYPE_VERSION_STRING}")
+    message(FATAL_ERROR "Freetype2 not found")
 endif()
-
-target_link_libraries(${CORE_TARGET} PUBLIC Freetype::Freetype)
+target_link_libraries(${CORE_TARGET} PUBLIC PkgConfig::Freetype2_lib)
 
 # ######################################################
 # ##### JSON

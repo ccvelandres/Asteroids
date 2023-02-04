@@ -1,4 +1,5 @@
 include(Kconfig)
+include(${CORE_CMAKE_MODULE_PATH}/assets.cmake)
 
 message(STATUS "-------- LOGIC ---------")
 kconfig_add_kconfig("${CMAKE_CURRENT_LIST_DIR}/Kconfig")
@@ -19,5 +20,8 @@ target_compile_definitions(sample PUBLIC SDL_MAIN_HANDLED)
 add_custom_command(TARGET sample POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_RUNTIME_DLLS:sample> $<TARGET_FILE_DIR:sample>
         COMMAND_EXPAND_LISTS)
+        
+core_add_asset_directory(${CMAKE_CURRENT_LIST_DIR}/assets)
+core_set_asset_directory(${CMAKE_CURRENT_BINARY_DIR}/assets)
 
 message(STATUS "------------------------")
