@@ -28,7 +28,8 @@ AssetInventory::AssetInventory()
         {"models",       {false, AssetType::Mesh}       }, // no strip extension
         {"shaders",      {true, AssetType::Pipeline}    }, // strip extension
         {"textures",     {false, AssetType::Texture}    }, // no strip extension
-        {"spritesheets", {false, AssetType::SpriteSheet}}  // no strip extension
+        {"spritesheets", {false, AssetType::SpriteSheet}}, // no strip extension
+        {"fonts",        {false, AssetType::Fonts}      }  // no strip extension
     };
 
     // Scan assets folder

@@ -43,7 +43,8 @@ enum class AssetType
     Mesh,
     Pipeline,
     Texture,
-    SpriteSheet
+    SpriteSheet,
+    Fonts
 };
 
 class AssetInventory
