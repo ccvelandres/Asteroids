@@ -13,6 +13,7 @@
 #include <core/graphics/renderer/renderer.hpp>
 #include <core/utils/logging.hpp>
 #include <core/assets/model.hpp>
+#include <core/ui/text/fontLoader.hpp>
 
 #include <glm/gtx/string_cast.hpp>
 
@@ -83,7 +84,8 @@ int main(int arc, char **argv)
     L_TAG("main");
 
     {
-        core::assets::Model model("assets/models/backpack/backpack.obj");
+        core::assets::Model model("assets/models/crate.obj");
+        // core::assets::Model model("assets/models/backpack/backpack.obj");
     }
 
     // Create crate entities
@@ -104,6 +106,23 @@ int main(int arc, char **argv)
     // camObject.camera->setProjection(CameraComponent::Projection::Orthographic);
     camObject.camera->updateMatrix();
 
+    {
+        // core::ui::FontLoader fontLoader;
+
+        // fontLoader.loadFont("assets/fonts/arial.ttf");
+        // SDL_Surface *surface = fontLoader.setPixelSize(0, 64).generateGlyphAtlas(0,255);
+        // core::assets::Texture texture = core::assets::Texture(surface);
+        // core::assets::Mesh mesh = core::assets::Mesh(vector);
+
+        // AssetManager *assetManager = Game::assetManager();
+
+        // AssetID quadId = assetManager->loadAsset(AssetType::Mesh, "quad.obj");
+        // AssetID textureId = assetManager->loadTexture(texture);
+
+        // Entity &font = entityManager->addEntity<Entity>();
+        // TransformComponent &transform = font.addComponent<TransformComponent>();
+        // MeshRenderer &mesh = font.addComponent<MeshRenderer>(quadId, textureId);
+    }
 
     // Set KeyDown input listener
     camObject.inputComponent->setListener(
