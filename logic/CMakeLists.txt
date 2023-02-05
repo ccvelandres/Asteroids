@@ -17,10 +17,12 @@ target_include_directories(sample PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
 target_link_libraries(sample PUBLIC ${CORE_TARGET})
 target_compile_definitions(sample PUBLIC SDL_MAIN_HANDLED)
 
+if(WIN32)
 add_custom_command(TARGET sample POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_RUNTIME_DLLS:sample> $<TARGET_FILE_DIR:sample>
         COMMAND_EXPAND_LISTS)
-        
+endif()
+
 core_add_asset_directory(${CMAKE_CURRENT_LIST_DIR}/assets)
 core_set_asset_directory(${CMAKE_CURRENT_BINARY_DIR}/assets)
 

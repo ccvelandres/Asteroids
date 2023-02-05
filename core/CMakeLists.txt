@@ -27,9 +27,6 @@ target_include_directories(${CORE_TARGET} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/in
 target_include_directories(${CORE_TARGET} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
 
 set(CORE_CMAKE_MODULE_PATH ${CMAKE_CURRENT_LIST_DIR}/cmake CACHE INTERNAL "")
-set(CORE_LIBRARY_BINARY_DIR ${CMAKE_CURRENT_BINARY_DIR} CACHE INTERNAL "")
-set(CORE_LIBRARY_INSTALL_DIR ${CMAKE_CURRENT_BINARY_DIR}/install CACHE INTERNAL "")
-message(STATUS "CORE_LIBRARY_INSTALL_DIR: ${CORE_LIBRARY_INSTALL_DIR}")
 
 include(${CORE_CMAKE_MODULE_PATH}/assets.cmake)
 core_set_asset_directory(${CMAKE_CURRENT_BINARY_DIR}/assets)
@@ -130,45 +127,79 @@ endif()
 target_link_libraries(${CORE_TARGET} PUBLIC nlohmann_json::nlohmann_json)
 
 # ######################################################
+# ##### libfmt
+
+find_package(fmt REQUIRED)
+if(fmt_FOUND)
+    message(STATUS "Found library: fmt")
+    message(STATUS "    Version: ${fmt_VERSION}")
+else()
+    message(FATAL_ERROR "fmt not found")
+endif()
+target_link_libraries(${CORE_TARGET} PUBLIC fmt::fmt)
+
+# ######################################################
 # ##### spdlog
 
+find_package(spdlog QUIET)
+if(spdlog_FOUND)    
+    message(STATUS "Found spdlog: ${spdlog_VERSION}")
+    target_link_libraries(${CORE_TARGET} PUBLIC $<$<BOOL:$<TARGET_PROPERTY:CONFIG_CORE_LOG_ENABLE>>:spdlog>)
+else()
+    FetchContent_Declare( spdlog_project
+        SOURCE_DIR ${CMAKE_CURRENT_LIST_DIR}/lib/spdlog
+        GIT_REPOSITORY https://github.com/gabime/spdlog
+        GIT_BRANCH v1.x
+        GIT_SHALLOW ON
+        UPDATE_DISCONNECTED ON)
 
-FetchContent_Declare( spdlog_project
-    SOURCE_DIR ${CMAKE_CURRENT_LIST_DIR}/lib/spdlog)
+    set(SPDLOG_BUILD_BENCH OFF CACHE INTERNAL "")
+    set(SPDLOG_BUILD_EXAMPLE OFF CACHE INTERNAL "")
+    set(SPDLOG_BUILD_TESTS OFF CACHE INTERNAL "")
+    if(TARGET fmt::fmt)
+        set(SPDLOG_FMT_EXTERNAL ON CACHE INTERNAL "")
+    else()
+        set(SPDLOG_FMT_EXTERNAL OFF CACHE INTERNAL "")
+    endif()
 
-set(SPDLOG_BUILD_BENCH OFF CACHE INTERNAL "")
-set(SPDLOG_BUILD_EXAMPLE OFF CACHE INTERNAL "")
-set(SPDLOG_BUILD_TESTS OFF CACHE INTERNAL "")
-set(SPDLOG_FMT_EXTERNAL ON CACHE INTERNAL "")
+    FetchContent_MakeAvailable(spdlog_project)
+    target_link_libraries(${CORE_TARGET} PUBLIC $<$<BOOL:$<TARGET_PROPERTY:CONFIG_CORE_LOG_ENABLE>>:spdlog::spdlog>)
+endif()
 
-FetchContent_MakeAvailable(spdlog_project)
-target_link_libraries(${CORE_TARGET} PUBLIC spdlog::spdlog)
 
 # ######################################################
 # #### SDL2
 
-find_package(SDL2 REQUIRED)
-if(SDL2_FOUND)
+find_package(SDL2 QUIET)
+if(TARGET SDL2::SDL2)
     message(STATUS "Found library: SDL2")
-    message(STATUS "    Library: ${SDL2_LIBRARIES}")
-    message(STATUS "    Link:    ${SDL2_LINK_LIBRARIES}")
-    message(STATUS "    Include: ${SDL2_INCLUDE_DIRS}")
-    message(STATUS "    Version: ${SDL2_VERSION}")
+    target_link_libraries(${CORE_TARGET} PUBLIC SDL2::SDL2)
 else()
-    message(FATAL_ERROR "SDL2 not found")
+    # Try pkg config
+    pkg_search_module(SDL2_lib REQUIRED sdl2 IMPORTED_TARGET)
+    if(SDL2_lib_FOUND)
+        target_link_libraries(${CORE_TARGET} PUBLIC PkgConfig::SDL2_lib)
+    else()
+        message(FATAL_ERROR "SDL2 not found")
+    endif()
 endif()
-target_link_libraries(${CORE_TARGET} PUBLIC SDL2::SDL2)
 
 # ######################################################
 # ##### SDL2_image
 
-find_package(SDL2_image REQUIRED)
-if(SDL2_image_FOUND)
+find_package(SDL_image QUIET)
+if(TARGET SDL2_image::SDL2_image)
     message(STATUS "Found library: SDL2_image")
+    target_link_libraries(${CORE_TARGET} PUBLIC SDL2_image::SDL2_image)
 else()
-    message(FATAL_ERROR "SDL2_image not found")
+    # Try pkg config
+    pkg_search_module(SDL2_image_lib REQUIRED SDL2_image IMPORTED_TARGET)
+    if(SDL2_image_lib_FOUND)
+        target_link_libraries(${CORE_TARGET} PUBLIC PkgConfig::SDL2_image_lib)
+    else()
+        message(FATAL_ERROR "SDL2_image not found")
+    endif()
 endif()
-target_link_libraries(${CORE_TARGET} PUBLIC SDL2_image::SDL2_image)
 
 # ######################################################
 # ##### SDL2_sound (shared library)
@@ -179,7 +210,7 @@ FetchContent_Declare( SDL2_sound_project
 set(SDLSOUND_BUILD_TEST OFF CACHE INTERNAL "")
 
 FetchContent_MakeAvailable(SDL2_sound_project)
-target_link_libraries(${CORE_TARGET} PUBLIC SDL2_sound)
+target_link_libraries(${CORE_TARGET} PUBLIC SDL2_sound::SDL2_sound)
 
 # ######################################################
 # ##### OpenAL-soft
@@ -194,7 +225,11 @@ set(ALSOFT_INSTALL_UTILS OFF CACHE INTERNAL "")
 set(ALSOFT_NO_CONFIG_UTIL OFF CACHE INTERNAL "")
 set(ALSOFT_STATIC_LIBGCC`ON CACHE INTERNAL "")
 set(ALSOFT_STATIC_STDCXX`ON CACHE INTERNAL "")
-set(ALSOFT_REQUIRE_WASAPI ON CACHE INTERNAL "")
+if(UNIX)
+
+elseif(WIN32)
+    set(ALSOFT_REQUIRE_WASAPI ON CACHE INTERNAL "")
+endif()
 set(LIBTYPE SHARED CACHE INTERNAL "")
 
 FetchContent_MakeAvailable(openal_soft_project)
@@ -213,25 +248,19 @@ target_link_libraries(${CORE_TARGET} PUBLIC $<$<BOOL:$<TARGET_PROPERTY:CONFIG_CO
 # ######################################################
 # ##### glm
 find_package(glm QUIET)
-
-if(NOT glm_FOUND)
-    message(STATUS "Fetching glm...")
-    FetchContent_Declare(
-        glm_project
-        GIT_REPOSITORY https://github.com/g-truc/glm
-        GIT_TAG 0.9.9.8
-        GIT_SHALLOW TRUE
-        SOURCE_DIR ${PROJECT_LIBRARY_SOURCE_DIR}/glm
-        UPDATE_DISCONNECTED ON
-    )
-    FetchContent_MakeAvailable(glm_project)
-elseif(glm_VERSION VERSION_GREATER_EQUAL "0.9.9")
-    message(STATUS "Found glm: ${glm_VERSION}")
+if(TARGET glm::glm)
+    message(STATUS "Found library: SDL2")
+    target_link_libraries(${CORE_TARGET} PUBLIC glm::glm)
 else()
-    message(FATAL_ERROR "glm not found")
+    # Try pkg config
+    pkg_search_module(glm_lib REQUIRED glm IMPORTED_TARGET)
+    if(glm_lib_FOUND)
+        target_link_libraries(${CORE_TARGET} PUBLIC PkgConfig::glm_lib)
+    else()
+        message(FATAL_ERROR "glm not found")
+    endif()
 endif()
 
-target_link_libraries(${CORE_TARGET} PUBLIC glm)
 
 # ######################################################
 # ##### OpenGL
