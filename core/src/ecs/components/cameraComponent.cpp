@@ -4,16 +4,6 @@
 
 #include <core/utils/logging.hpp>
 
-std::ostream& operator<<(std::ostream& os, const CameraComponent::Projection& p) {
-    if( p == CameraComponent::Projection::Perspective ) 
-        return os << "Perspective";
-    if( p == CameraComponent::Projection::Orthographic ) 
-        return os << "Orthographic";
-    return os;
-}
-
-template <> struct fmt::formatter<CameraComponent::Projection> : ostream_formatter {};
-
 constexpr glm::mat4 identityMatrix = glm::mat4(1.0f);
 
 CameraComponent::CameraComponent()  = default;
@@ -88,7 +78,7 @@ void CameraComponent::updateMatrix()
         this->updatePerspectiveMatrix();
         break;
     default:
-        L_THROW_RUNTIME("Unhandled camera projection mode: {}", this->m_projection);
+        L_THROW_RUNTIME("Unhandled camera projection mode: {}", static_cast<int>(this->m_projection));
     }
     /** @todo: this needs fixing together with transformComponent local space translation */
     this->m_viewMatrix = glm::mat4_cast(m_transform->getOrientation())
