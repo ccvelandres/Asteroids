@@ -19,3 +19,11 @@
 [submodule "core/lib/spdlog"]
 	path = core/lib/spdlog
 	url = https://github.com/gabime/spdlog.git
+[submodule "core/lib/SDL_image"]
+	path = core/lib/SDL_image
+	url = https://github.com/libsdl-org/SDL_image
+	branch = SDL2
+[submodule "core/lib/SDL"]
+	path = core/lib/SDL
+	url = https://github.com/libsdl-org/SDL
+	branch = SDL2
