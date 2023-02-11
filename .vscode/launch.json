@@ -5,61 +5,25 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "(lldb) Launch",
+            "name": "(lldb) Linux",
             "type": "lldb",
             "request": "launch",
-            "linux": {
-                "cwd": "${workspaceFolder}/build/native/debug/logic",
-                "program": "${workspaceFolder}/build/native/debug/logic/sample",
-            },
+            "cwd": "${workspaceFolder}/build/linux/logic",
+            "program": "${workspaceFolder}/build/linux/logic/sample",
             "env": {
                 "__NV_PRIME_RENDER_OFFLOAD": "1",
                 "__GLX_VENDOR_LIBRARY_NAME": "nvidia"
             },
-            "preLaunchTask": "Rebuild:NativeSample"
+            "preLaunchTask": "Rebuild:linux"
         },
         {
-            "name": "(lldb) Launch References - OpenGL",
+            "name": "(lldb) Linux",
             "type": "lldb",
             "request": "launch",
-            "linux": {
-                "cwd": "${workspaceFolder}/build/linux/out/references/opengl",
-                "program": "${workspaceFolder}/build/linux/out/references/opengl/${input:OpenGLTargets}",
-            },
-            "preLaunchTask": "Build:Debug",
-            "env": {
-                "__NV_PRIME_RENDER_OFFLOAD": "1",
-                "__GLX_VENDOR_LIBRARY_NAME": "nvidia"
-            }
+            "cwd": "${workspaceFolder}/build/win64/logic",
+            "program": "${workspaceFolder}/build/win64/logic/sample",
+            "preLaunchTask": "Rebuild:win64"
         },
-        {
-            "name": "(lldb) Launch References - GLM",
-            "type": "lldb",
-            "request": "launch",
-            "linux": {
-                "cwd": "${workspaceFolder}/build/linux/out/references/glm",
-                "program": "${workspaceFolder}/build/linux/out/references/glm/${input:GLMTargets}",
-            },
-            "preLaunchTask": "Build:Debug",
-            "env": {
-                "__NV_PRIME_RENDER_OFFLOAD": "1",
-                "__GLX_VENDOR_LIBRARY_NAME": "nvidia"
-            }
-        },
-        {
-            "name": "(lldb) Launch Examples",
-            "type": "lldb",
-            "request": "launch",
-            "linux": {
-                "cwd": "${workspaceFolder}/build/linux/out/examples/${input:Examples}",
-                "program": "${workspaceFolder}/build/linux/out/examples/${input:Examples}/${input:Examples}",
-            },
-            "preLaunchTask": "Build:Debug",
-            "env": {
-                "__NV_PRIME_RENDER_OFFLOAD": "1",
-                "__GLX_VENDOR_LIBRARY_NAME": "nvidia"
-            }
-        }
     ],
     "inputs": [
         {

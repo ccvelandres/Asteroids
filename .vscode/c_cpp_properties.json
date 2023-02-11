@@ -1,7 +1,7 @@
 {
     "configurations": [
         {
-            "name": "Native",
+            "name": "linux",
             "includePath": [
                 "${workspaceFolder}/**",
                 "${workspaceFolder}/build/native/debug/Kconfig/include/generated",
@@ -27,6 +27,32 @@
                 "${workspaceFolder}/build/native/debug//Kconfig/include/generated/config.h"
             ],
             "dotConfig": "${workspaceFolder}/build/native/debug/Kconfig/.config"
+        },
+        {
+            "name": "win64",
+            "includePath": [
+                "${workspaceFolder}/**",
+                "${workspaceFolder}/build/win64/Kconfig/include/generated",
+                "${workspaceFolder}/lib/**",
+                "${workspaceFolder}/core/lib/SDL_sound/src",
+                "${workspaceFolder}/core/lib/openal-soft/al",
+                "${workspaceFolder}/core/lib/openal-soft/alc",
+                "C:/msys64/ucrt64/include/SDL2"
+            ],
+            "defines": [
+                "BUILD_WITH_EASY_PROFILER",
+                "CORE_UTILS_QUEUE_ENABLE_STDMUTEX",
+                "CORE_UTILS_QUEUE_ENABLE_LOCKFREE",
+                "CORE_UTILS_QUEUE_IMPL_USE_LOCKFREE"
+            ],
+            "compilerPath": "C:/msys64/ucrt64/bin/gcc",
+            "cStandard": "c99",
+            "cppStandard": "c++17",
+            "intelliSenseMode": "${default}",
+            "forcedInclude": [
+                "${workspaceFolder}/build/win64/Kconfig/include/generated/config.h"
+            ],
+            "dotConfig": "${workspaceFolder}/build/win64/Kconfig/.config"
         }
     ],
     "version": 4
