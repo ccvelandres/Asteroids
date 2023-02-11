@@ -16,3 +16,6 @@
 [submodule "core/lib/assimp"]
 	path = core/lib/assimp
 	url = https://github.com/assimp/assimp
+[submodule "core/lib/spdlog"]
+	path = core/lib/spdlog
+	url = https://github.com/gabime/spdlog.git
