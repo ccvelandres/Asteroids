@@ -6,7 +6,6 @@ choice
     help
         This option selects the underlying implementation for thread-safe queues
         used within the core library
-
         When in doubt, use STDMUTEX
 
     config CORE_QUEUE_DEFAULT_STDMUTEX

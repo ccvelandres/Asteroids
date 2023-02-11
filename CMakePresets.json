@@ -2,28 +2,41 @@
     "version": 3,
     "configurePresets": [
         {
-            "name": "native",
+            "name": "linux",
             "displayName": "Examples",
-            "binaryDir": "build/native/debug",
-            "description": "Debug build",
+            "binaryDir": "build/linux",
+            "description": "Linux Native Build",
             "cacheVariables": {
                 "CMAKE_BUILD_TYPE": "Debug",
                 "KCONFIG_DEFCONFIG": "defconfig",
                 "BUILD_SHARED_LIBS": "ON",
-                "KCONFIG_KBUILD_DIR": "../kconfig/kbuild-standalone/build/kconfig"
+                "KCONFIG_KBUILD_DIR": "../kbuild-standalone/build/kconfig"
+            }
+        },
+        {
+            "name": "win64",
+            "displayName": "MSYS2 Windows",
+            "binaryDir": "build/win64",
+            "generator": "MinGW Makefiles",
+            "description": "MSYS2 Windows Build",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Debug",
+                "KCONFIG_DEFCONFIG": "defconfig",
+                "BUILD_SHARED_LIBS": "ON",
+                "KCONFIG_KBUILD_DIR": "../kbuild-standalone/build/kconfig"
             }
         }
     ],
     "buildPresets": [
         {
-            "name": "native",
-            "configurePreset": "native"
+            "name": "linux",
+            "configurePreset": "linux"
         }
     ],
     "testPresets": [
         {
             "name": "core_ut",
-            "configurePreset": "native"
+            "configurePreset": "linux"
         }
     ]
 }

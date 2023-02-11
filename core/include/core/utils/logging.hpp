@@ -11,10 +11,13 @@
  */
 
 #include <exception>
+#include <stdexcept>
 #include <cstddef>
 
 #include "profiler.hpp"
 #include <fmt/core.h>
+#include <fmt/format.h>
+#include <fmt/ostream.h>
 
 namespace core::utils::logging
 {

@@ -20,6 +20,7 @@ namespace core::utils::platform
 
 #elif _WIN32
 #include <libloaderapi.h>
+#include <errhandlingapi.h>
 #else
 #error "Could not detect platform"
 #endif
@@ -34,9 +35,10 @@ namespace core::utils::platform
 #ifdef __linux__
         return std::filesystem::canonical("/proc/self/exe").parent_path();
 #elif _WIN32
-        constexpr int MAX_PATH = 256;
-        TCHAR         szPath[MAX_PATH];
-        if (!GetModuleFileName(NULL, szPath, MAX_PATH))
+        L_TAG("getProjectPath");
+        constexpr int max_path_length = 256;
+        TCHAR         szPath[max_path_length];
+        if (!GetModuleFileName(NULL, szPath, max_path_length))
         {
             L_THROW(std::runtime_error, "Could not retrieve module path (%d)" , GetLastError());
         }

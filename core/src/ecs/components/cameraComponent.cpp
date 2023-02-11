@@ -4,6 +4,16 @@
 
 #include <core/utils/logging.hpp>
 
+std::ostream& operator<<(std::ostream& os, const CameraComponent::Projection& p) {
+    if( p == CameraComponent::Projection::Perspective ) 
+        return os << "Perspective";
+    if( p == CameraComponent::Projection::Orthographic ) 
+        return os << "Orthographic";
+    return os;
+}
+
+template <> struct fmt::formatter<CameraComponent::Projection> : ostream_formatter {};
+
 constexpr glm::mat4 identityMatrix = glm::mat4(1.0f);
 
 CameraComponent::CameraComponent()  = default;

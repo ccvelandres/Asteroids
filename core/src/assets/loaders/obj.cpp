@@ -4,6 +4,7 @@
 #include <fstream>
 #include <string>
 #include <vector>
+#include <array>
 
 #include <utils/logging.hpp>
 #include <utils/profiler.hpp>

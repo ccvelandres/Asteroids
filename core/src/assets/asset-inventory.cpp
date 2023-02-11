@@ -45,8 +45,8 @@ AssetInventory::AssetInventory()
             for (const auto &path : fs::recursive_directory_iterator(dir.path()))
             {
                 if (path.is_directory()) continue;
-                std::string assetPath = fs::relative(path.path(), projectDirectory);
-                std::string assetName = fs::relative(path.path(), dir.path());
+                std::string assetPath = fs::relative(path.path(), projectDirectory).string();
+                std::string assetName = fs::relative(path.path(), dir.path()).string();
                 // Strip extension if needed
                 if (res->second.first)
                 {
