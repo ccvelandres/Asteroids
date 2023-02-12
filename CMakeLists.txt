@@ -17,6 +17,14 @@ set(BUILD_SHARED_LIBS ON)
 set(CMAKE_C_STANDARD 99) # Requires C11 standard
 set(CMAKE_CXX_STANDARD 17) # Requires C++20 standard
 
+if(WIN32)
+    add_link_options(-static)
+endif()
+# set(CMAKE_CXX_STANDARD_LIBRARIES "-static-libgcc -static-libstdc++ -lwsock32 -lws2_32 ${CMAKE_CSS_STANDARD_LIBRARIES}")
+# set (CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -Wl,-Bstatic,--whole-archive -lwinpthread -Wl,--no-whole-archive")
+# set(CMAKE_CXX_STANDARD_LIBRARIES "-static-libgcc -static-libstdc++ -lwsock32 -lws2_32 ${CMAKE_CXX_STANDARD_LIBRARIES}")
+# set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -static -Wl,-allow-multiple-definition")
+
 # ################################################################
 # # Project Settings
 get_filename_component(PROJECT_FOLDER_NAME ${CMAKE_CURRENT_LIST_DIR} NAME)
@@ -28,10 +36,6 @@ set(PROJECT_ROOT "${CMAKE_SOURCE_DIR}")
 set(PROJECT_LIBRARY_SOURCE_DIR "${CMAKE_SOURCE_DIR}/lib")
 set(PROJECT_LIBRARY_BINARY_DIR "${CMAKE_BINARY_DIR}/lib")
 set(PROJECT_LIBRARY_INSTALL_DIR "${CMAKE_BINARY_DIR}/install")
-
-if(WIN32)
-    add_link_options(-static-libgcc -static-libstdc++)
-endif()
 
 # ################################################################
 # # Libraries

@@ -105,6 +105,19 @@ Executable at `./build/linux/sample`
 
 ## Windows 
 
+### MSYS2 Packages
+
+#### MINGW-W64
+```bash
+make python3 ncurses-devel mingw-w64-x86_64-cmake mingw-w64-x86_64-make mingw-w64-x86_64-gcc  mingw-w64-x86_64-ninja diffutils bison flex mingw-w64-x86_64-freetype mingw-w64-x86_64-SDL2 mingw-w64-x86_64-SDL2_image mingw-w64-x86_64-nlohmann-json mingw-w64-x86_64-spdlog mingw-w64-x86_64-glm mingw-w64-x86_64-glew mingw-w64-x86_64-fmt
+```
+
+#### UCRT64
+```bash
+python3 ncurses-devel mingw-w64-ucrt-x86_64-toolchain mingw-w64-ucrt-x86_64-cmake mingw-w64-ucrt-x86_64-make mingw-w64-ucrt-x86_64-gcc  mingw-w64-ucrt-x86_64-ninja diffutils bison flex mingw-w64-ucrt-x86_64-freetype mingw-w64-ucrt-x86_64-SDL2 mingw-w64-ucrt-x86_64-SDL2_image mingw-w64-ucrt-x86_64-nlohmann-json mingw-w64-ucrt-x86_64-spdlog mingw-w64-ucrt-x86_64-glm mingw-w64-ucrt-x86_64-glew mingw-w64-ucrt-x86_64-fmt
+```
+
+mingw-w64-x86_64-gcc mingw-w64-x86_64-ncurses
 # References
 - https://vulkan-tutorial.com/Introduction
 - http://marcelbraghetto.github.io/a-simple-triangle/
