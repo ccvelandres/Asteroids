@@ -14,10 +14,10 @@
                 "__NV_PRIME_RENDER_OFFLOAD": "1",
                 "__GLX_VENDOR_LIBRARY_NAME": "nvidia"
             },
-            "preLaunchTask": "Rebuild:linux"
+            "preLaunchTask": "Rebuild:linux",
         },
         {
-            "name": "(lldb) Linux",
+            "name": "(lldb) Win64",
             "type": "lldb",
             "request": "launch",
             "cwd": "${workspaceFolder}/build/win64/logic",

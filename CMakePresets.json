@@ -17,7 +17,7 @@
             "name": "win64",
             "displayName": "MSYS2 Windows",
             "binaryDir": "build/win64",
-            "generator": "MinGW Makefiles",
+            "generator": "MSYS Makefiles",
             "description": "MSYS2 Windows Build",
             "cacheVariables": {
                 "CMAKE_BUILD_TYPE": "Debug",
@@ -31,6 +31,10 @@
         {
             "name": "linux",
             "configurePreset": "linux"
+        },
+        {
+            "name": "win64",
+            "configurePreset": "win64"
         }
     ],
     "testPresets": [

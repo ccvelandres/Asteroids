@@ -4,28 +4,34 @@
     "version": "2.0.0",
     "tasks": [
         {
-            "label": "Configure:Native",
-            "linux":{
-                "command": "cmake",
-                "args": [
-                    "--preset=native"
-                ]
-            },
+            "label": "Configure:linux",
+            "command": "cmake",
+            "args": [
+                "--preset=linux"
+            ],
             "problemMatcher": [
                 "$gcc"
             ]
         },
         {
-            "label": "Build:NativeSample",
-            "linux":{
-                "command": "cmake",
-                "args": [
-                    "--build",
-                    "--preset=native",
-                    "--target", "sample",
-                    "--parallel"
-                ],
-            },
+            "label": "Configure:win64",
+            "command": "cmake",
+            "args": [
+                "--preset=win64"
+            ],
+            "problemMatcher": [
+                "$gcc"
+            ]
+        },
+        {
+            "label": "Build:linux",
+            "command": "cmake",
+            "args": [
+                "--build",
+                "--preset=linux",
+                "--target", "sample",
+                "--parallel"
+            ],
             "problemMatcher": [
                 "$gcc"
             ],
@@ -34,21 +40,57 @@
                 "isDefault": true
             },
             "dependsOn": [
-                "Configure:Native"
+                "Configure:linux"
             ],
             "dependsOrder": "sequence"
         },
         {
-            "label": "Rebuild:NativeSample",
-            "linux":{
-                "command": "cmake",
-                "args": [
-                    "--build",
-                    "--preset=native",
-                    "--target", "sample",
-                    "--parallel"
-                ],
+            "label": "Build:win64",
+            "command": "cmake",
+            "args": [
+                "--build",
+                "--preset=win64",
+                "--target", "sample",
+                "--parallel"
+            ],
+            "problemMatcher": [
+                "$gcc"
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": true
             },
+            "dependsOn": [
+                "Configure:win64"
+            ],
+            "dependsOrder": "sequence"
+        },
+        {
+            "label": "Rebuild:linux",
+            "command": "cmake",
+            "args": [
+                "--build",
+                "--preset=linux",
+                "--target", "sample",
+                "--parallel"
+            ],
+            "problemMatcher": [
+                "$gcc"
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+        },
+        {
+            "label": "Rebuild:win64",
+            "command": "cmake",
+            "args": [
+                "--build",
+                "--preset=win64",
+                "--target", "sample",
+                "--parallel"
+            ],
             "problemMatcher": [
                 "$gcc"
             ],
@@ -59,15 +101,13 @@
         },
         {
             "label": "Build:Profiler",
-            "linux":{
-                "command": "cmake",
-                "args": [
-                    "--build",
-                    "--preset=native",
-                    "--target", "profiler_gui",
-                    "--parallel"
-                ],
-            }
+            "command": "cmake",
+            "args": [
+                "--build",
+                "--preset=native",
+                "--target", "easy_profiler_project",
+                "--parallel"
+            ]
         },
         {
             "label": "Launch:Profiler",
