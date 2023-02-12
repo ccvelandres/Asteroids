@@ -3,6 +3,8 @@ include(Kconfig)
 message(STATUS "-------- LOGIC ---------")
 kconfig_add_kconfig("${CMAKE_CURRENT_LIST_DIR}/Kconfig")
 
+find_package(SDL2 REQUIRED)
+
 file(GLOB_RECURSE SRC_C_LOGIC ${CMAKE_CURRENT_SOURCE_DIR}/src/*.c)
 file(GLOB_RECURSE SRC_CPP_LOGIC ${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp)
 
@@ -17,4 +19,5 @@ target_compile_definitions(sample PUBLIC SDL_MAIN_HANDLED)
 add_custom_command(TARGET sample POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_RUNTIME_DLLS:sample> $<TARGET_FILE_DIR:sample>
         COMMAND_EXPAND_LISTS)
+
 message(STATUS "------------------------")

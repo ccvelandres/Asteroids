@@ -12,13 +12,19 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 # set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/out")
 # set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/out")
 # set(CMAKE_DOCS_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/docs")
-set(BUILD_SHARED_LIBS ON)
 
 set(CMAKE_C_STANDARD 99) # Requires C11 standard
 set(CMAKE_CXX_STANDARD 17) # Requires C++20 standard
 
-if(WIN32)
-    add_link_options(-static)
+if(UNIX)
+    set(BUILD_SHARED_LIBS ON CACHE INTERNAL "")
+elseif(WIN32)
+    set(BUILD_SHARED_LIBS OFF CACHE INTERNAL "")
+    # set(CMAKE_REQUIRED_LIBRARIES -static-libgcc -static-libstdc++ -lwsock32 -lws2_32)
+    # set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -static -mconsole -Wl,-allow-multiple-definition  -Wl,-Bstatic,--whole-archive")
+    # add_link_options(-static -mconsole)
+    set(CMAKE_CXX_STANDARD_LIBRARIES "-static-libgcc -static-libstdc++ -lwsock32 -lws2_32 ${CMAKE_CSS_STANDARD_LIBRARIES}")
+    set (CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -Wl,-Bstatic,--whole-archive -lwinpthread -Wl,--no-whole-archive")
 endif()
 # set(CMAKE_CXX_STANDARD_LIBRARIES "-static-libgcc -static-libstdc++ -lwsock32 -lws2_32 ${CMAKE_CSS_STANDARD_LIBRARIES}")
 # set (CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -Wl,-Bstatic,--whole-archive -lwinpthread -Wl,--no-whole-archive")
