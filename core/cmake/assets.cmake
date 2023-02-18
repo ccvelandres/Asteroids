@@ -8,13 +8,12 @@ if(__CORE_ASSETS_CMAKE_INCLUDE_GUARD__)
 endif()
 
 function(core_set_asset_directory path)
-    message(STATUS "Adding asset directory: ${path}")
+    message(STATUS "Setting asset build directory: ${path}")
 
     set_property(GLOBAL PROPERTY CORE_ASSET_BINARY_DIR ${path})
 endfunction()
 
 function(core_get_asset_directory path)
-    message(STATUS "Adding asset directory: ${path}")
     get_property(_asset_bindir GLOBAL PROPERTY CORE_ASSET_BINARY_DIR)
     set(${path} ${_asset_bindir} PARENT_SCOPE)
 endfunction()
