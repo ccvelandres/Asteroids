@@ -40,6 +40,7 @@
                 "C:/msys64/ucrt64/include/SDL2"
             ],
             "defines": [
+                "SDL_MAIN_HANDLED",
                 "BUILD_WITH_EASY_PROFILER",
                 "CORE_UTILS_QUEUE_ENABLE_STDMUTEX",
                 "CORE_UTILS_QUEUE_ENABLE_LOCKFREE",
