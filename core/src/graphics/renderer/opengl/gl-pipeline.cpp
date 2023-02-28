@@ -46,6 +46,80 @@ static GLuint compileShader(const GLenum shaderType, const std::string &shaderSo
     return shaderId;
 }
 
+static GLuint compileShader(const GLenum                               shaderType,
+                            const core::graphics::Shader::ShaderStage &shaderStage)
+{
+    L_TAG("compileShader");
+
+    const char *shaderData       = shaderStage.binaryData.data();
+    GLint       shaderDataLength = shaderStage.binaryData.size();
+    GLuint      shaderId         = glCreateShader(shaderType);
+
+    glShaderSource(shaderId, 1, &shaderData, &shaderDataLength);
+    glCompileShader(shaderId);
+
+    GLint res;
+    glGetShaderiv(shaderId, GL_COMPILE_STATUS, &res);
+
+    if (res != GL_TRUE)
+    {
+        GLint messageLength;
+        glGetShaderiv(shaderId, GL_INFO_LOG_LENGTH, &messageLength);
+        std::string msg(messageLength + 1, '\0');
+        glGetShaderInfoLog(shaderId, messageLength, nullptr, msg.data());
+        L_THROW_RUNTIME("{} failed to compile: {}", shaderStage.path, msg);
+    }
+
+    return shaderId;
+}
+
+static GLuint createPipelineProgram(const core::graphics::Shader &shader)
+{
+    L_TAG("createPipelineProgram");
+
+    GLuint              shaderProgramId = glCreateProgram();
+    std::vector<GLuint> shaderIds(shader.stageCount());
+
+    for (auto &shaderStage : shader.getShaderStages())
+    {
+        GLenum shaderType = OpenGLPipeline::shaderTypeFromType(shaderStage.shaderType);
+        GLuint shaderId   = ::compileShader(shaderType, shaderStage);
+        shaderIds.push_back(shaderId);
+        glAttachShader(shaderProgramId, shaderId);
+        L_TRACE("Compiled shader. {}: {}", shaderId, shaderStage.path);
+    }
+
+    /** Bind vertex indices to expected indices */
+    glBindAttribLocation(shaderProgramId, 0, "a_v");  // geometry vertice
+    glBindAttribLocation(shaderProgramId, 1, "a_vn"); // normals
+    glBindAttribLocation(shaderProgramId, 2, "a_vt"); // texture coordinates
+    glBindAttribLocation(shaderProgramId, 3, "a_t");  // tangents
+    glBindAttribLocation(shaderProgramId, 5, "a_bt"); // bitangents
+
+    /** Link and check result */
+    GLint res;
+    glLinkProgram(shaderProgramId);
+    glGetProgramiv(shaderProgramId, GL_LINK_STATUS, &res);
+
+    if (res != GL_TRUE)
+    {
+        GLint messageLength;
+        glGetProgramiv(shaderProgramId, GL_INFO_LOG_LENGTH, &messageLength);
+        std::string msg(messageLength + 1, '\0');
+        glGetProgramInfoLog(shaderProgramId, messageLength, nullptr, msg.data());
+        L_THROW_RUNTIME("Shader program failed to link: {}", msg);
+    }
+
+    /** Cleanup files */
+    for (const auto &shader : shaderIds)
+    {
+        glDetachShader(shaderProgramId, shader);
+        glDeleteShader(shader);
+    }
+
+    return shaderProgramId;
+}
+
 static GLuint createPipelineProgram(const std::vector<OpenGLPipeline::ShaderStage> &shaderStages)
 {
     L_TAG("createPipelineProgram");
@@ -63,9 +137,11 @@ static GLuint createPipelineProgram(const std::vector<OpenGLPipeline::ShaderStag
     }
 
     /** Bind vertex indices to expected indices */
-    glBindAttribLocation(shaderProgramId, 0, "a_v");
-    glBindAttribLocation(shaderProgramId, 1, "a_vn");
-    glBindAttribLocation(shaderProgramId, 2, "a_vt");
+    glBindAttribLocation(shaderProgramId, 0, "a_v");  // geometry vertice
+    glBindAttribLocation(shaderProgramId, 1, "a_vn"); // normals
+    glBindAttribLocation(shaderProgramId, 2, "a_vt"); // texture coordinates
+    glBindAttribLocation(shaderProgramId, 3, "a_t");  // tangents
+    glBindAttribLocation(shaderProgramId, 5, "a_bt"); // bitangents
 
     /** Link and check result */
     GLint res;
@@ -147,6 +223,8 @@ struct OpenGLPipeline::Internal
     const GLint                                            sa_vertices;
     const GLint                                            sa_vertexNormals;
     const GLint                                            sa_textureVertice;
+    const GLint                                            sa_tangents;
+    const GLint                                            sa_bitangents;
     const std::unordered_map<std::string, UniformConfig>   uniforms;
     const std::unordered_map<std::string, AttributeConfig> attributes;
 
@@ -157,6 +235,8 @@ struct OpenGLPipeline::Internal
           sa_vertices(glGetAttribLocation(shaderProgramId, "a_v")),
           sa_vertexNormals(glGetAttribLocation(shaderProgramId, "a_vn")),
           sa_textureVertice(glGetAttribLocation(shaderProgramId, "a_vt")),
+          sa_tangents(glGetAttribLocation(shaderProgramId, "a_t")),
+          sa_bitangents(glGetAttribLocation(shaderProgramId, "a_bt")),
           uniforms(::getProgramUniforms(shaderProgramId)),
           attributes(::getProgramAttributes(shaderProgramId))
     {
@@ -165,7 +245,27 @@ struct OpenGLPipeline::Internal
         L_TRACE("Internal resources initialized ({})", static_cast<void *>(this));
     }
 
-    void setUniform(const UniformConfig &uniform, void *data, std::size_t dataLength, GLboolean transpose = GL_FALSE)
+    Internal(const std::string &name, const core::graphics::Shader &shader)
+        : pipelineName(name),
+          shaderProgramId(::createPipelineProgram(shader)),
+          su_mvp(glGetUniformLocation(shaderProgramId, "u_mvp")),
+          sa_vertices(glGetAttribLocation(shaderProgramId, "a_v")),
+          sa_vertexNormals(glGetAttribLocation(shaderProgramId, "a_vn")),
+          sa_textureVertice(glGetAttribLocation(shaderProgramId, "a_vt")),
+          sa_tangents(glGetAttribLocation(shaderProgramId, "a_t")),
+          sa_bitangents(glGetAttribLocation(shaderProgramId, "a_bt")),
+          uniforms(::getProgramUniforms(shaderProgramId)),
+          attributes(::getProgramAttributes(shaderProgramId))
+    {
+        L_TAG("OpenGLPipeline::Internal");
+        L_DEBUG("Pipeline \"{}\" created with {} shaders", pipelineName, shader.stageCount());
+        L_TRACE("Internal resources initialized ({})", static_cast<void *>(this));
+    }
+
+    void setUniform(const UniformConfig &uniform,
+                    void                *data,
+                    std::size_t          dataLength,
+                    GLboolean            transpose = GL_FALSE)
     {
         L_TAG("OpenGLPipeline::setUniform");
 
@@ -173,7 +273,11 @@ struct OpenGLPipeline::Internal
          *  lambda so compiler can do what's best and cleaner code
          */
         auto sizeCheck = [this](std::size_t a, std::size_t b) {
-            L_ASSERT(a <= b, "Pipeline {}: Expected data length ({}), got ({})", this->shaderProgramId, a, b);
+            L_ASSERT(a <= b,
+                     "Pipeline {}: Expected data length ({}), got ({})",
+                     this->shaderProgramId,
+                     a,
+                     b);
         };
 
         switch (uniform.type)
@@ -255,20 +359,38 @@ struct OpenGLPipeline::Internal
         /** Configure and pass geometry vertices */
         GLsizei offsetV = mesh.getOffsetPosition();
         glEnableVertexAttribArray(sa_vertices);
-        glVertexAttribPointer(sa_vertices, 3, GL_FLOAT, GL_FALSE, stride, reinterpret_cast<const void *>(offsetV));
+        glVertexAttribPointer(sa_vertices,
+                              3,
+                              GL_FLOAT,
+                              GL_FALSE,
+                              stride,
+                              reinterpret_cast<const void *>(offsetV));
 
         /** Configure and pass vertex normals */
         GLsizei offsetVN = mesh.getOffsetNormals();
         glEnableVertexAttribArray(sa_vertexNormals);
-        glVertexAttribPointer(sa_vertexNormals, 3, GL_FLOAT, GL_FALSE, stride, reinterpret_cast<const void *>(offsetVN));
+        glVertexAttribPointer(sa_vertexNormals,
+                              3,
+                              GL_FLOAT,
+                              GL_FALSE,
+                              stride,
+                              reinterpret_cast<const void *>(offsetVN));
 
         /** Configure and pass uv coordinates */
         GLsizei offsetVT = mesh.getOffsetTexCoords();
         glEnableVertexAttribArray(sa_textureVertice);
-        glVertexAttribPointer(sa_textureVertice, 3, GL_FLOAT, GL_FALSE, stride, reinterpret_cast<const void *>(offsetVT));
+        glVertexAttribPointer(sa_textureVertice,
+                              3,
+                              GL_FLOAT,
+                              GL_FALSE,
+                              stride,
+                              reinterpret_cast<const void *>(offsetVT));
 
         /** Render mesh with wireframe */
-        glDrawElements(GL_TRIANGLES, mesh.getIndiceCount(), GL_UNSIGNED_INT, reinterpret_cast<const GLvoid *>(0));
+        glDrawElements(GL_TRIANGLES,
+                       mesh.getIndiceCount(),
+                       GL_UNSIGNED_INT,
+                       reinterpret_cast<const GLvoid *>(0));
 
         glDisableVertexAttribArray(sa_vertices);
         glDisableVertexAttribArray(sa_vertexNormals);
@@ -301,18 +423,36 @@ struct OpenGLPipeline::Internal
 
         /** Configure and pass geometry vertices */
         glEnableVertexAttribArray(sa_vertices);
-        glVertexAttribPointer(sa_vertices, 3, GL_FLOAT, GL_FALSE, stride, reinterpret_cast<const void *>(offsetV));
+        glVertexAttribPointer(sa_vertices,
+                              3,
+                              GL_FLOAT,
+                              GL_FALSE,
+                              stride,
+                              reinterpret_cast<const void *>(offsetV));
 
         /** Configure and pass vertex normals */
         glEnableVertexAttribArray(sa_vertexNormals);
-        glVertexAttribPointer(sa_vertexNormals, 3, GL_FLOAT, GL_FALSE, stride, reinterpret_cast<const void *>(offsetVN));
+        glVertexAttribPointer(sa_vertexNormals,
+                              3,
+                              GL_FLOAT,
+                              GL_FALSE,
+                              stride,
+                              reinterpret_cast<const void *>(offsetVN));
 
         /** Configure and pass uv coordinates */
         glEnableVertexAttribArray(sa_textureVertice);
-        glVertexAttribPointer(sa_textureVertice, 2, GL_FLOAT, GL_FALSE, stride, reinterpret_cast<const void *>(offsetVT));
+        glVertexAttribPointer(sa_textureVertice,
+                              2,
+                              GL_FLOAT,
+                              GL_FALSE,
+                              stride,
+                              reinterpret_cast<const void *>(offsetVT));
 
         /** Render mesh with wireframe */
-        glDrawElements(GL_TRIANGLES, mesh.getIndiceCount(), GL_UNSIGNED_INT, reinterpret_cast<const GLvoid *>(0));
+        glDrawElements(GL_TRIANGLES,
+                       mesh.getIndiceCount(),
+                       GL_UNSIGNED_INT,
+                       reinterpret_cast<const GLvoid *>(0));
 
         glDisableVertexAttribArray(sa_vertices);
         glDisableVertexAttribArray(sa_vertexNormals);
@@ -339,13 +479,16 @@ struct OpenGLPipeline::Internal
              */
             auto uniformConfig = uniforms.find(uniform.first);
             if (uniformConfig == uniforms.end()) continue;
-                // L_THROW_LOGIC("Pipeline {} does not have uniform named {}", shaderProgramId, uniform.first);
+            // L_THROW_LOGIC("Pipeline {} does not have uniform named {}", shaderProgramId, uniform.first);
 
             /** Sanity check that the expected type matches */
             L_ASSERT(uniformConfig->second.type == uniform.second.type,
                      "ShaderUniformType does not match given uniform type");
             /** Use helper function for setting uniform */
-            setUniform(uniformConfig->second, uniform.second.data, uniform.second.dataSize, uniform.second.matrixTransponse);
+            setUniform(uniformConfig->second,
+                       uniform.second.data,
+                       uniform.second.dataSize,
+                       uniform.second.matrixTransponse);
         }
 
         glDrawElements(renderInfo.drawInfo.drawMode,
@@ -360,14 +503,25 @@ OpenGLPipeline::OpenGLPipeline(const std::string &name, const std::vector<Shader
 {
 }
 
+OpenGLPipeline::OpenGLPipeline(const std::string &name, const core::graphics::Shader &shader)
+    : m_internal(std::make_unique<Internal>(name, shader))
+{
+    L_TAG("OpenGLPipeline::OpenGLPipeline");
+}
+
 OpenGLPipeline::OpenGLPipeline()                              = default;
 OpenGLPipeline::OpenGLPipeline(OpenGLPipeline &&o)            = default;
 OpenGLPipeline &OpenGLPipeline::operator=(OpenGLPipeline &&o) = default;
 OpenGLPipeline::~OpenGLPipeline()                             = default;
 
 /** @todo: need to deprecate these functions */
-void OpenGLPipeline::render(const OpenGLMesh &mesh, const glm::mat4 &mvp) const { m_internal->render(mesh, mvp); }
-void OpenGLPipeline::render(const OpenGLMesh &mesh, const OpenGLTexture &texture, const glm::mat4 &mvp) const
+void OpenGLPipeline::render(const OpenGLMesh &mesh, const glm::mat4 &mvp) const
+{
+    m_internal->render(mesh, mvp);
+}
+void OpenGLPipeline::render(const OpenGLMesh    &mesh,
+                            const OpenGLTexture &texture,
+                            const glm::mat4     &mvp) const
 {
     m_internal->render(mesh, texture, mvp);
 }
@@ -403,4 +557,37 @@ GLenum OpenGLPipeline::shaderTypeFromName(const std::string &name)
         return (*it).second;
     else
         L_THROW_RUNTIME("Could not identify shader type: {}", name);
+}
+
+GLenum OpenGLPipeline::shaderTypeFromType(const core::graphics::Shader::ShaderType &shaderType)
+{
+    L_TAG("OpenGLPipeline::shaderTypeFromName");
+
+    typedef typename core::graphics::Shader::ShaderType ShaderType;
+
+    const std::unordered_map<core::graphics::Shader::ShaderType, GLenum> shaderExtensions = {
+        {ShaderType::Vertex,          GL_VERTEX_SHADER         }, // Vertex Shader
+        {ShaderType::Vertex,          GL_VERTEX_SHADER         }, // Vertex Shader
+        {ShaderType::Fragment,        GL_FRAGMENT_SHADER       }, // Fragment Shader
+        {ShaderType::Fragment,        GL_FRAGMENT_SHADER       }, // Fragment Shader
+        {ShaderType::Geometry,        GL_GEOMETRY_SHADER       }, // Geometry Shader
+        {ShaderType::Geometry,        GL_GEOMETRY_SHADER       }, // Geometry Shader
+        {ShaderType::Compute,         GL_COMPUTE_SHADER        }, // Compute Shader
+        {ShaderType::TesselationCtrl, GL_TESS_CONTROL_SHADER   }, // Tesselation Control  Shader
+        {ShaderType::TesselationEval, GL_TESS_EVALUATION_SHADER}, // Tesselation Evaluation Shader
+        {ShaderType::RayGeneration,   GL_FALSE                 }, // Ray Generation shader
+        {ShaderType::RayIntersection, GL_FALSE                 }, // Ray Intersection shader
+        {ShaderType::RayAnyHit,       GL_FALSE                 }, // Ray Any-hit shader
+        {ShaderType::RayClosestHit,   GL_FALSE                 }, // Ray Closest-hit shader
+        {ShaderType::RayMiss,         GL_FALSE                 }, // Ray Miss shader
+        {ShaderType::RayCallable,     GL_FALSE                 }, // Ray Callable shader
+        {ShaderType::Mesh,            GL_FALSE                 }, // Mesh Shader
+        {ShaderType::Task,            GL_FALSE                 }  // Task Shader
+    };
+
+    auto it = shaderExtensions.find(shaderType);
+    if (it != shaderExtensions.end())
+        return (*it).second;
+    else
+        L_THROW_RUNTIME("Could not identify shader type: {}", shaderType);
 }

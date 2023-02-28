@@ -11,10 +11,11 @@
 #include <memory>
 #include <vector>
 #include <string>
-#include "gl-wrapper.hpp"
 
 #include <glm/glm.hpp>
 
+#include "../../shader.hpp"
+#include "gl-wrapper.hpp"
 #include "gl-mesh.hpp"
 #include "gl-texture.hpp"
 
@@ -75,6 +76,7 @@ public:
         DrawInfo drawInfo;
     };
 
+    OpenGLPipeline(const std::string &name, const core::graphics::Shader &shader);
     OpenGLPipeline(const std::string &name, const std::vector<ShaderStage> &shaderStages);
     ~OpenGLPipeline();
 
@@ -94,6 +96,14 @@ public:
      * @return GLenum type of shader
      */
     static GLenum shaderTypeFromName(const std::string &name);
+
+    /**
+     * @brief Identify type of shader based from ShaderType
+     *
+     * @param name shader name
+     * @return GLenum type of shader
+     */
+    static GLenum shaderTypeFromType(const core::graphics::Shader::ShaderType &shaderType);
 };
 
 /** @} endgroup OpenGL */

@@ -54,10 +54,18 @@ namespace core::graphics
     int Shader::addShaderStage(Shader::ShaderType shaderType, const AssetPath &name)
     {
         L_TAG("Shader::addShaderStage");
-        
-        this->addStage(shaderType, name);
+        int ret = this->addStage(shaderType, name);
         L_TRACE("Added shader stage: {}: {}", shaderType, name);
+
+        return ret;
     }
 
-
+    const std::vector<Shader::ShaderStage> &Shader::getShaderStages() const noexcept
+    {
+        return this->m_shaderStages;
+    }
+    std::size_t Shader::stageCount() const noexcept
+    {
+        return this->m_shaderStages.size();
+    }
 } // namespace core::graphics
