@@ -72,9 +72,10 @@ void AssetInventory::loadInventory(const std::string &inventoryFile)
     /** load inventory to cache */
 }
 
-const AssetPaths &AssetInventory::resolvePath(const AssetType &type, const std::string &name)
+const std::vector<AssetPath> &AssetInventory::lookupAssets(const AssetType &type,
+                                                           const AssetName &name)
 {
-    L_TAG("AssetInventory::resolvePath()");
+    L_TAG("AssetInventory::lookupAssets");
 
     auto assetList = cache.find(type);
     if (assetList != cache.end())
@@ -86,9 +87,5 @@ const AssetPaths &AssetInventory::resolvePath(const AssetType &type, const std::
         }
     }
 
-    // If path is not in cache, try to resolve absolute path from project root
-    L_TRACE("Asset not found in cache: {}", name);
-    auto &assetPath = cache[type][name];
-    assetPath.push_back(name);
-    return assetPath;
+    L_THROW_RUNTIME("Could not find matching assets");
 }

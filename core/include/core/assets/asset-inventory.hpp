@@ -41,6 +41,7 @@ enum class AssetType
 {
     Audio,
     Mesh,
+    Model,
     Pipeline,
     Texture,
     SpriteSheet,
@@ -66,7 +67,7 @@ public:
 
     void loadInventory(const std::string &inventoryFile);
 
-    const AssetPaths &resolvePath(const AssetType &type, const AssetName &name);
+    const std::vector<AssetPath>& lookupAssets(const AssetType &type, const AssetName &name);
 };
 
 /** @} endgroup Assets */

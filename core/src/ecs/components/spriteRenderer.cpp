@@ -2,6 +2,7 @@
 
 #include <core/game.hpp>
 #include <core/utils/logging.hpp>
+#include <core/assets/shader.hpp>
 #include <core/graphics/asset-manager.hpp>
 
 #include <mutex>

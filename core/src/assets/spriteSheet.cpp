@@ -27,10 +27,10 @@ namespace core::assets
 
         auto resolveMetafileFunc = [](const AssetName &name) {
             // resolve paths for sprite sheet
-            AssetPaths assetPaths = AssetInventory::getInstance().resolvePath(AssetType::SpriteSheet, name);
+            const auto &assetPaths = AssetInventory::getInstance().lookupAssets(AssetType::SpriteSheet, name);
 
             // look for json file in assetPaths
-            auto spriteMeta = std::find_if(assetPaths.begin(), assetPaths.end(), [](std::string &path) {
+            auto spriteMeta = std::find_if(assetPaths.begin(), assetPaths.end(), [](const auto &path) {
                 constexpr const char jsonExt[] = ".json";
                 return std::strncmp(path.c_str() + path.find_last_of("."), jsonExt, std::strlen(jsonExt)) == 0 ? true
                                                                                                                : false;

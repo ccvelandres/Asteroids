@@ -80,6 +80,9 @@ namespace core::assets
         std::size_t stageCount() const noexcept;
         /** @brief Returns the shader name */
         const std::string name() const noexcept;
+
+        /** @brief Identify shader with name */
+        static ShaderType getTypeFromExt(const AssetName &name);
     };
 
 } // namespace core::assets

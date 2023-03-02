@@ -45,14 +45,17 @@ namespace core::assets
         L_TRACE("Internal resources freed ({})", static_cast<void *>(this));
     };
 
-    Texture::Texture(const AssetName &name) : m_name(name), m_surface(load_file(name))
+    Texture::Texture(const AssetName &name) : m_name(name)
     {
         L_TAG("Texture(&name)");
 
-        /** unlike with mesh that we can store defaults to some array,
-         * it's better that we just have default texture files then load
-         * that normally
-         */
+        const AssetPaths &assetPaths =
+            AssetInventory::getInstance().lookupAssets(AssetType::Texture, name);
+
+        L_ASSERT(assetPaths.size() == 1, "Found multiple paths for {}", name);
+        auto &assetPath = assetPaths.at(0);
+
+        this->m_surface = load_file(assetPath);
         L_TRACE("Internal resources initialized ({})", static_cast<void *>(this));
     }
 
