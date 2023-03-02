@@ -203,7 +203,7 @@ namespace core::audio
 
         // Load asset to memory
         audioData      = std::make_shared<AudioData>(AudioData());
-        auto assetPath = AssetInventory::getInstance().resolvePath(AssetType::Audio, assetName);
+        auto &assetPath = AssetInventory::getInstance().lookupAssets(AssetType::Audio, assetName);
         L_ASSERT(assetPath.size() == 1, "Found multiple asset paths for: {}", assetName);
 
         // Open audio stream

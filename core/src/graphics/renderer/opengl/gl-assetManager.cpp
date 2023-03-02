@@ -11,10 +11,10 @@ struct OpenGLAssetManager::Internal
 
     /** @todo: improve mutex & thread-safe impl */
     /** @todo: probably better to replace this with vector? but need to ensure index-value should not change ever */
-    AssetCache<OpenGLMesh>                                                t_meshCache;
-    AssetCache<OpenGLPipeline>                                            shaderCache;
-    AssetCache<OpenGLTexture>                                             t_textureCache;
-    std::mutex                                                            mutex;
+    AssetCache<OpenGLMesh>     t_meshCache;
+    AssetCache<OpenGLPipeline> shaderCache;
+    AssetCache<OpenGLTexture>  t_textureCache;
+    std::mutex                 mutex;
 
     Internal()
     {
