@@ -74,7 +74,7 @@ struct OpenGLAssetManager::Internal
 
     AssetID loadMesh( const core::assets::Mesh &mesh)
     {
-        L_TAG("OpenGLAssetManager::laodMesh");
+        L_TAG("OpenGLAssetManager::loadMesh");
         const std::string          &name  = mesh.name();
         auto                       &cache = this->t_meshCache;
         AssetID                     id;
@@ -92,6 +92,31 @@ struct OpenGLAssetManager::Internal
 
             cache.insert(insertPos, std::make_pair(name, OpenGLMesh(mesh)));
             L_DEBUG("Mesh created {}: {}", id, name);
+        }
+
+        return id;
+    }
+
+    AssetID loadTexture( const core::assets::Texture &texture)
+    {
+        L_TAG("OpenGLAssetManager::loadTexture");
+        const std::string          &name  = texture.name();
+        auto                       &cache = this->t_textureCache;
+        AssetID                     id;
+        std::lock_guard<std::mutex> l(this->mutex);
+
+        // Check if shader is in cache already
+        if (this->findCache(name, cache, id))
+        {
+            L_DEBUG("Texture loaded from cache {}: {}", id, name);
+        }
+        else
+        {
+            auto insertPos = cache.end();
+            id             = cache.size();
+
+            cache.insert(insertPos, std::make_pair(name, OpenGLTexture(texture)));
+            L_DEBUG("Texture created {}: {}", id, name);
         }
 
         return id;

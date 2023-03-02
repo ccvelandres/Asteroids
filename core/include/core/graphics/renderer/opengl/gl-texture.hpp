@@ -3,7 +3,7 @@
 /**
  * @file core/renderer/opengl/gl-texture.hpp
  * @author Cedric Velandres (ccvelandres@gmail.com)
- * 
+ *
  * @addtogroup OpenGL
  * @{
  */

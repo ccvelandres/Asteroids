@@ -5,7 +5,7 @@
 
 namespace core::assets
 {
-    static void load_file(const AssetName &name, Texture::TextureData &textureData)
+    static SDL_Surface *load_file(const AssetName &name)
     {
         L_TAG("Texture(file)");
 
@@ -34,18 +34,18 @@ namespace core::assets
 
         L_DEBUG("Texture loaded from {}", name);
 
-        textureData.surface = surface;
+        return surface;
     }
 
     Texture::Texture() = default;
     Texture::~Texture()
     {
         L_TAG("~Texture");
-        if (m_textureData.surface) SDL_FreeSurface(m_textureData.surface);
+        if (m_surface) SDL_FreeSurface(m_surface);
         L_TRACE("Internal resources freed ({})", static_cast<void *>(this));
     };
 
-    Texture::Texture(const AssetName &name)
+    Texture::Texture(const AssetName &name) : m_name(name), m_surface(load_file(name))
     {
         L_TAG("Texture(&name)");
 
@@ -53,16 +53,17 @@ namespace core::assets
          * it's better that we just have default texture files then load
          * that normally
          */
-        load_file(name, this->m_textureData);
-
         L_TRACE("Internal resources initialized ({})", static_cast<void *>(this));
     }
 
-    Texture::Texture(SDL_Surface *const surface) : m_textureData{.surface = surface}
+    Texture::Texture(const std::string &name, SDL_Surface *const surface)
+        : m_name(name),
+          m_surface(surface)
     {
         L_TAG("Texture(&surface)");
         L_TRACE("Internal resources initialized ({})", static_cast<void *>(this));
     }
 
-    SDL_Surface *Texture::getSurface() const { return m_textureData.surface; }
+    const std::string &Texture::name() const noexcept { return this->m_name; }
+    SDL_Surface       *Texture::getSurface() const noexcept { return this->m_surface; }
 } // namespace core::assets

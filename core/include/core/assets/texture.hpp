@@ -15,24 +15,23 @@
 
 namespace core::assets
 {
+    /** Forward declaration for Model */
+    class Model;
+
     /**
      * @brief Helper class for loading texture files
-     * 
+     *
      */
     class Texture
     {
-    public:
-        struct TextureData
-        {
-            SDL_Surface *surface;
-        };
     private:
-        TextureData m_textureData;
+        std::string  m_name;
+        SDL_Surface *m_surface;
     protected:
     public:
         Texture();
         Texture(const AssetName &name);
-        Texture(SDL_Surface *const surface);
+        Texture(const std::string &name, SDL_Surface *const surface);
         ~Texture();
 
         Texture(Texture &o)             = delete;
@@ -40,7 +39,12 @@ namespace core::assets
         Texture(Texture &&o)            = default;
         Texture &operator=(Texture &&o) = default;
 
-        SDL_Surface *getSurface() const;
+        /** @brief Returns the texture name */
+        const std::string &name() const noexcept;
+        /** @brief Returns the sdl surface */
+        SDL_Surface *getSurface() const noexcept;
+
+        friend Model;
     };
 } // namespace core::assets
 
