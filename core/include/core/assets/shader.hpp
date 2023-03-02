@@ -1,18 +1,18 @@
 #pragma once
 
 /**
- * @file core/renderer/shader.hpp
+ * @file core/assets/shader.hpp
  * @author Cedric Velandres (ccvelandres@gmail.com)
  *
- * @addtogroup Graphics
+ * @addtogroup Assets
  * @{
  */
 
-#include "../assets/asset-inventory.hpp"
+#include "asset-inventory.hpp"
 
 #include <memory>
 
-namespace core::graphics
+namespace core::assets
 {
 
     /**
@@ -40,7 +40,7 @@ namespace core::graphics
             Mesh,
             Task
         };
-            
+
         struct ShaderStage
         {
             AssetPath          path;
@@ -49,28 +49,22 @@ namespace core::graphics
         };
 
     private:
+        std::string              m_shaderName;
         std::vector<ShaderStage> m_shaderStages;
 
         /**
          * @brief Find the index of the shader
-         * 
+         *
          * @param path path to shader source
          * @return int index of shader in stage, otherwise -1
          */
         int findShaderStage(const AssetPath &path);
 
-        /**
-         * @brief Add a shader stage
-         * 
-         * @param type type of shader stage
-         * @param path path to shader asset
-         * @return int index of shader in stage
-         */
-        int addStage(Shader::ShaderType type, const AssetPath &path);
     protected:
     public:
-        Shader(const std::vector<std::pair<ShaderType, AssetPath>> &shaderStages);
-        Shader();
+        Shader(const std::string &shaderName);
+        Shader(const std::string                                           &shaderName,
+               const std::vector<std::pair<Shader::ShaderType, AssetPath>> &shaderStages);
         ~Shader();
 
         Shader(Shader &o)             = delete;
@@ -78,14 +72,16 @@ namespace core::graphics
         Shader(Shader &&o)            = default;
         Shader &operator=(Shader &&o) = default;
 
-        int addShaderStage(ShaderType shaderType, const AssetPath &name);
+        int addShaderStage(Shader::ShaderType shaderType, const AssetPath &name);
 
         /** @brief Returns reference to shader stage vector */
         const std::vector<ShaderStage> &getShaderStages() const noexcept;
         /** @brief Returns number of shader stages */
         std::size_t stageCount() const noexcept;
+        /** @brief Returns the shader name */
+        const std::string name() const noexcept;
     };
 
-} // namespace core::graphics
+} // namespace core::assets
 
 /** @} endgroup Renderer */

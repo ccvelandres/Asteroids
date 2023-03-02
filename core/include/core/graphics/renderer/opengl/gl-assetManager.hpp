@@ -31,6 +31,9 @@ public:
     ~OpenGLAssetManager();
 
     AssetID loadAsset(const AssetType &type, const AssetName &name) override;
+    AssetID loadMesh(const core::assets::Mesh &mesh) override;
+    AssetID loadTexture(const core::assets::Texture &texture) override;
+    AssetID loadPipeline(const core::assets::Shader &shader) override;
 
     OpenGLMesh     &getMesh(AssetID id) const;
     OpenGLPipeline &getPipeline(AssetID id) const;

@@ -47,7 +47,7 @@ static GLuint compileShader(const GLenum shaderType, const std::string &shaderSo
 }
 
 static GLuint compileShader(const GLenum                               shaderType,
-                            const core::graphics::Shader::ShaderStage &shaderStage)
+                            const core::assets::Shader::ShaderStage &shaderStage)
 {
     L_TAG("compileShader");
 
@@ -73,7 +73,7 @@ static GLuint compileShader(const GLenum                               shaderTyp
     return shaderId;
 }
 
-static GLuint createPipelineProgram(const core::graphics::Shader &shader)
+static GLuint createPipelineProgram(const core::assets::Shader &shader)
 {
     L_TAG("createPipelineProgram");
 
@@ -245,7 +245,7 @@ struct OpenGLPipeline::Internal
         L_TRACE("Internal resources initialized ({})", static_cast<void *>(this));
     }
 
-    Internal(const std::string &name, const core::graphics::Shader &shader)
+    Internal(const std::string &name, const core::assets::Shader &shader)
         : pipelineName(name),
           shaderProgramId(::createPipelineProgram(shader)),
           su_mvp(glGetUniformLocation(shaderProgramId, "u_mvp")),
@@ -503,7 +503,7 @@ OpenGLPipeline::OpenGLPipeline(const std::string &name, const std::vector<Shader
 {
 }
 
-OpenGLPipeline::OpenGLPipeline(const std::string &name, const core::graphics::Shader &shader)
+OpenGLPipeline::OpenGLPipeline(const std::string &name, const core::assets::Shader &shader)
     : m_internal(std::make_unique<Internal>(name, shader))
 {
     L_TAG("OpenGLPipeline::OpenGLPipeline");
@@ -559,13 +559,13 @@ GLenum OpenGLPipeline::shaderTypeFromName(const std::string &name)
         L_THROW_RUNTIME("Could not identify shader type: {}", name);
 }
 
-GLenum OpenGLPipeline::shaderTypeFromType(const core::graphics::Shader::ShaderType &shaderType)
+GLenum OpenGLPipeline::shaderTypeFromType(const core::assets::Shader::ShaderType &shaderType)
 {
     L_TAG("OpenGLPipeline::shaderTypeFromName");
 
-    typedef typename core::graphics::Shader::ShaderType ShaderType;
+    typedef typename core::assets::Shader::ShaderType ShaderType;
 
-    const std::unordered_map<core::graphics::Shader::ShaderType, GLenum> shaderExtensions = {
+    const std::unordered_map<core::assets::Shader::ShaderType, GLenum> shaderExtensions = {
         {ShaderType::Vertex,          GL_VERTEX_SHADER         }, // Vertex Shader
         {ShaderType::Vertex,          GL_VERTEX_SHADER         }, // Vertex Shader
         {ShaderType::Fragment,        GL_FRAGMENT_SHADER       }, // Fragment Shader

@@ -9,6 +9,9 @@
  */
 
 #include "../assets/asset-inventory.hpp"
+#include "../assets/mesh.hpp"
+#include "../assets/texture.hpp"
+#include "../assets/shader.hpp"
 
 using AssetID = std::intmax_t;
 
@@ -30,6 +33,10 @@ public:
     virtual ~AssetManager()                   = default;
 
     virtual AssetID loadAsset(const AssetType &type, const AssetName &name) = 0;
+
+    virtual AssetID loadMesh(const core::assets::Mesh &mesh) = 0;
+    virtual AssetID loadTexture(const core::assets::Texture &texture) = 0;
+    virtual AssetID loadPipeline(const core::assets::Shader &shader) = 0;
 };
 
 /** @} endgroup Renderer */
