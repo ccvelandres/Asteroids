@@ -38,8 +38,9 @@ public:
     {
         transform = &this->addComponent<TransformComponent>();
         transform->setPosition(pos);
-
-        AssetID crateMesh    = Game::assetManager()->loadAsset(AssetType::Mesh, "crate.obj");
+        core::assets::Model model("assets/models/crate.obj");
+        
+        AssetID crateMesh    = Game::assetManager()->loadMesh(model.getMeshes()[0]); // Game::assetManager()->loadAsset(AssetType::Mesh, "crate.obj");
         AssetID crateTexture = Game::assetManager()->loadAsset(AssetType::Texture, "crate.png");
         mesh                 = &this->addComponent<MeshRenderer>(crateMesh, crateTexture);
     }
@@ -84,7 +85,7 @@ int main(int arc, char **argv)
     L_TAG("main");
 
     {
-        core::assets::Model model("assets/models/crate.obj");
+        // core::assets::Model model("assets/models/crate.obj");
         // core::assets::Model model("assets/models/backpack/backpack.obj");
     }
 
