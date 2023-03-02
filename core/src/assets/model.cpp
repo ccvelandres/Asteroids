@@ -10,72 +10,109 @@
 namespace core::assets
 {
 
-    static void loadMaterial(const aiScene *scene, unsigned int index)
+    struct Model::Internal
     {
-        L_TAG("Model::loadMaterial");
+        /** @todo: add parent-child relation for nodes */
+        std::vector<Mesh>    m_meshes;
+        std::vector<Texture> m_textures;
+        const aiScene       *m_scene{nullptr};
 
-        L_ASSERT(scene->mNumMaterials > index, "index exceeds mNumMaterials");
+        void loadModel();
+    private:
+        void processNode(aiNode *node);
+        void loadMesh(int meshIndex);
+        void loadMaterial(aiTextureType type, int materialIndex);
+    };
 
-        std::vector<Mesh::Texture_> textures;
+    void Model::Internal::loadModel()
+    {
+        L_TAG("Model::Internal::loadModel");
 
-        auto &material = scene->mMaterials[index];
+        L_ASSERT(m_scene != nullptr, "aiScene does not have valid data");
 
-        // load diffuse textures
-        for (int i = 0; i < material->GetTextureCount(aiTextureType_DIFFUSE); ++i)
-        {
-            Mesh::Texture_ texture;
-            aiString       texturePath;
-            auto           t = material->GetTexture(aiTextureType_DIFFUSE, i, &texturePath);
+        // Reserve vectors
+        m_meshes.reserve(m_scene->mNumMeshes);
+        m_textures.reserve(m_scene->mNumTextures);
 
-            texture.name = texturePath.C_Str();
-            textures.push_back(texture);
-            L_TRACE("Diffuse: {}", texture.name);
-        }
+        // Process root node
+        processNode(m_scene->mRootNode);
     }
 
-    static Mesh &&loadMesh(const aiScene *scene, const aiMesh *mesh)
+    void Model::Internal::processNode(aiNode *node)
     {
-        L_TAG("Model::loadMesh");
+        L_TAG("Model::Model");
+        L_ASSERT(m_scene != nullptr, "aiScene does not have valid data");
 
-        std::vector<Mesh::Vertex_>  vertices;
-        std::vector<unsigned int>   indices;
-        std::vector<Mesh::Texture_> textures;
+        // load node's meshes
+        for (unsigned int i = 0; i < node->mNumMeshes; i++)
+        {
+            loadMesh(node->mMeshes[i]);
+        }
 
-        L_TRACE("mName: {}", mesh->mName.C_Str());
+        // load materials
+        for (int i = 0; i < m_scene->mNumMaterials; ++i)
+        {
+            // load textures
+        }
+
+        // load childrens
+        for (int i = 0; i < node->mNumChildren; ++i)
+            processNode(node->mChildren[i]);
+    }
+
+    void Model::Internal::loadMesh(int meshIndex)
+    {
+        L_TAG("Model::Internal::loadMesh");
+
+        L_ASSERT(m_scene->mNumMeshes > meshIndex, "meshIndex exceeds numMesh in scene");
+        const auto &mesh = m_scene->mMeshes[meshIndex];
+
+        Mesh meshObject;
+        meshObject.m_name          = std::string(mesh->mName.C_Str());
+        meshObject.m_hasTangents   = mesh->HasTangentsAndBitangents();
+        meshObject.m_hasBitangents = mesh->HasTangentsAndBitangents();
+
+        auto &vertices = meshObject.m_vertices;
+        auto &indices  = meshObject.m_indices;
 
         // Reserve memory for vectors
         vertices.reserve(mesh->mNumVertices);
         indices.reserve(mesh->mNumFaces);
 
         // Do a somple check that there is texture coordinates
-        if ( NULL == mesh->mTextureCoords[0])
-        {
-            L_WARN("Mesh has no texture coordinates");
-        }
+        if (!mesh->HasTextureCoords(0)) L_WARN("Mesh has no texture coordinates");
 
-        // Load mesh vertices
+        // load mesh vertices
         for (int i = 0; i < mesh->mNumVertices; ++i)
         {
-            Mesh::Vertex_ vertex;
+            Vertex vertex;
             // geometry vertex
-            {
-                auto &v  = mesh->mVertices[i];
-                vertex.v = glm::vec3(v.x, v.y, v.z);
-            }
+            auto &v  = mesh->mVertices[i];
+            vertex.v = glm::vec3(v.x, v.y, v.z);
+
             // vertex normals
             if (mesh->HasNormals())
             {
                 auto &vn  = mesh->mNormals[i];
                 vertex.vn = glm::vec3(vn.x, vn.y, vn.z);
             }
+
             // texture coordinates
-            /** @todo: currently assumes models have only one tex coordinates */
-            if (mesh->mTextureCoords[0])
+            /** @todo: support importing more than 1 uv channels */
+            if (mesh->HasTextureCoords(0))
             {
                 // texture coordinates
                 auto &uv  = mesh->mTextureCoords[0][i];
                 vertex.uv = glm::vec2(uv.x, uv.y);
+            }
+            else
+            {
+                // fallback texcoordinates
+                vertex.uv = glm::vec2(0.0f, 0.0f);
+            }
 
+            if (mesh->HasTangentsAndBitangents())
+            {
                 // tangent vectors
                 auto &tangent   = mesh->mTangents[i];
                 vertex.tangents = glm::vec3(tangent.x, tangent.y, tangent.z);
@@ -83,11 +120,6 @@ namespace core::assets
                 // bitangent vectors
                 auto &bitangent   = mesh->mBitangents[i];
                 vertex.bitangents = glm::vec3(bitangent.x, bitangent.y, bitangent.z);
-            }
-            else
-            {
-                // fallback texcoordinates
-                vertex.uv = glm::vec2(0.0f, 0.0f);
             }
 
             vertices.push_back(vertex);
@@ -108,33 +140,36 @@ namespace core::assets
             }
         }
 
-        // load mesh materials
+        // Move meshobject
+        m_meshes.push_back(std::move(meshObject));
 
-        core::assets::loadMaterial(scene, mesh->mMaterialIndex);
+        // load material used by mesh
+        loadMaterial(aiTextureType_DIFFUSE, mesh->mMaterialIndex);
     }
 
-    static void loadNode(const aiScene *scene, aiNode *node)
+    void Model::Internal::loadMaterial(aiTextureType type, int materialIndex)
     {
-        L_TAG("Model::loadNode");
+        L_TAG("Model::Internal::loadMaterial");
+        L_ASSERT(m_scene->mNumMaterials > materialIndex,
+                 "materialIndex exceeds numMaterials in scene");
+        auto &material = m_scene->mMaterials[materialIndex];
 
-        L_TRACE("mName: {}", node->mName.C_Str());
-        L_TRACE("mNumMeshes: {}", node->mNumMeshes);
-        L_TRACE("mNumChildren: {}", node->mNumChildren);
-
-        // load mesh data
-        for (int i = 0; i < node->mNumMeshes; ++i)
+        // load all textures of type
+        for (int i = 0; i < material->GetTextureCount(type); ++i)
         {
-            aiMesh *mesh = scene->mMeshes[node->mMeshes[i]];
-            core::assets::loadMesh(scene, mesh);
-        }
+            Texture  texture;
+            aiString texturePath;
+            auto     t = material->GetTexture(type, i, &texturePath);
 
-        for (int i = 0; i < node->mNumChildren; ++i)
-        {
-            core::assets::loadNode(scene, node->mChildren[i]);
+            /** @todo: load texture here */
+
+            texture.m_name = std::string(texturePath.C_Str());
+            L_TRACE("Loaded texture -- {}", texture.m_name);
+            m_textures.push_back(std::move(texture));
         }
     }
 
-    Model::Model(const AssetName &name)
+    Model::Model(const AssetName &name) : m_internal(std::make_unique<Internal>())
     {
         L_TAG("Model::Model");
 
@@ -144,16 +179,31 @@ namespace core::assets
             Assimp::Importer importer;
             const aiScene   *scene = importer.ReadFile(name,
                                                      aiProcess_Triangulate | aiProcess_GenNormals
-                                                         | aiProcess_CalcTangentSpace | aiProcess_JoinIdenticalVertices);
+                                                         | aiProcess_CalcTangentSpace
+                                                         | aiProcess_JoinIdenticalVertices);
 
             if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode)
             {
                 L_THROW_RUNTIME("Error during model import: {}", importer.GetErrorString());
             }
 
-            core::assets::loadNode(scene, scene->mRootNode);
+            // Load to internal ptr
+            m_internal->m_scene = scene;
+
+            // Use helper function to load model from internal ptr
+            m_internal->loadModel();
+            // this->loadModel();
+            // core::assets::loadNode(scene, scene->mRootNode);
+
+            importer.FreeScene();
         }
     }
 
     Model::~Model() = default;
+
+    std::vector<Mesh>    &Model::getMeshes() const noexcept { return this->m_internal->m_meshes; }
+    std::vector<Texture> &Model::getTextures() const noexcept
+    {
+        return this->m_internal->m_textures;
+    }
 } // namespace core::assets
