@@ -11,6 +11,7 @@
 #include <memory>
 #include "gl-wrapper.hpp"
 
+#include <core/graphics/renderer/vertex.hpp>
 #include <assets/mesh.hpp>
 
 /**
@@ -20,6 +21,8 @@
 class OpenGLMesh
 {
 public:
+    typedef struct Vertex VertexType;
+
     struct VertexInfo
     {
         GLuint   vertexBufferID;
@@ -29,6 +32,10 @@ public:
         GLsizei  offsetPosition;
         GLsizei  offsetNormals;
         GLsizei  offsetTexCoords;
+        GLsizei  offsetTangents;
+        GLsizei  offsetBitangents;
+        bool     hasTangents;
+        bool     hasBitangents;
     };
 private:
     VertexInfo m_vertexInfo;

@@ -17,6 +17,9 @@
 
 namespace core::assets
 {
+    /** Forward declaration for Model */
+    class Model;
+
     /**
      * @brief Helper class for parsing mesh files
      *
@@ -24,65 +27,33 @@ namespace core::assets
     class Mesh
     {
     public:
-        /**
-         * @brief Container for vertices used for 3D mesh
-         *
-         */
-        struct Vertex_
-        {
-            glm::vec3 v;  /** Geometry vertex */
-            glm::vec3 vn; /** Vertex normals */
-            glm::vec2 uv; /** Texture coordinates */
-            glm::vec3 tangents; /** tangets */
-            glm::vec3 bitangents; /** bitangents */
-        };
-
-        struct Texture_
-        {
-            std::string name;
-        };
-
-        struct MeshData
-        {
-            std::vector<Vertex>   vertices;
-            std::vector<uint32_t> indices;
-
-            MeshData &operator=(MeshData &&)      = default;
-            MeshData &operator=(const MeshData &) = default;
-        };
-
     private:
-        MeshData m_meshData;
-
+        std::string           m_name;
+        bool                  m_hasTangents;   /** Whether mesh data has tangents */
+        bool                  m_hasBitangents; /** Whether mesh data has bitangents */
+        std::vector<Vertex>   m_vertices;
+        std::vector<uint32_t> m_indices;
     public:
-
-        Mesh();
-        /**
-         * @brief Construct a new Mesh object
-         *
-         * @param name name of mesh asset
-         */
-        Mesh(const AssetName &name);
-        Mesh(const std::vector<Vertex> &vertices, const std::vector<uint32_t> &indices);
-        ~Mesh();
+        Mesh()  = default;
+        ~Mesh() = default;
 
         Mesh(const Mesh &)            = delete;
         Mesh &operator=(const Mesh &) = delete;
         Mesh(Mesh &&o)                = default;
         Mesh &operator=(Mesh &&o)     = default;
 
-        /**
-         * @brief Get the vector containing all Vertex objects for the mesh
-         *
-         * @return const std::vector<Vertex>& reference to vector of Vertex
-         */
+        /** @brief Returns the mesh name */
+        const std::string &name() const noexcept;
+        /** @brief Returns if mesh has tangents */
+        bool hasTangents() const noexcept;
+        /** @brief Returns if mesh has bitangents */
+        bool hasBitangents() const noexcept;
+        /** @brief Returns reference to vector containing the vertices */
         const std::vector<Vertex> &getVertices() const noexcept;
-        /**
-         * @brief Get the vector containing all indices for the mesh
-         *
-         * @return const std::vector<uint32_t>& reference to vector of indices
-         */
+        /** @brief Returns reference to vector containing the indices */
         const std::vector<uint32_t> &getIndices() const noexcept;
+
+        friend Model;
     };
 } // namespace core::assets
 

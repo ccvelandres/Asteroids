@@ -72,6 +72,30 @@ struct OpenGLAssetManager::Internal
         return id;
     }
 
+    AssetID loadMesh( const core::assets::Mesh &mesh)
+    {
+        L_TAG("OpenGLAssetManager::laodMesh");
+        const std::string          &name  = mesh.name();
+        auto                       &cache = this->t_meshCache;
+        AssetID                     id;
+        std::lock_guard<std::mutex> l(this->mutex);
+
+        // Check if shader is in cache already
+        if (this->findCache(name, cache, id))
+        {
+            L_DEBUG("Mesh loaded from cache {}: {}", id, name);
+        }
+        else
+        {
+            auto insertPos = cache.end();
+            id             = cache.size();
+
+            cache.insert(insertPos, std::make_pair(name, OpenGLMesh(mesh)));
+            L_DEBUG("Mesh created {}: {}", id, name);
+        }
+
+        return id;
+    }
 };
 
 static AssetID loadPipeline(const AssetName                        &name,
@@ -209,20 +233,7 @@ AssetID OpenGLAssetManager::loadAsset(const AssetType &type, const AssetName &na
 AssetID OpenGLAssetManager::loadMesh(const core::assets::Mesh &mesh)
 {
     L_TAG("OpenGLAssetManager::loadMesh");
-    AssetID id;
-
-    // /** Get paths from asset manager */
-    // L_DEBUG("Loading mesh from {}", name);
-    // AssetPaths assetPaths = AssetInventory::getInstance().resolvePath(type, name);
-
-    // /** Parse mesh file */
-    // assert(assetPaths.size() == 1);
-    // core::assets::Mesh mesh(assetPaths[0]);
-
-    // cache.insert(insertPos, OpenGLMesh(mesh));
-    // assetIDCache[name] = id; // add asset to cache
-    // L_DEBUG("Mesh loaded {}: {}", id, name);
-    return id;
+    return this->m_internal->loadMesh(mesh);
 }
 
 AssetID OpenGLAssetManager::loadTexture(const core::assets::Texture &texture)

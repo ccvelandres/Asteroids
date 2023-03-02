@@ -27,8 +27,8 @@ static GLuint createVertexBuffer(const core::assets::Mesh &mesh)
     // bufferDataPtr = bufferData.data();
 
     /** @todo: is it possible to just cast the std::vector<Vertex>? Is it POD? */
-    auto &vertice = mesh.getVertices();
-    bufferSize    = (vertice.size() * sizeof(Vertex));
+    const std::vector<OpenGLMesh::VertexType> &vertice = mesh.getVertices();
+    bufferSize    = (vertice.size() * sizeof(OpenGLMesh::VertexType));
     bufferDataPtr = reinterpret_cast<const void *>(vertice.data());
 
     L_DEBUG("Loading {} bytes", bufferSize);
@@ -66,14 +66,19 @@ static OpenGLMesh::VertexInfo createGLMesh(const core::assets::Mesh &mesh)
     L_TAG("OpenGLMesh::createGLMesh(&mesh)");
 
     OpenGLMesh::VertexInfo vertexInfo;
-    vertexInfo.vertexBufferID  = ::createVertexBuffer(mesh);
-    vertexInfo.indiceBufferID  = ::createIndiceBuffer(mesh);
-    vertexInfo.indiceCount     = static_cast<uint32_t>(mesh.getIndices().size());
-    vertexInfo.stride          = sizeof(Vertex);
-    vertexInfo.offsetPosition  = offsetof(Vertex, v);
-    vertexInfo.offsetNormals   = offsetof(Vertex, vn);
-    vertexInfo.offsetTexCoords = offsetof(Vertex, uv);
+    vertexInfo.vertexBufferID   = ::createVertexBuffer(mesh);
+    vertexInfo.indiceBufferID   = ::createIndiceBuffer(mesh);
+    vertexInfo.indiceCount      = static_cast<uint32_t>(mesh.getIndices().size());
+    vertexInfo.stride           = sizeof(OpenGLMesh::VertexType);
+    vertexInfo.offsetPosition   = offsetof(OpenGLMesh::VertexType, v);
+    vertexInfo.offsetNormals    = offsetof(OpenGLMesh::VertexType, vn);
+    vertexInfo.offsetTexCoords  = offsetof(OpenGLMesh::VertexType, uv);
+    vertexInfo.offsetTangents   = offsetof(OpenGLMesh::VertexType, tangents);
+    vertexInfo.offsetBitangents = offsetof(OpenGLMesh::VertexType, bitangents);
+    vertexInfo.hasTangents      = mesh.hasTangents();
+    vertexInfo.hasBitangents    = mesh.hasBitangents();
 
+    /** @todo: remove tangents, bitangents from stride if mesh does not have them */
     /** @todo support for vertex buffer with no normals */
 
     /** Configure and pass geometry vertices */
@@ -87,6 +92,20 @@ static OpenGLMesh::VertexInfo createGLMesh(const core::assets::Mesh &mesh)
     /** Configure and pass uv coordinates */
     glEnableVertexAttribArray(2);
     glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, vertexInfo.stride, reinterpret_cast<const void *>(vertexInfo.offsetTexCoords));
+
+    if(vertexInfo.hasTangents)
+    {
+        /** Configure and pass tangents */
+        glEnableVertexAttribArray(3);
+        glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, vertexInfo.stride, reinterpret_cast<const void *>(vertexInfo.offsetTangents));
+    }
+
+    if(vertexInfo.hasBitangents)
+    {
+        /** Configure and pass bitangents */
+        glEnableVertexAttribArray(4);
+        glVertexAttribPointer(4, 3, GL_FLOAT, GL_FALSE, vertexInfo.stride, reinterpret_cast<const void *>(vertexInfo.offsetBitangents));
+    }
 
     return vertexInfo;
 }
