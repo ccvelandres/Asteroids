@@ -46,7 +46,7 @@ static GLuint compileShader(const GLenum shaderType, const std::string &shaderSo
     return shaderId;
 }
 
-static GLuint compileShader(const GLenum                               shaderType,
+static GLuint compileShader(const GLenum                             shaderType,
                             const core::assets::Shader::ShaderStage &shaderStage)
 {
     L_TAG("compileShader");
@@ -245,8 +245,8 @@ struct OpenGLPipeline::Internal
         L_TRACE("Internal resources initialized ({})", static_cast<void *>(this));
     }
 
-    Internal(const std::string &name, const core::assets::Shader &shader)
-        : pipelineName(name),
+    Internal(const core::assets::Shader &shader)
+        : pipelineName(shader.name()),
           shaderProgramId(::createPipelineProgram(shader)),
           su_mvp(glGetUniformLocation(shaderProgramId, "u_mvp")),
           sa_vertices(glGetAttribLocation(shaderProgramId, "a_v")),
@@ -503,8 +503,8 @@ OpenGLPipeline::OpenGLPipeline(const std::string &name, const std::vector<Shader
 {
 }
 
-OpenGLPipeline::OpenGLPipeline(const std::string &name, const core::assets::Shader &shader)
-    : m_internal(std::make_unique<Internal>(name, shader))
+OpenGLPipeline::OpenGLPipeline(const core::assets::Shader &shader)
+    : m_internal(std::make_unique<Internal>(shader))
 {
     L_TAG("OpenGLPipeline::OpenGLPipeline");
 }

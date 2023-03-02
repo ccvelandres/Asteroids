@@ -25,10 +25,10 @@ namespace core::assets
     class Model
     {
     public:
-
-        std::vector<Mesh> m_vMesh;
-        std::vector<Texture> m_vTexture;
+        struct Internal;
+        std::unique_ptr<Internal> m_internal;
     private:
+        void loadModel();
     protected:
     public:
         Model();
@@ -39,6 +39,9 @@ namespace core::assets
         Model &operator=(Model &o)  = delete;
         Model(Model &&o)            = default;
         Model &operator=(Model &&o) = default;
+
+        std::vector<Mesh> &getMeshes() const noexcept;
+        std::vector<Texture> &getTextures() const noexcept;
     };
 } // namespace core::assets
 

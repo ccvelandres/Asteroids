@@ -16,10 +16,14 @@ namespace core::assets
         return -1;
     }
 
-    Shader::Shader(const std::string &shaderName) : m_shaderName(shaderName) {}
-    Shader::~Shader() = default;
 
-    Shader::Shader(const std::string                                   &shaderName,
+    Shader::Shader(const std::string &shaderName) : m_shaderName(shaderName)
+    {
+        L_TAG("Shader::Shader");
+        L_UNIMPLEMENTED("Shader::Shader");
+    }
+
+    Shader::Shader(const std::string                                           &shaderName,
                    const std::vector<std::pair<Shader::ShaderType, AssetPath>> &shaderStages)
         : m_shaderName(shaderName)
     {
@@ -31,6 +35,8 @@ namespace core::assets
             L_TRACE("Added shader stage: {}: {}", stage.first, stage.second);
         }
     }
+
+    Shader::~Shader() = default;
 
     int Shader::addShaderStage(Shader::ShaderType shaderType, const AssetPath &path)
     {

@@ -131,6 +131,13 @@ namespace core::assets
     //     L_THROW_LOGIC("Unimplemented function");
     //     L_TRACE("Internal resources initialized ({})", static_cast<void *>(this));
     // }
+
+    Mesh::Mesh(const AssetName &name)
+    {
+        L_TAG("Mesh::Mesh");
+        L_UNIMPLEMENTED("Mesh::Mesh");
+    }
+
     const std::string &Mesh::name() const noexcept { return this->m_name; }
     bool               Mesh::hasTangents() const noexcept { return this->m_hasTangents; }
     bool               Mesh::hasBitangents() const noexcept { return this->m_hasBitangents; }
