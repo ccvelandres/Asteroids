@@ -43,7 +43,7 @@ namespace core::utils::platform
             L_THROW(std::runtime_error, "Could not retrieve module path (%d)" , GetLastError());
         }
 
-        return std::filesystem::path(szPath);
+        return std::filesystem::path(szPath).parent_path();
 #else
 #error "Could not detect platform"
 #endif

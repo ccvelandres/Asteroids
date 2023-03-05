@@ -39,9 +39,6 @@ message("Project Name: ${PROJECT_NAME}")
 
 project(${PROJECT_NAME} VERSION 0.1.0)
 set(PROJECT_ROOT "${CMAKE_SOURCE_DIR}")
-set(PROJECT_LIBRARY_SOURCE_DIR "${CMAKE_SOURCE_DIR}/lib")
-set(PROJECT_LIBRARY_BINARY_DIR "${CMAKE_BINARY_DIR}/lib")
-set(PROJECT_LIBRARY_INSTALL_DIR "${CMAKE_BINARY_DIR}/install")
 
 # ################################################################
 # # Libraries

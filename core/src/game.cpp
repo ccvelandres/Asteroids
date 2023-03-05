@@ -48,8 +48,10 @@ Game::Game(const std::string &windowTitle, const float &windowWidth, const float
     L_TAG("Game::Game");
 
     // Change directory to project dir
-    std::filesystem::current_path(core::utils::platform::getProjectPath());
-    L_TRACE("CWD: {}", std::filesystem::current_path().string());
+    {
+        L_TRACE("CWD: {}", core::utils::platform::getProjectPath().string());
+        std::filesystem::current_path(core::utils::platform::getProjectPath());
+    }
 
     /** @todo: thread-safe game instance creation for singleton */
     if (g_game) assert("Only one Game class object may exist");
