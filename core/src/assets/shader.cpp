@@ -74,7 +74,7 @@ namespace core::assets
         for (auto &stage : shaderStages)
         {
             this->addShaderStage(stage.first, stage.second);
-            L_TRACE("Added shader stage: {}: {}", stage.first, stage.second);
+            L_TRACE("Added shader stage: {}: {}", static_cast<int>(stage.first), stage.second);
         }
     }
 
@@ -94,7 +94,7 @@ namespace core::assets
             this->m_shaderStages.push_back(std::move(shaderStage));
         }
 
-        L_TRACE("Added shader stage: {}: {}", shaderType, path);
+        L_TRACE("Added shader stage: {}: {}", static_cast<int>(shaderType), path);
         return index;
     }
 

@@ -190,13 +190,6 @@ namespace core::assets
         L_TRACE("Internal resources initialized ({})", static_cast<void *>(this));
     }
 
-    SpriteSheet::SpriteSheet(SDL_Surface *const surface, const SpriteData &spriteData)
-    {
-        L_TAG("SpriteSheet(*surface, &spriteData)");
-        L_TRACE("Internal resources initialized ({})", static_cast<void *>(this));
-    }
-
     const std::string &SpriteSheet::getTextureName() const { return m_sheetData.texture; }
-
     const SpriteSheet::SpriteData &SpriteSheet::getSpriteData() const { return m_sheetData; }
 } // namespace core::assets

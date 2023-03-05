@@ -9,7 +9,7 @@
  */
 
 #include <string>
-#include <SDL_surface.h>
+#include <memory>
 
 #include "asset-inventory.hpp"
 
@@ -25,13 +25,12 @@ namespace core::assets
     class Texture
     {
     private:
-        std::string  m_name;
-        SDL_Surface *m_surface;
+        struct Internal;
+        std::unique_ptr<Internal> m_internal;
     protected:
     public:
         Texture();
         Texture(const AssetName &name);
-        Texture(const std::string &name, SDL_Surface *const surface);
         ~Texture();
 
         Texture(Texture &o)             = delete;
@@ -42,7 +41,7 @@ namespace core::assets
         /** @brief Returns the texture name */
         const std::string &name() const noexcept;
         /** @brief Returns the sdl surface */
-        SDL_Surface *getSurface() const noexcept;
+        const Internal& getInternal() const noexcept;
 
         friend Model;
     };

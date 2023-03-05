@@ -9,7 +9,6 @@
  */
 
 #include <string>
-#include <SDL_surface.h>
 
 #include "asset-inventory.hpp"
 
@@ -79,7 +78,6 @@ namespace core::assets
     public:
         SpriteSheet();
         SpriteSheet(const AssetName &name);
-        SpriteSheet(SDL_Surface *const surface, const SpriteData &spriteData);
         ~SpriteSheet();
 
         SpriteSheet(SpriteSheet &o)             = delete;
@@ -87,7 +85,6 @@ namespace core::assets
         SpriteSheet(SpriteSheet &&o)            = default;
         SpriteSheet &operator=(SpriteSheet &&o) = default;
 
-        SDL_Surface *getSurface() const;
         const std::string& getTextureName() const;
         const SpriteData& getSpriteData() const;
     };

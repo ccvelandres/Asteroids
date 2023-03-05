@@ -1,4 +1,6 @@
 #include <core/graphics/renderer/opengl/gl-texture.hpp>
+
+#include <assets/texture_p.hpp>
 #include <utils/logging.hpp>
 
 #include "SDL2/SDL_opengl.h"
@@ -43,7 +45,7 @@ static GLuint createTexture(const core::assets::Texture &texture)
     L_TAG("createTexture");
 
     GLuint       textureId;
-    SDL_Surface *surface = texture.getSurface();
+    SDL_Surface *surface = texture.getInternal().m_surface;
 
     // Flip the texture first before loading
     flipv_surface(surface);

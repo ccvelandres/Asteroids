@@ -5,8 +5,6 @@
 #include <map>
 #include <vector>
 
-#include <SDL.h>
-
 using EventType = std::size_t;
 
 class EventHandler

@@ -1,6 +1,8 @@
 #include <core/assets/model.hpp>
 #include <core/utils/logging.hpp>
 
+#include <assets/texture_p.hpp>
+
 #include <assimp/Importer.hpp>
 #include <assimp/postprocess.h>
 #include <assimp/scene.h>
@@ -163,8 +165,8 @@ namespace core::assets
 
             /** @todo: load texture here */
 
-            texture.m_name = std::string(texturePath.C_Str());
-            L_TRACE("Loaded texture -- {}", texture.m_name);
+            texture.m_internal->m_name = std::string(texturePath.C_Str());
+            L_TRACE("Loaded texture -- {}", texture.m_internal->m_name);
             m_textures.push_back(std::move(texture));
         }
     }

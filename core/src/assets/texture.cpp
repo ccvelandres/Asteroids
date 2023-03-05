@@ -1,6 +1,8 @@
 #include <core/assets/texture.hpp>
 #include <core/utils/logging.hpp>
 
+#include <assets/texture_p.hpp>
+
 #include <SDL_image.h>
 
 namespace core::assets
@@ -37,15 +39,7 @@ namespace core::assets
         return surface;
     }
 
-    Texture::Texture() = default;
-    Texture::~Texture()
-    {
-        L_TAG("~Texture");
-        if (m_surface) SDL_FreeSurface(m_surface);
-        L_TRACE("Internal resources freed ({})", static_cast<void *>(this));
-    };
-
-    Texture::Texture(const AssetName &name) : m_name(name)
+    Texture::Internal::Internal(const AssetName& name)
     {
         L_TAG("Texture(&name)");
 
@@ -56,17 +50,27 @@ namespace core::assets
         auto &assetPath = assetPaths.at(0);
 
         this->m_surface = load_file(assetPath);
-        L_TRACE("Internal resources initialized ({})", static_cast<void *>(this));
     }
 
-    Texture::Texture(const std::string &name, SDL_Surface *const surface)
-        : m_name(name),
-          m_surface(surface)
+    Texture::Internal::~Internal()
     {
-        L_TAG("Texture(&surface)");
+        if (this->m_surface) SDL_FreeSurface(this->m_surface);
+    }
+
+    Texture::Texture() = default;
+    Texture::~Texture()
+    {
+        L_TAG("~Texture");
+        L_TRACE("Internal resources freed ({})", static_cast<void *>(this));
+    };
+
+    Texture::Texture(const AssetName &name)
+     : m_internal(std::make_unique<Internal>(name))
+    {
+        L_TAG("Texture(&name)");
         L_TRACE("Internal resources initialized ({})", static_cast<void *>(this));
     }
 
-    const std::string &Texture::name() const noexcept { return this->m_name; }
-    SDL_Surface       *Texture::getSurface() const noexcept { return this->m_surface; }
+    const std::string &Texture::name() const noexcept { return this->m_internal->m_name; }
+    const Texture::Internal &Texture::getInternal() const noexcept { return *(this->m_internal); }
 } // namespace core::assets

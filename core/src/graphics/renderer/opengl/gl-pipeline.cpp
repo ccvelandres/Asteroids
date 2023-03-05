@@ -589,5 +589,5 @@ GLenum OpenGLPipeline::shaderTypeFromType(const core::assets::Shader::ShaderType
     if (it != shaderExtensions.end())
         return (*it).second;
     else
-        L_THROW_RUNTIME("Could not identify shader type: {}", shaderType);
+        L_THROW_RUNTIME("Could not identify shader type: {}", static_cast<int>(shaderType));
 }
