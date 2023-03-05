@@ -17,12 +17,15 @@
             "preLaunchTask": "Rebuild:linux",
         },
         {
-            "name": "(lldb) Win64",
-            "type": "lldb",
+            "name": "(gdb) Win64",
+            "type": "cppdbg",
             "request": "launch",
-            "cwd": "${workspaceFolder}/build/win64/logic",
-            "program": "${workspaceFolder}/build/win64/logic/sample",
-            "preLaunchTask": "Rebuild:win64"
+            "environment": [
+                {"name": "PATH", "value": "C:\\msys64\\ucrt64\\bin;${env:PATH}"}
+            ],
+            "miDebuggerPath": "C:\\msys64\\ucrt64\\bin\\gdb.exe",
+            "cwd": "${workspaceFolder}\\build\\win64\\logic",
+            "program": "${workspaceFolder}\\build\\win64\\logic\\sample.exe",
         },
     ],
     "inputs": [
