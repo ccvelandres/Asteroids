@@ -5,15 +5,19 @@ Originally was supposed to be a quick and simple asteroid game turned into a gam
 ## Engine
 
 The engine is separated into "system" responsible for various functionalities:
+- Assets - core/assets
+- Audio - core/audio
+- ECS - core/ecs
 - Graphics - core/graphics
 - Input - core/input
-- Assets - core/assets
+- UI - core/ui
+- Utilities - core/utils
 - Scenes (wip) - For managing game scenes and scene switching (menu, game world, etc)
 - Task (wip) - Multithreading, optimizations
 
 ## Sideprojects
 
-This project also contains some mini-projects :)
+This project also contains some mini-projects :
 - **Lock-free Queue** - core/utils/queue.hpp
   - using c++ atomics (still missing cache line optimizations)
 
@@ -33,15 +37,15 @@ This project also contains some mini-projects :)
 │ │     ├── assets          - asset management 
 │ │     │ ├── defaults
 │ │     │ └── loaders
+│ │     ├── audio           - audio system
 │ │     ├── ecs             - entity-component system
 │ │     │ └── components
 │ │     ├── graphics        - graphics system
 │ │     │ ├── camera        - camera module
 │ │     │ └── renderer
-│ │     │     ├── opengl    - opengl renderer
-│ │     │     ├── sdl       - sdl software renderer (wip)
-│ │     │     └── vulkan    - vulkan renderer (wip)
+│ │     │     └── opengl    - opengl renderer
 │ │     ├── input           - input module
+│ │     ├── ui              - ui system (wip)
 │ │     └── utils           - utility modules
 │ └── src                   - core engine sources
 ├── docs                    - documentations
@@ -61,7 +65,7 @@ This project also contains some mini-projects :)
 
 Sources in logic/. CMake Target = sample.
 
-Move the crate using keybinds :)
+Move the crate using keybinds :
 
 ### Controls
 
@@ -114,7 +118,7 @@ make python3 ncurses-devel mingw-w64-x86_64-cmake mingw-w64-x86_64-make mingw-w6
 
 #### UCRT64
 ```bash
-python3 ncurses-devel mingw-w64-ucrt-x86_64-toolchain mingw-w64-ucrt-x86_64-cmake mingw-w64-ucrt-x86_64-make mingw-w64-ucrt-x86_64-gcc  mingw-w64-ucrt-x86_64-ninja diffutils bison flex mingw-w64-ucrt-x86_64-freetype mingw-w64-ucrt-x86_64-SDL2 mingw-w64-ucrt-x86_64-SDL2_image mingw-w64-ucrt-x86_64-nlohmann-json mingw-w64-ucrt-x86_64-spdlog mingw-w64-ucrt-x86_64-glm mingw-w64-ucrt-x86_64-glew mingw-w64-ucrt-x86_64-fmt msys2-w32api-runtime
+python3 ncurses-devel mingw-w64-ucrt-x86_64-toolchain mingw-w64-ucrt-x86_64-cmake mingw-w64-ucrt-x86_64-make mingw-w64-ucrt-x86_64-gcc  mingw-w64-ucrt-x86_64-ninja diffutils bison flex mingw-w64-ucrt-x86_64-freetype mingw-w64-ucrt-x86_64-SDL2 mingw-w64-ucrt-x86_64-SDL2_image mingw-w64-ucrt-x86_64-nlohmann-json mingw-w64-ucrt-x86_64-spdlog mingw-w64-ucrt-x86_64-glm mingw-w64-ucrt-x86_64-glew mingw-w64-ucrt-x86_64-fmt msys2-w32api-runtime mingw-w64-ucrt-x86_64-glslang
 ```
 
 mingw-w64-x86_64-gcc mingw-w64-x86_64-ncurses
