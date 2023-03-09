@@ -47,6 +47,9 @@ template <typename T = Component, std::enable_if_t<std::is_base_of<Component, T>
 using ComponentPtr = std::shared_ptr<T>; /** Alias for Component Pointer */
 
 template <typename T = Component, std::enable_if_t<std::is_base_of<Component, T>::value, bool> = true>
+using ComponentWeakPtr = std::weak_ptr<T>; /** Alias for Weak Component Pointer */
+
+template <typename T = Component, std::enable_if_t<std::is_base_of<Component, T>::value, bool> = true>
 using ComponentList = std::vector<ComponentPtr<T>>; /** Alias for vector of ComponentPtr */
 
 

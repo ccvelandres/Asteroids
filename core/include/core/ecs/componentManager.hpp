@@ -10,9 +10,8 @@
 
 #include "component.hpp"
 
-#include <memory>
-#include <array>
 #include <vector>
+#include <unordered_map>
 #include <functional>
 
 /**
@@ -22,7 +21,7 @@
 class ComponentManager
 {
 private:
-    std::array<std::vector<std::weak_ptr<Component>>, maxComponents> m_components;
+    std::unordered_map<ComponentID, std::vector<ComponentWeakPtr<Component>>> m_components;
     static ComponentManager                                         *m_instance;
 
     /** Disable all constructors */

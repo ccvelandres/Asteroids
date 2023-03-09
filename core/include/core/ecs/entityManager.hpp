@@ -3,7 +3,7 @@
 /**
  * @file core/ecs/entityManager.hpp
  * @author Cedric Velandres (ccvelandres@gmail.com)
- * 
+ *
  * @addtogroup ECS
  * @{
  */
@@ -15,7 +15,7 @@
 
 #include <typeindex>
 #include <memory>
-#include <map>
+#include <unordered_map>
 #include <vector>
 #include <functional>
 
@@ -27,8 +27,8 @@
 class EntityManager
 {
 private:
-    std::map<EntityID, std::vector<EntityPtr<Entity>>> m_entities;
-    static EntityManager                              *m_instance;
+    std::unordered_map<EntityID, std::vector<EntityPtr<Entity>>> m_entities;
+    static EntityManager                                        *m_instance;
 
     /** Disable all constructors */
     EntityManager();
@@ -43,7 +43,7 @@ private:
      * @param id EntityID retrieved with @ref getEntityID<T>()
      * @param entity entity to register
      */
-    void registerEntity(EntityID id, Entity *const entity);
+    void registerEntity(const EntityID &id, Entity *const entity);
 protected:
 public:
     ~EntityManager();
@@ -69,7 +69,10 @@ public:
         L_TAG("addEntity");
 
         T *e = new T(std::forward<TArgs>(args)...);
-        L_DEBUG("{}, addr({}) hash(0x{:x})", typeid(T).name(), static_cast<void *>(e), typeid(T).hash_code());
+        L_DEBUG("{}: addr({}) id(0x{:x})",
+                L_TYPE_GETSTRING(T),
+                static_cast<void *>(e),
+                getEntityID<T>());
         registerEntity(getEntityID<T>(), e);
 
         e->init();

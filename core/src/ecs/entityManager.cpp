@@ -12,7 +12,7 @@ EntityManager &EntityManager::getInstance()
     return *m_instance;
 }
 
-void EntityManager::registerEntity(EntityID id, Entity *const entity)
+void EntityManager::registerEntity(const EntityID &id, Entity *const entity)
 {
     m_entities[id].emplace_back(EntityPtr<Entity>(entity));
 }

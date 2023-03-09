@@ -18,7 +18,7 @@ void ComponentManager::registerComponent(ComponentID id, const ComponentPtr<Comp
 
 void ComponentManager::refresh()
 {
-    for (auto &v : m_components)
+    for (auto &[id, v] : m_components)
     {
         v.erase(std::remove_if(v.begin(), v.end(), [](const std::weak_ptr<Component> &p) { return p.expired(); }),
                 v.end());

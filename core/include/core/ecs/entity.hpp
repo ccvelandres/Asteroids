@@ -3,7 +3,7 @@
 /**
  * @file core/ecs/entity.hpp
  * @author Cedric Velandres (ccvelandres@gmail.com)
- * 
+ *
  * @addtogroup ECS
  * @{
  */
@@ -112,17 +112,17 @@ public:
 
         ComponentPtr<Component> p = std::make_shared<T>(T(std::forward<TArgs>(args)...));
         L_ASSERT(p, "Failed to instantiate component of type {}", typeid(T).name());
-    
+
         addComponent(getComponentID<T>(), p);
         p->m_entity = this;
         p->init();
 
-        L_TRACE("Attached {} @ {} to instance of {} @ {}",
+        L_TRACE("Attached {}:{} @ {} to instance of entity @ {}",
                 L_TYPE_GETSTRING(T),
+                getComponentID<T>(),
                 static_cast<void *>(p.get()),
-                typeid(this).name(),
                 static_cast<void *>(this));
-        return static_cast<T&>(*p);
+        return static_cast<T &>(*p);
     }
 
     /**
@@ -140,7 +140,11 @@ public:
         L_TAG("Entity::getComponent");
 
         /** @todo: change return type to ComponentPtr<T> */
-        L_ASSERT(hasComponent<T>() == true, "Entity has no component", typeid(T).name());
+        L_ASSERT(hasComponent<T>() == true,
+                 "Entity {} has no component {}:{}",
+                 static_cast<void *>(this),
+                 L_TYPE_GETSTRING(T),
+                 getComponentID<T>());
 
         return std::static_pointer_cast<T>(m_components[getComponentID<T>()]);
     }
