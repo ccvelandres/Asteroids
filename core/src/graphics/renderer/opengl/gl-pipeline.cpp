@@ -86,7 +86,7 @@ static GLuint createPipelineProgram(const core::assets::Shader &shader)
         GLuint shaderId   = ::compileShader(shaderType, shaderStage);
         shaderIds.push_back(shaderId);
         glAttachShader(shaderProgramId, shaderId);
-        L_TRACE("Compiled shader. {}: {}", shaderId, shaderStage.path);
+        L_TRACE("Compiled shader {}: {}", shaderId, shaderStage.path);
     }
 
     /** Bind vertex indices to expected indices */

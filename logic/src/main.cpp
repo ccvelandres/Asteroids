@@ -3,8 +3,6 @@
 #include <thread>
 #include <typeindex>
 
-#include <SDL2/SDL.h>
-
 #include <core/game.hpp>
 #include <core/event.hpp>
 #include <core/ecs/entity.hpp>
@@ -13,15 +11,8 @@
 #include <core/graphics/renderer/renderer.hpp>
 #include <core/utils/logging.hpp>
 #include <core/assets/model.hpp>
-#include <core/ui/text/fontLoader.hpp>
 
 #include <glm/gtx/string_cast.hpp>
-
-#include <assimp/LogStream.hpp>
-#include <assimp/DefaultLogger.hpp>
-#include <assimp/Importer.hpp>
-#include <assimp/scene.h>
-#include <assimp/postprocess.h>
 
 constexpr int   windowWidth  = 640;
 constexpr int   windowHeight = 480;
@@ -59,15 +50,6 @@ public:
         camera =
             &this->addComponent<CameraComponent>(CameraComponent::Projection::Perspective);
         inputComponent = &this->addComponent<InputComponent>();
-    }
-};
-
-struct mStream : public Assimp::LogStream
-{
-    void write(const char *message)
-    {
-        LOG_DEFINE_TAG("Assimp");
-        L_INFO("{}", message);
     }
 };
 
