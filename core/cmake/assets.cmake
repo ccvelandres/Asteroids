@@ -7,22 +7,7 @@ if(__CORE_ASSETS_CMAKE_INCLUDE_GUARD__)
     return()
 endif()
 
-function(core_set_asset_directory path)
-    message(STATUS "Setting asset build directory: ${path}")
-
-    set_property(GLOBAL PROPERTY CORE_ASSET_BINARY_DIR ${path})
-endfunction()
-
-function(core_get_asset_directory path)
-    get_property(_asset_bindir GLOBAL PROPERTY CORE_ASSET_BINARY_DIR)
-    set(${path} ${_asset_bindir} PARENT_SCOPE)
-endfunction()
-
-function(core_add_asset_directory path)
-    message(STATUS "Adding asset directory: ${path}")
-
-    set_property(GLOBAL APPEND PROPERTY CORE_ASSET_DIRECTORIES ${path})
-endfunction()
+include(${CMAKE_CURRENT_LIST_DIR}/assets-common.cmake)
 
 function(core_process_asset_audio path)
     core_get_asset_directory(_asset_bindir)
@@ -49,13 +34,7 @@ function(core_process_asset_spritesheets path)
     file(COPY ${path} DESTINATION ${_asset_bindir} FOLLOW_SYMLINK_CHAIN)
 endfunction()
 
-function(core_process_asset_shaders path)
-    core_get_asset_directory(_asset_bindir)
-    file(MAKE_DIRECTORY ${_asset_bindir}/shaders)
-    execute_process(COMMAND ${PROJECT_ROOT}/tools/scripts/compile_shaders.sh INPUTDIR=${path}
-        OUTDIR=${_asset_bindir}/shaders
-        WORKING_DIRECTORY ${PROJECT_ROOT})
-endfunction()
+include(${CMAKE_CURRENT_LIST_DIR}/assets-shaders.cmake)
 
 function(core_process_asset_textures path)
     core_get_asset_directory(_asset_bindir)
@@ -67,6 +46,7 @@ function(core_process_assets)
 
     get_property(_core_asset_dirs GLOBAL PROPERTY CORE_ASSET_DIRECTORIES)
     
+    unset(assetlist)
     set(assetSubdirTypes audio env fonts models spritesheets shaders textures)
 
     # make the binary asset dir
@@ -77,15 +57,20 @@ function(core_process_assets)
         message(DEBUG "  -- ${assetDir}")
         file(GLOB assetSubdir LIST_DIRECTORIES true ${assetDir}/*)
         foreach(asset ${assetSubdir})
+            unset(_assetlist)
             get_filename_component(_basename ${asset} NAME)
             message(DEBUG "  -- ${asset}")
             if(_basename IN_LIST assetSubdirTypes)
-                cmake_language(CALL core_process_asset_${_basename} ${asset})
+                cmake_language(CALL core_process_asset_${_basename} ${asset} _assetlist)
             else()
                 file(COPY ${asset} DESTINATION ${_asset_bindir} FOLLOW_SYMLINK_CHAIN)
             endif()
+            list(APPEND assetlist ${_assetlist})
         endforeach()
     endforeach()
+
+    # Create target for assets
+    add_custom_target(core_assets DEPENDS ${assetlist})
 endfunction()
 
 define_property(GLOBAL PROPERTY CORE_ASSET_DIRECTORIES BRIEF_DOCS "List of asset directories")
