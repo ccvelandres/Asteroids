@@ -1,0 +1,8 @@
+./*
+!./assimp
+!./easy_profiler
+!./openal-soft
+!./SDL
+!./SDL_image
+!./SDL_sound
+!./spdlog
