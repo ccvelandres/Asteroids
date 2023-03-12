@@ -72,7 +72,7 @@ public:
         L_DEBUG("{}: addr({}) id(0x{:x})",
                 L_TYPE_GETSTRING(T),
                 static_cast<void *>(e),
-                getEntityID<T>());
+                getEntityID<T>().hash_code());
         registerEntity(getEntityID<T>(), e);
 
         e->init();
@@ -93,7 +93,10 @@ public:
     {
         L_TAG("addEntities");
 
-        L_DEBUG("{}, count({}), hash(0x{:x})", typeid(T).name(), numEntities, typeid(T).hash_code());
+        L_DEBUG("{}: count({}), hash(0x{:x})",
+                L_TYPE_GETSTRING(T),
+                numEntities,
+                getEntityID<T>().hash_code());
         EntityList<T> l_entities;
         l_entities.reserve(numEntities);
 

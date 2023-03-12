@@ -3,7 +3,7 @@
 /**
  * @file core/ecs/component.hpp
  * @author Cedric Velandres (ccvelandres@gmail.com)
- * 
+ *
  * @addtogroup ECS
  * @{
  */
@@ -12,14 +12,14 @@
 
 #include <memory>
 #include <vector>
+#include <typeindex>
 
-class Component; /** Forward declaration for Component Class */
-class Entity; /** Forward declaration for Base Entity Class */
-class EntityManager; /** Forward declaration for EntityManager Class */
+class Component;        /** Forward declaration for Component Class */
+class Entity;           /** Forward declaration for Base Entity Class */
+class EntityManager;    /** Forward declaration for EntityManager Class */
 class ComponentManager; /** Forward declaration for ComponentManager Class */
 
-using ComponentID                   = std::size_t;
-constexpr std::size_t maxComponents = 32;
+using ComponentID = std::type_index;
 
 /**
  * @todo Replace component ID with no RTTI
@@ -30,17 +30,10 @@ constexpr std::size_t maxComponents = 32;
  * template<typename T>
  * std::size_t type_id() { return reinterpret_cast<std::size_t>(&type<T>::id); }
  */
-inline ComponentID getComponentID()
+template <typename T, std::enable_if_t<std::is_base_of<Component, T>::value, bool> = true>
+constexpr ComponentID getComponentID() noexcept
 {
-    static ComponentID lastID = 0;
-    return lastID++;
-}
-
-template <typename T>
-inline ComponentID getComponentID() noexcept
-{
-    static ComponentID cID = getComponentID();
-    return cID;
+    return std::type_index(typeid(T));
 }
 
 template <typename T = Component, std::enable_if_t<std::is_base_of<Component, T>::value, bool> = true>
@@ -52,10 +45,9 @@ using ComponentWeakPtr = std::weak_ptr<T>; /** Alias for Weak Component Pointer 
 template <typename T = Component, std::enable_if_t<std::is_base_of<Component, T>::value, bool> = true>
 using ComponentList = std::vector<ComponentPtr<T>>; /** Alias for vector of ComponentPtr */
 
-
 /**
  * @brief Contains the Base Component Class for the ECS System
- * 
+ *
  */
 class Component
 {

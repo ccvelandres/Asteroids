@@ -4,8 +4,18 @@
 
 #include <filesystem>
 #include <fstream>
+#include <algorithm>
+#include <regex>
 
 namespace fs = std::filesystem;
+
+static void normalizePathSeparators(std::string &path)
+{
+    if(std::filesystem::path::preferred_separator == L'/')
+        return;
+
+    std::replace(path.begin(), path.end(), '\\', '/');
+}
 
 /** @todo: dynamic scan of asset folder or have a manifest file? */
 
@@ -53,6 +63,9 @@ AssetInventory::AssetInventory()
                 {
                     assetName.erase(assetName.find_last_of('.'));
                 }
+
+                // Replace path separators for assetName if separators are not forward-slashes
+                normalizePathSeparators(assetName);
 
                 L_TRACE("\t\t{}: {}", assetName, assetPath);
                 cache[res->second.second][assetName].push_back(assetPath);

@@ -13,7 +13,7 @@
 #include "../time.hpp"
 #include "../utils/logging.hpp"
 
-#include <array>
+#include <unordered_map>
 #include <bitset>
 #include <memory>
 #include <typeindex>
@@ -48,8 +48,7 @@ class Entity
 {
 private:
     /** @todo: wrap componentptr with atomic (C++20) */
-    std::array<ComponentPtr<Component>, maxComponents> m_components;
-    std::bitset<maxComponents>                         m_componentBitset;
+    std::unordered_map<ComponentID, ComponentPtr<Component>> m_components;
 
     bool isActive = true;
 
@@ -58,8 +57,31 @@ private:
      *
      * @param id componentID retrieved from getComponentID<T>()
      * @param component component to register
+     * @return true if component was successfully registered, otherwise false
      */
-    void addComponent(ComponentID id, ComponentPtr<Component> &component);
+    void addComponent(const ComponentID &id, ComponentPtr<Component> &component);
+
+    /**
+     * @brief Checks if entity has component of id @p id
+     *
+     * @param id component id
+     * @return true if entity has component with @p id
+     */
+    bool hasComponent(const ComponentID &id) const noexcept;
+
+    /**
+     * @brief Removes attached component with @p id from the entity
+     *
+     * @param id component id
+     */
+    void removeComponent(const ComponentID &id);
+
+    /**
+     * @brief Retrieves component of @p id attached to this entity
+     *
+     * @param  id component id
+     */
+    ComponentPtr<Component> getComponent(const ComponentID &id) const;
 protected:
     /** Protected Constructors (use EntityManager to add components) */
     Entity();
@@ -80,7 +102,7 @@ public:
     template <typename T, std::enable_if_t<std::is_base_of<Component, T>::value, bool> = true>
     bool hasComponent() noexcept
     {
-        return m_componentBitset[getComponentID<T>()];
+        return this->hasComponent(getComponentID<T>());
     }
 
     /**
@@ -91,7 +113,7 @@ public:
     template <typename T, std::enable_if_t<std::is_base_of<Component, T>::value, bool> = true>
     void removeComponent() noexcept
     {
-        m_components[getComponentID<T>()].reset();
+        this->removeComponent(getComponentID<T>());
     }
 
     /**
@@ -106,6 +128,7 @@ public:
     T &addComponent(TArgs &&...args)
     {
         L_TAG("Entity::addComponent");
+        auto id = getComponentID<T>();
 
         /** @todo: change return type to ComponentPtr<T> */
         L_ASSERT(hasComponent<T>() == false, "Entity already has component {}", typeid(T).name());
@@ -113,13 +136,13 @@ public:
         ComponentPtr<Component> p = std::make_shared<T>(T(std::forward<TArgs>(args)...));
         L_ASSERT(p, "Failed to instantiate component of type {}", typeid(T).name());
 
-        addComponent(getComponentID<T>(), p);
+        addComponent(id, p);
         p->m_entity = this;
         p->init();
 
         L_TRACE("Attached {}:{} @ {} to instance of entity @ {}",
                 L_TYPE_GETSTRING(T),
-                getComponentID<T>(),
+                id.hash_code(),
                 static_cast<void *>(p.get()),
                 static_cast<void *>(this));
         return static_cast<T &>(*p);
@@ -137,16 +160,8 @@ public:
     template <typename T, std::enable_if_t<std::is_base_of<Component, T>::value, bool> = true>
     ComponentPtr<T> getComponentPtr()
     {
-        L_TAG("Entity::getComponent");
-
-        /** @todo: change return type to ComponentPtr<T> */
-        L_ASSERT(hasComponent<T>() == true,
-                 "Entity {} has no component {}:{}",
-                 static_cast<void *>(this),
-                 L_TYPE_GETSTRING(T),
-                 getComponentID<T>());
-
-        return std::static_pointer_cast<T>(m_components[getComponentID<T>()]);
+        auto ptr = this->getComponent(getComponentID<T>());
+        return std::static_pointer_cast<T>(ptr);
     }
     template <typename T, std::enable_if_t<std::is_base_of<Component, T>::value, bool> = true>
     T &getComponent()
