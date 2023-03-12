@@ -4,8 +4,6 @@ include(${CORE_CMAKE_MODULE_PATH}/assets.cmake)
 message(STATUS "-------- LOGIC ---------")
 kconfig_add_kconfig("${CMAKE_CURRENT_LIST_DIR}/Kconfig")
 
-find_package(SDL2 REQUIRED)
-
 file(GLOB_RECURSE SRC_C_LOGIC ${CMAKE_CURRENT_SOURCE_DIR}/src/*.c)
 file(GLOB_RECURSE SRC_CPP_LOGIC ${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp)
 
@@ -14,7 +12,7 @@ kconfig_add_target(sample)
 target_include_directories(sample PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src)
 target_include_directories(sample PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
 
-target_link_libraries(sample PUBLIC ${CORE_TARGET})
+target_link_libraries(sample PRIVATE ${CORE_TARGET})
 target_compile_definitions(sample PUBLIC SDL_MAIN_HANDLED)
 
 # target_link_options(sample PRIVATE
@@ -35,9 +33,9 @@ if(WIN32)
             "${_compiler_path}/libstdc++-6.dll"
             $<TARGET_FILE_DIR:sample>
             COMMAND_EXPAND_LISTS)
-    set_target_properties(sample PROPERTIES
-        WIN32_EXECUTABLE TRUE
-        LINK_FLAGS -static)
+    # set_target_properties(sample PROPERTIES
+    #     # WIN32_EXECUTABLE TRUE
+    #     LINK_FLAGS -static)
 endif()
 
 core_add_asset_directory(${CMAKE_CURRENT_LIST_DIR}/assets)
