@@ -35,11 +35,16 @@ namespace core::assets
         std::vector<uint32_t> m_indices;
     public:
         Mesh(const AssetName &name);
+        Mesh(const std::string    &name,
+             bool                  hasTangents,
+             bool                  hasBitangents,
+             std::vector<Vertex>   vertices,
+             std::vector<uint32_t> indices);
         Mesh()  = default;
         ~Mesh() = default;
 
-        Mesh(const Mesh &)            = delete;
-        Mesh &operator=(const Mesh &) = delete;
+        Mesh(const Mesh &)            = default;
+        Mesh &operator=(const Mesh &) = default;
         Mesh(Mesh &&o)                = default;
         Mesh &operator=(Mesh &&o)     = default;
 
