@@ -148,28 +148,44 @@ endif()
 # ######################################################
 # ##### libfmt
 
-find_package(fmt REQUIRED)
-if(fmt_FOUND)
-    message(STATUS "Found library: fmt")
-    message(STATUS "    Version: ${fmt_VERSION}")
-else()
-    message(FATAL_ERROR "fmt not found")
-endif()
-target_link_libraries(${CORE_TARGET} PUBLIC fmt::fmt)
 
 # ######################################################
 # ##### spdlog
 
-FetchContent_Declare( spdlog_project
-    SOURCE_DIR ${CMAKE_CURRENT_LIST_DIR}/lib/spdlog)
-
-set(SPDLOG_BUILD_BENCH OFF CACHE INTERNAL "")
-set(SPDLOG_BUILD_EXAMPLE OFF CACHE INTERNAL "")
-set(SPDLOG_BUILD_TESTS OFF CACHE INTERNAL "")
-if(TARGET fmt::fmt)
-    set(SPDLOG_FMT_EXTERNAL ON CACHE INTERNAL "")
+find_package(spdlog QUIET)
+if(spdlog_FOUND)    
+    message(STATUS "Found spdlog: ${spdlog_VERSION}")
+    target_link_libraries(${CORE_TARGET} PUBLIC $<$<BOOL:$<TARGET_PROPERTY:CONFIG_CORE_LOG_ENABLE>>:spdlog::spdlog>)
 else()
-    set(SPDLOG_FMT_EXTERNAL OFF CACHE INTERNAL "")
+    find_package(fmt REQUIRED)
+    if(fmt_FOUND)
+        message(STATUS "Found library: fmt")
+        message(STATUS "    Version: ${fmt_VERSION}")
+    else()
+        message(FATAL_ERROR "fmt not found")
+    endif()
+    target_link_libraries(${CORE_TARGET} PUBLIC fmt::fmt)
+
+    FetchContent_Declare( spdlog_project
+        SOURCE_DIR ${CMAKE_CURRENT_LIST_DIR}/lib/spdlog
+        GIT_REPOSITORY https://github.com/gabime/spdlog
+        GIT_BRANCH v1.x
+        GIT_SHALLOW ON
+        UPDATE_DISCONNECTED ON)
+
+    set(SPDLOG_BUILD_BENCH OFF CACHE INTERNAL "")
+    set(SPDLOG_BUILD_EXAMPLE OFF CACHE INTERNAL "")
+    set(SPDLOG_BUILD_TESTS OFF CACHE INTERNAL "")
+    if(TARGET fmt::fmt)
+        message(STATUS "Using external fmt library")
+        set(SPDLOG_FMT_EXTERNAL ON CACHE INTERNAL "")
+    else()
+        message(STATUS "Using spdlog::fmt library")
+        set(SPDLOG_FMT_EXTERNAL OFF CACHE INTERNAL "")
+    endif()
+
+    FetchContent_MakeAvailable(spdlog_project)
+    target_link_libraries(${CORE_TARGET} PUBLIC $<$<BOOL:$<TARGET_PROPERTY:CONFIG_CORE_LOG_ENABLE>>:spdlog::spdlog>)
 endif()
 
 FetchContent_MakeAvailable(spdlog_project)
