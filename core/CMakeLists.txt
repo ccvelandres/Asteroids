@@ -36,6 +36,8 @@ target_include_directories(${CORE_TARGET} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/inc
 set(CORE_CMAKE_MODULE_PATH ${CMAKE_CURRENT_LIST_DIR}/cmake CACHE INTERNAL "")
 
 include(${CORE_CMAKE_MODULE_PATH}/assets.cmake)
+# Add asset targets to dependencies
+add_dependencies(${CORE_TARGET} core_assets)
 core_set_asset_directory(${CMAKE_CURRENT_BINARY_DIR}/assets)
 core_add_asset_directory(${CMAKE_CURRENT_LIST_DIR}/assets)
 
@@ -208,15 +210,15 @@ else()
     set(ALSOFT_INSTALL_UTILS OFF CACHE INTERNAL "")
     set(ALSOFT_NO_CONFIG_UTIL OFF CACHE INTERNAL "")
     set(ALSOFT_RTKIT OFF CACHE INTERNAL "")
-    # set(ALSOFT_STATIC_LIBGCC`ON CACHE INTERNAL "")
-    # set(ALSOFT_STATIC_STDCXX`ON CACHE INTERNAL "")
-    # set(ALSOFT_STATIC_WINPTHREAD ON CACHE INTERNAL "")
-    # if(UNIX)
+    set(ALSOFT_STATIC_LIBGCC`ON CACHE INTERNAL "")
+    set(ALSOFT_STATIC_STDCXX`ON CACHE INTERNAL "")
+    set(ALSOFT_STATIC_WINPTHREAD ON CACHE INTERNAL "")
+    if(UNIX)
 
-    # elseif(WIN32)
-    #     set(ALSOFT_BUILD_ROUTER ON CACHE INTERNAL "")
-    #     set(ALSOFT_REQUIRE_WASAPI ON CACHE INTERNAL "")
-    # endif()
+    elseif(WIN32)
+        set(ALSOFT_BUILD_ROUTER ON CACHE INTERNAL "")
+        set(ALSOFT_REQUIRE_WASAPI ON CACHE INTERNAL "")
+    endif()
 
     FetchContent_MakeAvailable(openal_soft_project)
     target_link_libraries(${CORE_TARGET} PRIVATE OpenAL::OpenAL)
