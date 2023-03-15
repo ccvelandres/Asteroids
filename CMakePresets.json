@@ -25,6 +25,20 @@
                 "BUILD_SHARED_LIBS": "ON",
                 "KCONFIG_KBUILD_DIR": "../kbuild-standalone/build/kconfig"
             }
+        },
+        {
+            "name": "msvc",
+            "displayName": "MSYS2 Windows",
+            "binaryDir": "build/msvc",
+            "generator": "Visual Studio 17 2022",
+            "description": "MSVC Windows Build",
+            "architecture": "Win32",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Debug",
+                "KCONFIG_DEFCONFIG": "defconfig",
+                "BUILD_SHARED_LIBS": "ON",
+                "KCONFIG_KBUILD_DIR": "../kbuild-standalone/build/kconfig"
+            }
         }
     ],
     "buildPresets": [

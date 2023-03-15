@@ -188,9 +188,6 @@ else()
     target_link_libraries(${CORE_TARGET} PUBLIC $<$<BOOL:$<TARGET_PROPERTY:CONFIG_CORE_LOG_ENABLE>>:spdlog::spdlog>)
 endif()
 
-FetchContent_MakeAvailable(spdlog_project)
-target_link_libraries(${CORE_TARGET} PUBLIC $<$<BOOL:$<TARGET_PROPERTY:CONFIG_CORE_LOG_ENABLE>>:spdlog::spdlog>)
-
 # ######################################################
 # ##### OpenAL-soft
 
