@@ -79,6 +79,17 @@ else()
 endif()
 
 # ######################################################
+# ##### SDL2_ttf
+
+find_package(SDL2_ttf REQUIRED)
+if(SDL2_ttf_FOUND)
+    message(STATUS "Found library: SDL2_ttf")
+    target_link_libraries(${CORE_TARGET} PRIVATE SDL2_ttf::SDL2_ttf)
+else()
+    message(FATAL_ERROR "SDL2_ttf not found")
+endif()
+
+# ######################################################
 # ##### SDL2_sound (shared library)
 
 FetchContent_Declare( SDL2_sound_project
