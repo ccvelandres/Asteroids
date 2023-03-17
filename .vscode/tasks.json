@@ -5,6 +5,7 @@
     "tasks": [
         {
             "label": "Configure:linux",
+            "type": "shell",
             "command": "cmake",
             "args": [
                 "--preset=linux"
@@ -25,6 +26,7 @@
         },
         {
             "label": "Build:linux",
+            "type": "shell",
             "command": "cmake",
             "args": [
                 "--build",
@@ -47,6 +49,7 @@
         },
         {
             "label": "Build:win64",
+            "type": "shell",
             "command": "cmake",
             "args": [
                 "--build",
@@ -69,6 +72,7 @@
         },
         {
             "label": "Rebuild:linux",
+            "type": "shell",
             "command": "cmake",
             "args": [
                 "--build",
@@ -87,6 +91,7 @@
         },
         {
             "label": "Rebuild:win64",
+            "type": "shell",
             "command": "cmake",
             "args": [
                 "--build",
