@@ -29,7 +29,8 @@
             "args": [
                 "--build",
                 "--preset=linux",
-                "--target", "sample",
+                "--target",
+                "sample",
                 "--parallel"
             ],
             "problemMatcher": [
@@ -50,7 +51,8 @@
             "args": [
                 "--build",
                 "--preset=win64",
-                "--target", "sample",
+                "--target",
+                "sample",
                 "--parallel"
             ],
             "problemMatcher": [
@@ -71,7 +73,8 @@
             "args": [
                 "--build",
                 "--preset=linux",
-                "--target", "sample",
+                "--target",
+                "sample",
                 "--parallel"
             ],
             "problemMatcher": [
@@ -88,7 +91,8 @@
             "args": [
                 "--build",
                 "--preset=win64",
-                "--target", "sample",
+                "--target",
+                "sample",
                 "--parallel"
             ],
             "problemMatcher": [
@@ -105,23 +109,24 @@
             "args": [
                 "--build",
                 "--preset=native",
-                "--target", "easy_profiler_project",
+                "--target",
+                "easy_profiler_project",
                 "--parallel"
             ]
         },
         {
             "label": "Launch:Profiler",
-            "linux":{
-                "command": "${workspaceFolder}/build/native/debug/core/lib/easy_profiler/bin/profiler_gui",
+            "linux": {
+                "command": "build/native/debug/core/lib/easy_profiler/bin/profiler_gui",
+            },
+            "windows": {
+                "command": "build/win64/_deps/easy_profiler_project-build/bin/profiler_gui.exe",
             },
             "isBackground": true,
             "runOptions": {
                 "instanceLimit": 1
             },
-            "dependsOn": [
-                "Build:Profiler"
-            ],
-            "type": "process",
+            "type": "shell",
             "problemMatcher": []
         }
     ]
