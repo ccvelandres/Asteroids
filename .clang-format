@@ -20,7 +20,7 @@ AllowShortEnumsOnASingleLine: true
 # AllowShortFunctionsOnASingleLine: InlineOnly
 AllowShortIfStatementsOnASingleLine: WithoutElse
 # AllowShortLambdasOnASingleLine: None
-# AllowShortLoopsOnASingleLine: true
+AllowShortLoopsOnASingleLine: true
 # AlwaysBreakAfterDefinitionReturnType: None
 AlwaysBreakAfterReturnType: None
 AlwaysBreakBeforeMultilineStrings: false
