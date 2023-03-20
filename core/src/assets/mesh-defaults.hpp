@@ -46,4 +46,4 @@ namespace core::assets::defaults
     };
 } // namespace core::assets::defaults
 
-/** @} endgroup Audio */
+/** @} endgroup Assets */

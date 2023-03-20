@@ -108,7 +108,7 @@ FetchContent_Declare( easy_profiler_project
 
 set(SDLSOUND_BUILD_TEST OFF CACHE INTERNAL "")
 FetchContent_MakeAvailable(easy_profiler_project)
-target_link_libraries(${CORE_TARGET} PRIVATE $<$<BOOL:$<TARGET_PROPERTY:CONFIG_CORE_PROFILER_ENABLE>>:easy_profiler>)
+target_link_libraries(${CORE_TARGET} PUBLIC $<$<BOOL:$<TARGET_PROPERTY:CONFIG_CORE_PROFILER_ENABLE>>:easy_profiler>)
 
 # ######################################################
 # ##### Assimp
