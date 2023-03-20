@@ -8,12 +8,10 @@
  * @{
  */
 
-#include <ft2build.h>
-#include FT_FREETYPE_H
-
+#include <core/assets/font.hpp>
 #include <glm/glm.hpp>
 
-#include "SDL_surface.h"
+#include <vector>
 
 namespace core::ui
 {
@@ -42,19 +40,23 @@ namespace core::ui
         BOTTON_TO_TOP
     };
 
-    struct Glyph
-    {
-        char charCode;
-        glm::ivec2 size;
-        glm::ivec2 bearing;
-        unsigned int advance;
-    };
-
     class FontLoader
     {
+    public:
+        struct Glyph
+        {
+            std::size_t                charCode;
+            glm::ivec2                 position;
+            glm::ivec2                 size;
+            glm::ivec2                 bearing;
+            std::size_t                advance;
+            std::size_t                pitch;
+            std::vector<unsigned char> bitmap;
+        };
+
+        struct Internal;
     private:
-        FT_Library m_library;
-        FT_Face    m_face;
+        std::unique_ptr<Internal> m_internal;
     protected:
     public:
 
@@ -65,10 +67,9 @@ namespace core::ui
         FontLoader(FontLoader &&)                 = delete;
         FontLoader &operator=(FontLoader &&)      = delete;
 
-        int loadFont(const std::string &font);
-
-        SDL_Surface* generateGlyphAtlas(std::size_t startIndex, std::size_t endIndex);
-
+        FontLoader &openFont(const std::string &font,
+                             std::size_t        startIndex = 33,
+                             std::size_t        endIndex   = 127);
         FontLoader &setPixelSize(std::size_t width, std::size_t height);
         FontLoader &setCharSize(std::size_t charWidth,
                                 std::size_t charHeight,
@@ -77,6 +78,8 @@ namespace core::ui
         FontLoader &setFontKerning(bool enable);
         FontLoader &setFontOutline(const int &outline);
         FontLoader &setFontStyle();
+
+        core::assets::Font generateFont();
 
         std::size_t getNumGlyphs() const noexcept;
     };
