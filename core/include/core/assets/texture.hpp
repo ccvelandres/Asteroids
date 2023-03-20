@@ -43,6 +43,8 @@ namespace core::assets
         const std::string &name() const noexcept;
         /** @brief Returns the size of texture in bytes */
         std::size_t size() const noexcept;
+        /** @brief Returns the internal pointer */
+        const Internal &getInternal() const noexcept;
 
         friend Model;
     };

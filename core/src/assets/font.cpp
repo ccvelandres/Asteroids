@@ -35,5 +35,6 @@ namespace core::assets
     Font::Font(Font &&o)            = default;
     Font &Font::operator=(Font &&o) = default;
 
+    std::size_t Font::getNumGlyphs() const noexcept { return this->m_internal->m_glyphs.size(); }
     const std::string &Font::name() const noexcept { return this->m_internal->m_name; }
 } // namespace core::assets

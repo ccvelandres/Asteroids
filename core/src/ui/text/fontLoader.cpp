@@ -300,8 +300,6 @@ namespace core::ui
         if (buildFontAsset(this->m_internal, fontInternal))
             L_THROW_RUNTIME("Could not build font asset");
 
-        IMG_SavePNG(fontInternal->m_atlas, "font_atlas.png");
-
         return core::assets::Font(std::move(fontInternal));
     }
 

@@ -45,7 +45,7 @@ namespace core::assets
         L_TRACE("Internal resources initialized ({})", static_cast<void *>(this));
     }
 
-    Texture::Texture(const AssetName &name) : m_internal(std::make_unique<Internal>(name))
+    Texture::Texture(const AssetName &name) : m_internal(std::make_unique<Internal>())
     {
         L_TAG("Texture::Texture(&name)");
 
@@ -55,7 +55,9 @@ namespace core::assets
         L_ASSERT(assetPaths.size() == 1, "Found multiple paths for {}", name);
         auto &assetPath = assetPaths.at(0);
 
+        this->m_internal->m_name = name;
         this->m_internal->m_surface = load_file(assetPath);
+        
         L_TRACE("Loaded {} bytes", this->size());
         L_TRACE("Internal resources initialized ({})", static_cast<void *>(this));
     }
@@ -74,5 +76,9 @@ namespace core::assets
     std::size_t        Texture::size() const noexcept
     {
         return this->m_internal->m_surface->h * this->m_internal->m_surface->pitch;
+    }
+    const Texture::Internal &Texture::getInternal() const noexcept
+    {
+        return *(this->m_internal.get());
     }
 } // namespace core::assets
