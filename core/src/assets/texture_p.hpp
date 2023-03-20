@@ -8,9 +8,9 @@
  * @{
  */
 
-#include <assets/texture.hpp>
+#include <SDL.h>
 
-#include <SDL2/SDL.h>
+#include <assets/texture.hpp>
 
 namespace core::assets
 {
@@ -18,10 +18,7 @@ namespace core::assets
     {
         std::string  m_name;
         SDL_Surface *m_surface;
-
-        Internal(const AssetName &name);
-        ~Internal();
     };
 } // namespace core::assets
 
-/** @} endgroup Audio */
+/** @} endgroup Assets */

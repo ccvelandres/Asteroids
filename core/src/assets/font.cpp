@@ -24,10 +24,11 @@ namespace core::assets
                 static_cast<void *>(this),
                 static_cast<void *>(internal.get()));
     }
-    
+
     Font::~Font()
     {
         L_TAG("Font::Font");
+        if (this->m_internal->m_atlas) SDL_FreeSurface(this->m_internal->m_atlas);
         L_TRACE("Internal resources freed ({})", static_cast<void *>(this));
     }
 

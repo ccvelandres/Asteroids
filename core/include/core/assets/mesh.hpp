@@ -1,7 +1,7 @@
 #pragma once
 
 /**
- * @file core/assets/mesh.cpp
+ * @file core/assets/mesh.hpp
  * @author Cedric Velandres (ccvelandres@gmail.com)
  *
  * @addtogroup Assets

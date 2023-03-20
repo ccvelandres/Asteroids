@@ -24,8 +24,9 @@ namespace core::assets
      */
     class Texture
     {
-    private:
+    public:
         struct Internal;
+    private:
         std::unique_ptr<Internal> m_internal;
     protected:
     public:
@@ -33,15 +34,15 @@ namespace core::assets
         Texture(const AssetName &name);
         ~Texture();
 
-        Texture(Texture &o)             = delete;
-        Texture &operator=(Texture &o)  = delete;
-        Texture(Texture &&o)            = default;
-        Texture &operator=(Texture &&o) = default;
+        Texture(Texture &o)            = delete;
+        Texture &operator=(Texture &o) = delete;
+        Texture(Texture &&o);
+        Texture &operator=(Texture &&o);
 
         /** @brief Returns the texture name */
         const std::string &name() const noexcept;
-        /** @brief Returns the sdl surface */
-        const Internal& getInternal() const noexcept;
+        /** @brief Returns the size of texture in bytes */
+        std::size_t size() const noexcept;
 
         friend Model;
     };

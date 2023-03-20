@@ -9,7 +9,7 @@ namespace core::assets
 {
     static SDL_Surface *load_file(const AssetName &name)
     {
-        L_TAG("Texture(file)");
+        L_TAG("Texture::load_file(name)");
 
         SDL_Surface *source = IMG_Load(name.c_str());
         if (source == NULL) L_THROW_RUNTIME("Could not load texture file {}", name);
@@ -39,9 +39,15 @@ namespace core::assets
         return surface;
     }
 
-    Texture::Internal::Internal(const AssetName& name)
+    Texture::Texture() : m_internal(std::make_unique<Internal>())
     {
-        L_TAG("Texture(&name)");
+        L_TAG("Texture::Texture()");
+        L_TRACE("Internal resources initialized ({})", static_cast<void *>(this));
+    }
+
+    Texture::Texture(const AssetName &name) : m_internal(std::make_unique<Internal>(name))
+    {
+        L_TAG("Texture::Texture(&name)");
 
         const AssetPaths &assetPaths =
             AssetInventory::getInstance().lookupAssets(AssetType::Texture, name);
@@ -49,28 +55,24 @@ namespace core::assets
         L_ASSERT(assetPaths.size() == 1, "Found multiple paths for {}", name);
         auto &assetPath = assetPaths.at(0);
 
-        this->m_surface = load_file(assetPath);
-    }
-
-    Texture::Internal::~Internal()
-    {
-        if (this->m_surface) SDL_FreeSurface(this->m_surface);
-    }
-
-    Texture::Texture() = default;
-    Texture::~Texture()
-    {
-        L_TAG("~Texture");
-        L_TRACE("Internal resources freed ({})", static_cast<void *>(this));
-    };
-
-    Texture::Texture(const AssetName &name)
-     : m_internal(std::make_unique<Internal>(name))
-    {
-        L_TAG("Texture(&name)");
+        this->m_internal->m_surface = load_file(assetPath);
+        L_TRACE("Loaded {} bytes", this->size());
         L_TRACE("Internal resources initialized ({})", static_cast<void *>(this));
     }
 
+    Texture::~Texture()
+    {
+        L_TAG("Texture::~Texture");
+        if (this->m_internal->m_surface) SDL_FreeSurface(this->m_internal->m_surface);
+        L_TRACE("Internal resources freed ({})", static_cast<void *>(this));
+    }
+
+    Texture::Texture(Texture &&o)            = default;
+    Texture &Texture::operator=(Texture &&o) = default;
+
     const std::string &Texture::name() const noexcept { return this->m_internal->m_name; }
-    const Texture::Internal &Texture::getInternal() const noexcept { return *(this->m_internal); }
+    std::size_t        Texture::size() const noexcept
+    {
+        return this->m_internal->m_surface->h * this->m_internal->m_surface->pitch;
+    }
 } // namespace core::assets
