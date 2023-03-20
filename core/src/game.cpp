@@ -24,6 +24,8 @@
 #include <core/graphics/renderer/opengl/gl-renderer.hpp>
 #endif
 
+#include <core/ui/uiManager.hpp>
+
 #include <thread>
 
 /** @todo: replace these with shared ptrs? */
@@ -37,6 +39,7 @@ InputManager              *g_inputManager     = nullptr;
 Time                      *g_time             = nullptr;
 AssetManager              *g_assetManager     = nullptr;
 AssetInventory            *g_assetInventory   = nullptr;
+UIManager                 *g_uimanager        = nullptr;
 
 Game::Game(const std::string &windowTitle, const float &windowWidth, const float &windowHeight)
     : m_windowTitle(windowTitle),
@@ -76,6 +79,8 @@ Game::Game(const std::string &windowTitle, const float &windowWidth, const float
     g_componentManager = &ComponentManager::getInstance();
     L_DEBUG("Initializing EntityManager");
     g_entityManager = &EntityManager::getInstance();
+    L_DEBUG("Initializing UIManager");
+    g_uimanager = &UIManager::getInstance();
 
 #if defined(CONFIG_CORE_RENDERER_DEFAULT_OPENGL)
     L_DEBUG("Initializing Renderer (OpenGL)");
@@ -107,6 +112,7 @@ void Game::init()
     g_inputManager->init();
     g_eventManager->init();
     g_audioManager->init();
+    g_uimanager->init();
 }
 
 void Game::startGameLoop()
@@ -195,15 +201,18 @@ void Game::startGameLoop()
 
         {
             PROFILER_BLOCK("FPS Calculation");
-            // logging::trace("{},{}: m_targetDelta:      ({})", __LINE__, __func__, m_targetDelta.count());
-            // logging::trace("{},{}: unscaledDeltaTime:  ({})", __LINE__, __func__, g_time->unscaledDeltaTime().count());
-            // logging::trace("{},{}: unscaledFrameStart: ({})", __LINE__, __func__, g_time->unscaledFrameStart().count());
-            // logging::trace("{},{}: unscaledFrameEnd:   ({})", __LINE__, __func__, g_time->unscaledFrameEnd().count());
-            // logging::trace("{},{}: unscaledFrameTime:  ({})", __LINE__, __func__, g_time->unscaledFrameTime().count());
-            // logging::trace("{},{}: scaledDeltaTime:    ({})", __LINE__, __func__, g_time->scaledDeltaTime().count());
-            // logging::trace("{},{}: scaledFrameTime:    ({})", __LINE__, __func__, g_time->scaledFrameTime().count());
-            // logging::trace("{},{}: unscaledTime:       ({})", __LINE__, __func__, g_time->unscaledTime().count());
-            float fps = time_fs::period::den / (Time::getTime<time_fs>() - g_time->unscaledFrameStart<time_fs>()).count();
+            // logging::trace("{},{}: m_targetDelta:      ({})", __LINE__, __func__,
+            // m_targetDelta.count()); logging::trace("{},{}: unscaledDeltaTime:  ({})", __LINE__,
+            // __func__, g_time->unscaledDeltaTime().count()); logging::trace("{},{}:
+            // unscaledFrameStart: ({})", __LINE__, __func__, g_time->unscaledFrameStart().count());
+            // logging::trace("{},{}: unscaledFrameEnd:   ({})", __LINE__, __func__,
+            // g_time->unscaledFrameEnd().count()); logging::trace("{},{}: unscaledFrameTime: ({})",
+            // __LINE__, __func__, g_time->unscaledFrameTime().count()); logging::trace("{},{}:
+            // scaledDeltaTime:    ({})", __LINE__, __func__, g_time->scaledDeltaTime().count()); logging::trace("{},{}:
+            // scaledFrameTime:    ({})", __LINE__, __func__, g_time->scaledFrameTime().count()); logging::trace("{},{}:
+            // unscaledTime:       ({})", __LINE__, __func__, g_time->unscaledTime().count());
+            float fps = time_fs::period::den
+                      / (Time::getTime<time_fs>() - g_time->unscaledFrameStart<time_fs>()).count();
             m_minfps = (fps < m_minfps ? fps : m_minfps);
             m_maxfps = (fps > m_maxfps ? fps : m_maxfps);
             m_fps    = fps;
