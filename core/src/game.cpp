@@ -14,7 +14,7 @@
 #include <core/assets/asset-inventory.hpp>
 
 #include <core/graphics/asset-manager.hpp>
-#include <core/graphics/renderer/renderer.hpp>
+#include <core/graphics/renderer.hpp>
 
 #if defined(CONFIG_CORE_RENDERER_VULKAN)
 #include <core/graphics/renderer/vulkan/vk-renderer.hpp>

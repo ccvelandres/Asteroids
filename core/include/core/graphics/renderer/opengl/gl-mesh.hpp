@@ -11,7 +11,7 @@
 #include <memory>
 #include "gl-wrapper.hpp"
 
-#include <core/graphics/renderer/vertex.hpp>
+#include <core/graphics/vertex.hpp>
 #include <assets/mesh.hpp>
 
 /**

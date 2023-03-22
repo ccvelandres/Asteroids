@@ -16,7 +16,7 @@
 #include <memory>
 
 #include "../../asset-manager.hpp"
-#include "../renderer.hpp"
+#include "core/graphics/renderer.hpp"
 
 class OpenGLRenderer : public Renderer
 {

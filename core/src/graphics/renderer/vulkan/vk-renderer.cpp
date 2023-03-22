@@ -25,7 +25,11 @@ struct VulkanRenderer::Internal
     }
 };
 
-VulkanRenderer::VulkanRenderer(SDL_Window *window) : m_internal(std::make_unique<Internal>(window)) {}
+VulkanRenderer::VulkanRenderer(SDL_Window *window)
+    : Renderer("Vulkan"),
+      m_internal(std::make_unique<Internal>(window))
+{
+}
 
 VulkanRenderer::VulkanRenderer(VulkanRenderer &&o)            = default;
 VulkanRenderer &VulkanRenderer::operator=(VulkanRenderer &&o) = default;

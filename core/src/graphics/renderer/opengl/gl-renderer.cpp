@@ -33,12 +33,13 @@ SDL_Window *createWindow(const std::string &windowTitle, const int windowWidth, 
 
     L_DEBUG("SDL VideoDriver: {}", SDL_GetCurrentVideoDriver());
 
-    SDL_Window *window = SDL_CreateWindow(windowTitle.c_str(),
-                                          SDL_WINDOWPOS_CENTERED,
-                                          SDL_WINDOWPOS_CENTERED,
-                                          windowWidth,
-                                          windowHeight,
-                                          SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE | SDL_WINDOW_OPENGL);
+    SDL_Window *window =
+        SDL_CreateWindow(windowTitle.c_str(),
+                         SDL_WINDOWPOS_CENTERED,
+                         SDL_WINDOWPOS_CENTERED,
+                         windowWidth,
+                         windowHeight,
+                         SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE | SDL_WINDOW_OPENGL);
 
     if (window == NULL)
     {
@@ -127,8 +128,11 @@ struct OpenGLRenderer::Internal
     }
 };
 
-OpenGLRenderer::OpenGLRenderer(const std::string &windowTitle, const int windowWidth, const int windowHeight)
-    : m_internal(std::make_unique<Internal>(windowTitle, windowWidth, windowHeight))
+OpenGLRenderer::OpenGLRenderer(const std::string &windowTitle,
+                               const int          windowWidth,
+                               const int          windowHeight)
+    : Renderer("OpenGL"),
+      m_internal(std::make_unique<Internal>(windowTitle, windowWidth, windowHeight))
 {
 }
 
@@ -170,7 +174,8 @@ static void render(OpenGLAssetManager                  &am,
     for (auto &sprite : components)
     {
         // if &'ed masks does not match renderComponents' mask, skip
-        if (sprite->m_renderMask.none() || (sprite->m_renderMask & camera->getRenderMask()) != sprite->m_renderMask)
+        if (sprite->m_renderMask.none()
+            || (sprite->m_renderMask & camera->getRenderMask()) != sprite->m_renderMask)
             continue;
 
         OpenGLMesh     &mesh     = am.getMesh(sprite->getMeshID());
@@ -185,8 +190,8 @@ static void render(OpenGLAssetManager                  &am,
         OpenGLPipeline::RenderInfo renderInfo;
         renderInfo.textures = {texture.getTextureID()};
         renderInfo.buffers  = {
-             {GL_ARRAY_BUFFER,         mesh.getVertexBufferID()},
-             {GL_ELEMENT_ARRAY_BUFFER, mesh.getIndiceBufferID()}
+            {GL_ARRAY_BUFFER,         mesh.getVertexBufferID()},
+            {GL_ELEMENT_ARRAY_BUFFER, mesh.getIndiceBufferID()}
         };
         renderInfo.uniforms = {
             {"u_mvp",  {GL_FLOAT_MAT4, sizeof(mvp), GL_FALSE, static_cast<void *>(&mvp[0][0])}},
@@ -212,7 +217,8 @@ static void render(OpenGLAssetManager                &am,
     for (auto &meshR : components)
     {
         // if &'ed masks does not match renderComponents' mask, skip
-        if (meshR->m_renderMask.none() || (meshR->m_renderMask & camera->getRenderMask()) != meshR->m_renderMask)
+        if (meshR->m_renderMask.none()
+            || (meshR->m_renderMask & camera->getRenderMask()) != meshR->m_renderMask)
             continue;
 
         OpenGLMesh     &mesh     = am.getMesh(meshR->getMeshID());
@@ -231,16 +237,15 @@ void OpenGLRenderer::render()
     L_TAG("OpenGLRenderer::render");
 
     /** @todo: this needs reworking, better rendering management for other types */
-    ComponentManager                &componentManager = ComponentManager::getInstance();
-    OpenGLAssetManager              &am               = dynamic_cast<OpenGLAssetManager &>(this->getAssetManager());
+    ComponentManager   &componentManager = ComponentManager::getInstance();
+    OpenGLAssetManager &am = dynamic_cast<OpenGLAssetManager &>(this->getAssetManager());
 
     /** @todo: fix depth rendering for multiple cameras */
-    for(auto camera : componentManager.getComponents<CameraComponent>())
+    for (auto camera : componentManager.getComponents<CameraComponent>())
     {
         ::render(am, camera, componentManager.getComponents<SpriteRenderer>());
         ::render(am, camera, componentManager.getComponents<MeshRenderer>());
     }
-
 }
 
 void OpenGLRenderer::renderEnd() { SDL_GL_SwapWindow(m_internal->window); }

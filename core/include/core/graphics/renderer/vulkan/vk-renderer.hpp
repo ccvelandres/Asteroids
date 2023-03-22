@@ -4,7 +4,7 @@
 #include <vulkan/vulkan.hpp>
 
 #include "../../asset-manager.hpp"
-#include "../renderer.hpp"
+#include "graphics/renderer.hpp"
 
 class VulkanRenderer : public Renderer
 {

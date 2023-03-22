@@ -13,7 +13,7 @@
 #include <vector>
 
 #include "asset-inventory.hpp"
-#include "../graphics/renderer/vertex.hpp"
+#include "../graphics/vertex.hpp"
 
 namespace core::assets
 {

@@ -8,7 +8,7 @@
 #include <core/ecs/entity.hpp>
 #include <core/ecs/entityManager.hpp>
 #include <core/ecs/components.hpp>
-#include <core/graphics/renderer/renderer.hpp>
+#include <core/graphics/renderer.hpp>
 #include <core/utils/logging.hpp>
 #include <core/assets/model.hpp>
 

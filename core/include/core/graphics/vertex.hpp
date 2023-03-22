@@ -1,7 +1,7 @@
 #pragma once
 
 /**
- * @file core/renderer/vertex.hpp
+ * @file core/graphics/vertex.hpp
  * @author Cedric Velandres (ccvelandres@gmail.com)
  *
  * @addtogroup Renderer

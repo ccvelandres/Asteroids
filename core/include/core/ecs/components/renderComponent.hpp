@@ -10,7 +10,7 @@
 
 #include "../component.hpp"
 #include "transformComponent.hpp"
-#include "../../graphics/renderer/renderer.hpp"
+#include "../../graphics/renderer.hpp"
 
 #include <bitset>
 
