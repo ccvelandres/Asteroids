@@ -9,6 +9,7 @@
 #include <core/ecs/entityManager.hpp>
 #include <core/ecs/components.hpp>
 #include <core/graphics/renderer.hpp>
+#include <core/ui/text/fontLoader.hpp>
 #include <core/utils/logging.hpp>
 #include <core/assets/model.hpp>
 
@@ -90,10 +91,8 @@ int main(int arc, char **argv)
     camObject.camera->updateMatrix();
 
     {
-        // core::ui::FontLoader fontLoader;
-
-        // fontLoader.loadFont("assets/fonts/arial.ttf");
-        // SDL_Surface *surface = fontLoader.setPixelSize(0, 64).generateGlyphAtlas(0,255);
+        core::assets::Font atlas = core::ui::FontLoader().openFont("assets/fonts/arial.ttf").generateFont();
+        
         // core::assets::Texture texture = core::assets::Texture(surface);
         // core::assets::Mesh mesh = core::assets::Mesh(vector);
 
