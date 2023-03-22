@@ -4,13 +4,11 @@
  * @file core/renderer/asset.hpp
  * @author Cedric Velandres (ccvelandres@gmail.com)
  *
- * @addtogroup Graphics
+ * @addtogroup Assets
  * @{
  */
 
 #include "../assets/asset-inventory.hpp"
-
-#include <memory>
 
 namespace core::assets
 {
@@ -19,16 +17,17 @@ namespace core::assets
     private:
     protected:
     public:
-        Asset(const AssetPath &path);
-        ~Asset();
+        Asset() = default;
+        virtual ~Asset(){};
 
-        Asset(const Asset &)            = delete;
-        Asset &operator=(const Asset &) = delete;
+        Asset(const Asset &)            = default;
+        Asset &operator=(const Asset &) = default;
         Asset(Asset &&)                 = default;
         Asset &operator=(Asset &&)      = default;
 
-        std::vector<char> loadBinaryFile();
+        virtual int importAsset(const AssetName &name) = 0;
+        virtual int exportAsset(const AssetName &name) = 0;
     };
 } // namespace core::assets
 
-/** @} endgroup Renderer */
+/** @} endgroup Assets */

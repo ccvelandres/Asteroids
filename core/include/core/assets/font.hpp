@@ -13,7 +13,8 @@
 #include <vector>
 
 #include <glm/glm.hpp>
-#include "asset-inventory.hpp"
+
+#include "asset.hpp"
 
 namespace core::assets
 {
@@ -85,6 +86,8 @@ namespace core::assets
 
         /** @brief Returns the texture name */
         const std::string &name() const noexcept;
+
+        
     };
 } // namespace core::assets
 
