@@ -13,6 +13,7 @@
 
 #include <core/assets/asset-inventory.hpp>
 
+#include <core/graphics/window.hpp>
 #include <core/graphics/asset-manager.hpp>
 #include <core/graphics/renderer.hpp>
 
@@ -40,6 +41,7 @@ Time                      *g_time             = nullptr;
 AssetManager              *g_assetManager     = nullptr;
 AssetInventory            *g_assetInventory   = nullptr;
 UIManager                 *g_uimanager        = nullptr;
+core::graphics::Window    *g_window           = nullptr;
 
 Game::Game(const std::string &windowTitle, const float &windowWidth, const float &windowHeight)
     : m_windowTitle(windowTitle),
@@ -84,8 +86,11 @@ Game::Game(const std::string &windowTitle, const float &windowWidth, const float
 
 #if defined(CONFIG_CORE_RENDERER_DEFAULT_OPENGL)
     L_DEBUG("Initializing Renderer (OpenGL)");
-    g_renderer     = new OpenGLRenderer(windowTitle, windowWidth, windowHeight);
+    g_window = new core::graphics::Window(
+        std::make_unique<OpenGLRenderer>(OpenGLRenderer(windowTitle, windowWidth, windowHeight)));
+    g_renderer     = &g_window->renderer();
     g_assetManager = &g_renderer->getAssetManager();
+
 #elif defined(CONFIG_CORE_RENDERER_DEFAULT_VULKAN)
 #error "Not yet supported, renderer interface needs work"
 #endif
@@ -208,9 +213,10 @@ void Game::startGameLoop()
             // logging::trace("{},{}: unscaledFrameEnd:   ({})", __LINE__, __func__,
             // g_time->unscaledFrameEnd().count()); logging::trace("{},{}: unscaledFrameTime: ({})",
             // __LINE__, __func__, g_time->unscaledFrameTime().count()); logging::trace("{},{}:
-            // scaledDeltaTime:    ({})", __LINE__, __func__, g_time->scaledDeltaTime().count()); logging::trace("{},{}:
-            // scaledFrameTime:    ({})", __LINE__, __func__, g_time->scaledFrameTime().count()); logging::trace("{},{}:
-            // unscaledTime:       ({})", __LINE__, __func__, g_time->unscaledTime().count());
+            // scaledDeltaTime:    ({})", __LINE__, __func__, g_time->scaledDeltaTime().count());
+            // logging::trace("{},{}: scaledFrameTime:    ({})", __LINE__, __func__,
+            // g_time->scaledFrameTime().count()); logging::trace("{},{}: unscaledTime:       ({})",
+            // __LINE__, __func__, g_time->unscaledTime().count());
             float fps = time_fs::period::den
                       / (Time::getTime<time_fs>() - g_time->unscaledFrameStart<time_fs>()).count();
             m_minfps = (fps < m_minfps ? fps : m_minfps);
