@@ -35,6 +35,7 @@ private:
     glm::mat4           m_projectionMatrix;  /** the projection matrix */
     glm::mat4           m_viewMatrix;        /** the view matrix */
     Projection          m_projection;        /** current projection mode of the camera */
+    glm::vec2           m_viewportPosition;  /** viewport position */
     glm::vec2           m_viewportSize;      /** viewport size of the camera */
     float               m_fieldOfView_r;     /** field of view in perspective mode (radians) */
     float               m_aspectRatio;       /** aspect ratio in perspective mode */
@@ -74,6 +75,8 @@ public:
 
     /** Set projection mode for the camera */
     CameraComponent &setProjection(const Projection &projection) noexcept;
+    /** Set viewport position of the camera */
+    CameraComponent &setViewportPosition(const glm::vec2 &viewportPosition) noexcept;
     /** Set screensize of the camera */
     CameraComponent &setViewportSize(const glm::vec2 &viewportSize) noexcept;
     /** Set field of view of camera (degrees) */
@@ -94,6 +97,7 @@ public:
     const glm::mat4  &getProjectionMatrix() const noexcept;
     const glm::mat4  &getViewMatrix() const noexcept;
     const Projection  getProjection() const noexcept;
+    const glm::vec2  &getViewportPosition() const noexcept;
     const glm::vec2  &getViewportSize() const noexcept;
     const float       getFieldOfView() const noexcept;
     const float       getFieldOfView_r() const noexcept;

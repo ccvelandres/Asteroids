@@ -11,6 +11,7 @@ CameraComponent::~CameraComponent() = default;
 
 CameraComponent::CameraComponent(const Projection &projection)
     : m_projection(projection),
+      m_viewportPosition(0.0f, 0.0f),
       m_viewportSize(Game::this_game()->getWindowSize()),
       m_fieldOfView_r(glm::radians(90.0f)),
       m_aspectRatio(m_viewportSize.x / m_viewportSize.y),
@@ -91,6 +92,12 @@ CameraComponent &CameraComponent::setProjection(const Projection &projection) no
     return *this;
 }
 
+CameraComponent &CameraComponent::setViewportPosition(const glm::vec2 &viewportPosition) noexcept
+{
+    m_viewportPosition = viewportPosition;
+    return *this;
+}
+
 CameraComponent &CameraComponent::setViewportSize(const glm::vec2 &viewportSize) noexcept
 {
     m_viewportSize = viewportSize;
@@ -136,6 +143,7 @@ CameraComponent &CameraComponent::setRenderMask(const RenderMask &renderMask) no
 const glm::mat4 &CameraComponent::getProjectionMatrix() const noexcept { return this->m_projectionMatrix; }
 const glm::mat4 &CameraComponent::getViewMatrix() const noexcept { return this->m_viewMatrix; }
 const CameraComponent::Projection CameraComponent::getProjection() const noexcept { return this->m_projection; }
+const glm::vec2                  &CameraComponent::getViewportPosition() const noexcept { return this->m_viewportPosition; }
 const glm::vec2                  &CameraComponent::getViewportSize() const noexcept { return this->m_viewportSize; }
 const float       CameraComponent::getFieldOfView() const noexcept { return glm::degrees(this->m_fieldOfView_r); }
 const float       CameraComponent::getFieldOfView_r() const noexcept { return this->m_fieldOfView_r; }
