@@ -14,6 +14,14 @@
 
 namespace core::graphics
 {
+    /** @brief Valid window renderer types */
+    enum class WindowRenderer
+    {
+        UNKNOWN,
+        OpenGL2,
+        OpenGL3,
+        Vulkan,
+    };
 
     /**
      * @brief Window object
@@ -21,12 +29,17 @@ namespace core::graphics
     class Window
     {
     public:
+
         struct Internal;
     private:
         std::unique_ptr<Internal> m_internal;
     protected:
     public:
-        Window(std::unique_ptr<Renderer> renderer);
+        Window(WindowRenderer     renderer,
+               const std::string &windowTitle,
+               const int          windowWidth  = 1280,
+               const int          windowHeight = 720);
+        Window(std::unique_ptr<Internal> internal);
         ~Window();
         Window(Window &o)             = delete;
         Window(Window &&o)            = delete;
@@ -40,6 +53,7 @@ namespace core::graphics
         // void postUpdate();
         // void refresh();
 
+        /** @brief Returns reference to renderer */
         Renderer &renderer() const;
     };
 } // namespace core::graphics

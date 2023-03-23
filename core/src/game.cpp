@@ -17,14 +17,6 @@
 #include <core/graphics/asset-manager.hpp>
 #include <core/graphics/renderer.hpp>
 
-#if defined(CONFIG_CORE_RENDERER_VULKAN)
-#include <core/graphics/renderer/vulkan/vk-renderer.hpp>
-#endif
-
-#if defined(CONFIG_CORE_RENDERER_OPENGL)
-#include <core/graphics/renderer/opengl/gl-renderer.hpp>
-#endif
-
 #include <core/ui/uiManager.hpp>
 
 #include <thread>
@@ -86,14 +78,16 @@ Game::Game(const std::string &windowTitle, const float &windowWidth, const float
 
 #if defined(CONFIG_CORE_RENDERER_DEFAULT_OPENGL)
     L_DEBUG("Initializing Renderer (OpenGL)");
-    g_window = new core::graphics::Window(
-        std::make_unique<OpenGLRenderer>(OpenGLRenderer(windowTitle, windowWidth, windowHeight)));
-    g_renderer     = &g_window->renderer();
-    g_assetManager = &g_renderer->getAssetManager();
-
+    g_window       = new core::graphics::Window(core::graphics::WindowRenderer::OpenGL3,
+                                          windowTitle,
+                                          windowWidth,
+                                          windowHeight);
 #elif defined(CONFIG_CORE_RENDERER_DEFAULT_VULKAN)
 #error "Not yet supported, renderer interface needs work"
 #endif
+
+    g_renderer     = &g_window->renderer();
+    g_assetManager = &g_renderer->getAssetManager();
 
     /** FPS Defaults */
     m_targetDelta = time_ds(time_step::den / 60);

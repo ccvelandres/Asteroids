@@ -38,7 +38,7 @@ public:
 
     virtual AssetManager &getAssetManager() = 0;
 
-    const std::string &rendererName() { return m_rendererName; }
+    const std::string      &rendererName() { return m_rendererName; }
 };
 
 /** @} endgroup Renderer */

@@ -3,20 +3,21 @@
 /**
  * @file core/renderer/opengl/gl-renderer.hpp
  * @author Cedric Velandres (ccvelandres@gmail.com)
- * 
+ *
  * @defgroup OpenGL
  * @brief OpenGL implementation for the Rendering System
- * 
- * The OpenGLRenderer supports minimum of GLES 1.2 
- * 
+ *
+ * The OpenGLRenderer supports minimum of GLES 1.2
+ *
  * @ingroup Renderer
  * @{
  */
 
-#include <memory>
-
 #include "../../asset-manager.hpp"
 #include "core/graphics/renderer.hpp"
+
+#include <SDL.h>
+#include <memory>
 
 class OpenGLRenderer : public Renderer
 {
@@ -25,7 +26,10 @@ private:
     std::unique_ptr<Internal> m_internal;
 protected:
 public:
-    OpenGLRenderer(const std::string &windowTitle, const int windowHeight = 1280, const int windowWidth = 720);
+    OpenGLRenderer(SDL_Window        *window,
+                   const std::string &windowTitle,
+                   const int          windowHeight = 1280,
+                   const int          windowWidth  = 720);
     OpenGLRenderer(OpenGLRenderer &&o);
     OpenGLRenderer &operator=(OpenGLRenderer &&o);
     ~OpenGLRenderer();
@@ -39,7 +43,10 @@ public:
     void render() override;
     void renderEnd() override;
 
-    AssetManager& getAssetManager() override;
+    /** @brief Returns reference to asset manager */
+    AssetManager &getAssetManager() override;
+    /** @brief Returns flags needed for window creation */
+    static SDL_WindowFlags getWindowFlags();
 };
 
 /** @} endgroup OpenGL */

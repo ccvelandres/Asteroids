@@ -27,28 +27,6 @@ static void initGL()
     }
 }
 
-SDL_Window *createWindow(const std::string &windowTitle, const int windowWidth, const int windowHeight)
-{
-    L_TAG("createWindow");
-
-    L_DEBUG("SDL VideoDriver: {}", SDL_GetCurrentVideoDriver());
-
-    SDL_Window *window =
-        SDL_CreateWindow(windowTitle.c_str(),
-                         SDL_WINDOWPOS_CENTERED,
-                         SDL_WINDOWPOS_CENTERED,
-                         windowWidth,
-                         windowHeight,
-                         SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE | SDL_WINDOW_OPENGL);
-
-    if (window == NULL)
-    {
-        L_THROW_RUNTIME("Could not create window");
-    }
-
-    return window;
-}
-
 SDL_GLContext createContext(SDL_Window *window)
 {
     L_TAG("createContext");
@@ -106,18 +84,22 @@ SDL_GLContext createContext(SDL_Window *window)
 
 struct OpenGLRenderer::Internal
 {
-    SDL_Window *const  window;
-    SDL_GLContext      context;
-    OpenGLAssetManager assetManager;
-    AssetID            defaultPipeline;
+    SDL_Window *const  m_window;
+    SDL_GLContext      m_context;
+    OpenGLAssetManager m_assetManager;
+    AssetID            m_defaultPipeline;
 
-    Internal(const std::string &windowTitle, const int windowWidth, const int windowHeight)
-        : window(::createWindow(windowTitle, windowWidth, windowHeight)),
-          context(::createContext(window)),
-          assetManager(),
-          defaultPipeline(assetManager.loadAsset(AssetType::Pipeline, "default"))
+    Internal(SDL_Window        *window,
+             const std::string &windowTitle,
+             const int          windowWidth,
+             const int          windowHeight)
+        : m_window(window),
+          m_context(::createContext(window)),
+          m_assetManager(),
+          m_defaultPipeline(m_assetManager.loadAsset(AssetType::Pipeline, "default"))
     {
         L_TAG("OpenGLRenderer::Internal");
+        L_DEBUG("SDL VideoDriver: {}", SDL_GetCurrentVideoDriver());
         L_TRACE("Internal resources initialized ({})", static_cast<void *>(this));
     }
 
@@ -128,11 +110,12 @@ struct OpenGLRenderer::Internal
     }
 };
 
-OpenGLRenderer::OpenGLRenderer(const std::string &windowTitle,
+OpenGLRenderer::OpenGLRenderer(SDL_Window        *window,
+                               const std::string &windowTitle,
                                const int          windowWidth,
                                const int          windowHeight)
     : Renderer("OpenGL"),
-      m_internal(std::make_unique<Internal>(windowTitle, windowWidth, windowHeight))
+      m_internal(std::make_unique<Internal>(window, windowTitle, windowWidth, windowHeight))
 {
 }
 
@@ -248,6 +231,7 @@ void OpenGLRenderer::render()
     }
 }
 
-void OpenGLRenderer::renderEnd() { SDL_GL_SwapWindow(m_internal->window); }
+void OpenGLRenderer::renderEnd() { SDL_GL_SwapWindow(m_internal->m_window); }
 
-AssetManager &OpenGLRenderer::getAssetManager() { return m_internal->assetManager; }
+AssetManager   &OpenGLRenderer::getAssetManager() { return m_internal->m_assetManager; }
+SDL_WindowFlags OpenGLRenderer::getWindowFlags() { return SDL_WINDOW_OPENGL; }
